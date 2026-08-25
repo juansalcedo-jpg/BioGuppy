@@ -72,11 +72,10 @@
 
     <div class="d-flex align-items-center gap-2 p-3 border-top border-secondary border-opacity-25">
         <div class="bg-accent text-dark fw-bold rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:36px;height:36px;font-size:.85rem;">
-            LH
+            <?php echo $primeraLetra = strtoupper(substr($_SESSION['usu_nombre'], 0, 1)); ?>
         </div>
         <div class="overflow-hidden">
-            <div class="text-white small fw-semibold text-truncate">Luis Herrera</div>
-            <div class="text-white-50 small">Sur</div>
+            <div class="text-white small fw-semibold text-truncate"><?php echo $_SESSION['usu_nombre']; ?></div>
         </div>
     </div>
 
