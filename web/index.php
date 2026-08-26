@@ -16,10 +16,10 @@ if(isset($_GET['modulo'])){
     resolve();
 }else{
 }
-echo "</div>"; // page-content
-echo "</div>"; // main-content
+echo "</div>";
+echo "</div>";
 
-echo "</div>"; // app-layout
+echo "</div>";
 include_once '../view/partials/footer.php';
 echo "</body>";
 echo "</html>";
