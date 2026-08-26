@@ -8,4 +8,33 @@
     crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <title>Document</title>
+    <style>
+        :root {
+            --sidebar-width: 260px;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            background-color: #eaf1fb;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            min-height: 100vh;
+        }
+        .page-content {
+            flex: 1;
+            padding: 24px;
+        }
+    </style>
 </head>

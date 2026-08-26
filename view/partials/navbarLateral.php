@@ -1,8 +1,12 @@
-
+<?php
+$modulo = $_GET['modulo'] ?? '';
+?>
 <style>
     .sidebar-biogu {
-        width: 260px;
+        width: var(--sidebar-width);
         background-color: #10254a;
+        overflow-y: auto;
+        z-index: 1030;
     }
     .sidebar-biogu .nav-link {
         color: #c9d4e6;
@@ -39,32 +43,38 @@
 
     <ul class="nav nav-pills flex-column px-2 gap-1 flex-grow-1">
         <li class="nav-item">
-            <a href="#" class="nav-link active d-flex align-items-center gap-2">
+            <a href=" <?php echo getUrl("Zoocriaderos","Zoocriaderos","list") ?>" class="nav-link d-flex align-items-center gap-2
+            <?php echo ($modulo == 'Zoocriaderos') ? 'active' : ''; ?>">
                 <i class="bi bi-flask"></i> Zoocriaderos
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link d-flex align-items-center gap-2">
+            <a href="<?php echo getUrl("Sitios","Sitios","list") ?>" class="nav-link d-flex align-items-center gap-2
+            <?php echo ($modulo == 'Sitios') ? 'active' : ''; ?>">
                 <i class="bi bi-geo-alt"></i> Sitios / Depósitos
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link d-flex align-items-center gap-2">
+            <a href="<?php echo getUrl("Validar","Validar","list") ?>" class="nav-link d-flex align-items-center gap-2
+            <?php echo ($modulo == 'Validar') ? 'active' : ''; ?>">
                 <i class="bi bi-person-check"></i> Validar registros
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link d-flex align-items-center gap-2">
+            <a href="<?php echo getUrl("Auxiliares","Auxiliares","list") ?>" class="nav-link d-flex align-items-center gap-2
+            <?php echo ($modulo == 'Auxiliares') ? 'active' : ''; ?>">
                 <i class="bi bi-people"></i> Auxiliares
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link d-flex align-items-center gap-2">
+            <a href="<?php echo getUrl("Reportes","Reportes","list") ?>" class="nav-link d-flex align-items-center gap-2
+            <?php echo ($modulo == 'Reportes') ? 'active' : ''; ?>">
                 <i class="bi bi-bar-chart"></i> Reportes
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link d-flex align-items-center gap-2">
+            <a href="<?php echo getUrl("Mapa","Mapa","list") ?>" class="nav-link d-flex align-items-center gap-2
+            <?php echo ($modulo == 'Mapa') ? 'active' : ''; ?>">
                 <i class="bi bi-map"></i> Mapa
             </a>
         </li>

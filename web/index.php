@@ -5,13 +5,21 @@ include_once '../lib/helpersLogin.php';
 include_once '../view/partials/head.php';
 
 echo "<body>";
-echo "<div class='container'>";
+echo "<div class='app-layout'>";
+
 include_once '../view/partials/navbarLateral.php';
+
+echo "<div class='main-content'>";
+include_once '../view/partials/navbarSuperior.php';
+echo "<div class='page-content'>";
 if(isset($_GET['modulo'])){
     resolve();
 }else{
 }
-echo "</div>";
+echo "</div>"; // page-content
+echo "</div>"; // main-content
+
+echo "</div>"; // app-layout
 include_once '../view/partials/footer.php';
 echo "</body>";
 echo "</html>";

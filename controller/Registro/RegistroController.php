@@ -28,21 +28,33 @@ include_once '../model/Registro/RegistroModel.php';
 
                         if(preg_match('/^[0-9]{6,10}$/', $usu_cedula)){
 
-                            if(preg_match('/^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+\.(com|edu)(\.[a-z]{2})?$/', $usu_correo)){
+                            if(filter_var($usu_correo, FILTER_VALIDATE_EMAIL)){
 
                                 if($usu_clave2 == $usu_clave1){
 
                                     if(preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!])[A-Za-z\d@#$%^&*!]{8,}$/', $usu_clave2)){
-                                        $usu_id = $obj->autoincrement("Usuarios","usu_id");
 
-                                        $sql = "INSERT INTO usuarios (usu_id, usu_nombre, usu_apellido, usu_cedula, usu_correo, usu_clave)
-                                            VALUES ($usu_id, '$usu_nombre', '$usu_apellido', '$usu_cedula', '$usu_correo', '$usu_clave2')";
+                                        $sqlVer = "SELECT * FROM usuarios WHERE usu_correo = '$usu_correo' OR usu_cedula = $usu_cedula";
 
-                                        $obj->insert($sql);
-                                
-                                        $_SESSION['ConfirmarRegistro'] = "Te has registrado correctamente";
-                                        $_SESSION['MostrarRegistro'] = true;
-                                        redirect("inicio/login.php");
+                                        $verificar = $obj->select($sqlVer);
+
+                                        if(pg_num_rows($verificar) == 0){
+                                            $usu_id = $obj->autoincrement("Usuarios","usu_id");
+                                        
+                                            $conEncript = password_hash($usu_clave2, PASSWORD_DEFAULT);
+                                            $sql = "INSERT INTO usuarios (usu_id, usu_nombre, usu_apellido, usu_cedula, usu_correo, usu_clave)
+                                                VALUES ($usu_id, '$usu_nombre', '$usu_apellido', '$usu_cedula', '$usu_correo', '$conEncript')";
+
+                                            $obj->insert($sql);
+                                    
+                                            $_SESSION['ConfirmarRegistro'] = "Te has registrado correctamente";
+                                            $_SESSION['MostrarRegistro'] = true;
+                                            redirect("inicio/login.php");
+                                        }else{
+                                            $_SESSION['ErrorValidacion'] = "El correo o la cedula ya estan registrados";
+                                            $_SESSION['MostrarRegistro'] = true;
+                                            redirect("inicio/login.php");
+                                        }
                                     } else {
                                         $_SESSION['ErrorValidacion'] = "La contraseña debe tener al menos 8 caracteres, 
                                         incluir mayúscula, minúscula, número y símbolo especial.";
