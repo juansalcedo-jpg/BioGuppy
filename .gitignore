@@ -1,0 +1,19 @@
+# Ignorar archivo de configuración local
+conf.php
+
+# Opcional: ignorar cualquier archivo de configuración sensible
+*.env
+*.ini
+
+# Ignorar logs y temporales
+*.log
+*.tmp
+
+# Ignorar dependencias de Composer
+/vendor/
+
+# Ignorar dependencias de Node (si usas npm/yarn)
+/node_modules/
+
+/dist/
+/build/
