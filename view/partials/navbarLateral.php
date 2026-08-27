@@ -42,42 +42,11 @@ $modulo = $_GET['modulo'] ?? '';
     </div>
 
     <ul class="nav nav-pills flex-column px-2 gap-1 flex-grow-1">
-        <li class="nav-item">
-            <a href=" <?php echo getUrl("Zoocriaderos","Zoocriaderos","list") ?>" class="nav-link d-flex align-items-center gap-2
-            <?php echo ($modulo == 'Zoocriaderos') ? 'active' : ''; ?>">
-                <i class="bi bi-flask"></i> Zoocriaderos
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="<?php echo getUrl("Sitios","Sitios","list") ?>" class="nav-link d-flex align-items-center gap-2
-            <?php echo ($modulo == 'Sitios') ? 'active' : ''; ?>">
-                <i class="bi bi-geo-alt"></i> Sitios / Depósitos
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="<?php echo getUrl("Validar","Validar","list") ?>" class="nav-link d-flex align-items-center gap-2
-            <?php echo ($modulo == 'Validar') ? 'active' : ''; ?>">
-                <i class="bi bi-person-check"></i> Validar registros
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="<?php echo getUrl("Auxiliares","Auxiliares","list") ?>" class="nav-link d-flex align-items-center gap-2
-            <?php echo ($modulo == 'Auxiliares') ? 'active' : ''; ?>">
-                <i class="bi bi-people"></i> Auxiliares
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="<?php echo getUrl("Reportes","Reportes","list") ?>" class="nav-link d-flex align-items-center gap-2
-            <?php echo ($modulo == 'Reportes') ? 'active' : ''; ?>">
-                <i class="bi bi-bar-chart"></i> Reportes
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="<?php echo getUrl("Mapa","Mapa","list") ?>" class="nav-link d-flex align-items-center gap-2
-            <?php echo ($modulo == 'Mapa') ? 'active' : ''; ?>">
-                <i class="bi bi-map"></i> Mapa
-            </a>
-        </li>
+        <?php
+        if (isset($_SESSION['menu_file'])) {
+            include_once $_SESSION['menu_file'];
+        }
+        ?>
     </ul>
 
     <div class="d-flex align-items-center gap-2 p-3 border-top border-secondary border-opacity-25">

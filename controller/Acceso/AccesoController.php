@@ -21,6 +21,19 @@
                     $_SESSION['usu_correo'] = $usu['usu_correo'];
                     $_SESSION['usu_id'] = $usu['usu_id'];
                     $_SESSION['auth'] = "ok";
+
+                    $sqlrol = "SELECT rol, subrol FROM usuarios WHERE usu_correo = '$usu_correo'";
+                    $rol = $obj->select($sqlrol);
+
+                    if (pg_num_rows($rol) > 0) {
+                        $datosRol = pg_fetch_assoc($rol);
+                        echo $datosRol['rol'] . " - " . $datosRol['subrol'];
+                        if($datosRol['rol'] == 4 && $datosRol['subrol'] == 2){
+                            $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAuxTerreno.php";
+                        }else if($datosRol['rol'] == 4 && $datosRol['subrol'] == 1){
+                            $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAuxEco.php";
+                        }
+                    }
                     redirect("index.php");
                 } else {
                     $_SESSION['ErrorLogin'] = "Correo o contraseña incorrectos";
