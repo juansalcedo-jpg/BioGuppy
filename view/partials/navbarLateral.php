@@ -25,15 +25,20 @@ $modulo = $_GET['modulo'] ?? '';
     .bg-accent {
         background-color: #22c1a4 !important;
     }
+
+    .otro{
+        color: pink;
+    }
 </style>
 <aside class="sidebar-biogu d-flex flex-column vh-100 position-fixed top-0 start-0">
 
     <div class="d-flex align-items-center gap-2 p-3 border-bottom border-secondary border-opacity-25">
-        <div class="rounded-3 overflow-hidden" style="width:38px;height:38px;">
-            <img src="/BioGuppy/Img/logo.jpeg" alt="BioGuppy" class="w-100 h-100" style="object-fit:cover;">
+        <div class="rounded-3 overflow-hidden" style="width:50px;height:50px;">
+            <img src="/BioGuppy/Img/logo.png" alt="BioGuppy" class="w-100 h-100" style="object-fit:cover;">
         </div>
         <div>
-            <h1 class="h6 text-white mb-0">BioGuppy</h1>
+            <h1 class="h6 text-white mb-0"><strong>Bio</strong><span class="otro">Guppy</span></h1>
+            
         </div>
     </div>
 
