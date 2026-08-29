@@ -5,6 +5,9 @@
     class ZoocriaderosController{
 
         public function list(){
+
+        echo "aqui va la vista";
+        
         }
 
     }
