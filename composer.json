@@ -1,0 +1,17 @@
+{
+    "name": "juans/bio-guppy",
+    "autoload": {
+        "psr-4": {
+            "Juans\\BioGuppy\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "JUANDA",
+            "email": "juansalcedo.perez28@gmail.com"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^7.1"
+    }
+}
