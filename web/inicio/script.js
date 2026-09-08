@@ -149,7 +149,7 @@ function activarFormularioDeAcceso() {
   function validarFormulario() {
     const correoValido = EXPRESION_CORREO.test(campoCorreo.value.trim())
       ? marcarEstadoCampo(campoCorreo, '')
-      : marcarEstadoCampo(campoCorreo, 'Ingresa un correo institucional válido.');
+      : marcarEstadoCampo(campoCorreo, 'Ingresa un correo electronico válido.');
 
     const claveValida = campoClave.value.trim().length >= 6
       ? marcarEstadoCampo(campoClave, '')
