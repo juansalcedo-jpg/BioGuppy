@@ -1,5 +1,6 @@
 # Ignorar archivo de configuración local
 conf.php
+email.php
 
 # Opcional: ignorar cualquier archivo de configuración sensible
 *.env

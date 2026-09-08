@@ -618,3 +618,187 @@ input{ font-family: inherit; color: inherit; }
     transition-duration: 0.001ms !important;
   }
 }
+
+.modal-biopass .modal-content{
+  background: var(--azul-marino);
+  border: 1px solid var(--turquesa-suave);
+  border-radius: var(--radio-lg);
+  color: var(--texto-alto);
+  font-family: var(--fuente-texto);
+}
+
+.modal-biopass .modal-header{
+  position: relative;
+  border-bottom: 1px solid var(--turquesa-suave);
+  padding: 1.5rem 2.75rem 1rem;
+  justify-content: center;
+}
+
+.modal-biopass .modal-title{
+  font-family: var(--fuente-titulos);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--texto-alto);
+  text-align: center;
+  width: 100%;
+}
+
+.modal-biopass .btn-close{
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  filter: invert(1) grayscale(100%) brightness(200%);
+  opacity: 0.7;
+}
+.modal-biopass .btn-close:hover{ opacity: 1; }
+
+.modal-biopass .modal-body{
+  padding: 1.25rem 1.75rem 0.5rem;
+}
+
+.modal-biopass .modal-body p{
+  color: var(--texto-medio);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.modal-biopass .form-label{
+  color: var(--texto-alto);
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.modal-biopass .form-control{
+  background: var(--azul-marino-claro);
+  border: 1px solid var(--azul-marino-claro-2);
+  color: var(--texto-alto);
+  border-radius: var(--radio-md);
+  padding: 0.65rem 0.9rem;
+  font-family: var(--fuente-texto);
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.modal-biopass .form-control::placeholder{
+  color: var(--texto-tenue);
+}
+
+.modal-biopass .form-control:focus{
+  background: var(--azul-marino-claro-2);
+  border-color: var(--turquesa-oscuro);
+  box-shadow: 0 0 0 3px var(--turquesa-suave);
+  color: var(--texto-alto);
+  outline: none;
+}
+
+.modal-biopass .modal-footer{
+  border-top: none;
+  padding: 1rem 1.75rem 1.75rem;
+}
+
+.modal-biopass .btn-enviar-recuperacion{
+  width: 100%;
+  background: linear-gradient(90deg, var(--turquesa) 0%, var(--turquesa-oscuro) 100%);
+  border: none;
+  color: var(--azul-oscuro);
+  font-family: var(--fuente-titulos);
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.7rem 1.5rem;
+  border-radius: var(--radio-pill);
+  cursor: pointer;
+  transition: opacity var(--duracion-rapida) ease;
+  text-decoration: none;
+  text-align: center;
+}
+
+.modal-biopass .btn-enviar-recuperacion:hover{
+  opacity: 0.88;
+}
+
+.modal-backdrop.show{
+  opacity: 0.75;
+}
+
+.modal-biopass .otp-inputs{
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 0.25rem 0 1rem;
+}
+
+.modal-biopass .otp-digit{
+  width: 46px;
+  height: 56px;
+  text-align: center;
+  font-family: var(--fuente-datos);
+  font-size: 1.4rem;
+  font-weight: 600;
+  background: var(--azul-marino-claro);
+  border: 1px solid var(--azul-marino-claro-2);
+  border-radius: var(--radio-md);
+  color: var(--texto-alto);
+  transition: border-color var(--duracion-rapida) ease,
+              box-shadow var(--duracion-rapida) ease,
+              background var(--duracion-rapida) ease;
+}
+
+.modal-biopass .otp-digit:focus{
+  outline: none;
+  border-color: var(--turquesa-oscuro);
+  background: var(--azul-marino-claro-2);
+  box-shadow: 0 0 0 3px var(--turquesa-suave);
+}
+
+.modal-biopass .otp-digit.otp-digit--error{
+  border-color: var(--coral);
+  box-shadow: 0 0 0 3px rgba(226, 133, 110, 0.18);
+}
+
+.modal-biopass .reenviar-codigo{
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--texto-tenue);
+  margin: 0;
+}
+
+.modal-biopass .reenviar-codigo a{
+  color: var(--turquesa);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.modal-biopass .reenviar-codigo a:hover{
+  color: var(--turquesa-oscuro);
+  text-decoration: underline;
+}
+
+/* ---------- Alerta flotante (toast) arriba de toda la página ---------- */
+.alerta-flotante {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-16px);
+  z-index: 2000; /* por encima del backdrop y del modal de Bootstrap */
+  width: 100%;
+  max-width: 420px;
+  padding: 0 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease, transform .3s ease;
+}
+
+.alerta-flotante.mostrar {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.alerta-flotante .alert {
+  margin-bottom: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
