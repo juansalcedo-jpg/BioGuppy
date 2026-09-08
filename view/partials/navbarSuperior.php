@@ -58,19 +58,6 @@
     border: 2px solid #ffffff;
 }
 
-.avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: #1e3a8a;
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-}
 </style>
 
 <div class="topbar">
@@ -105,7 +92,5 @@
         </svg>
         <span class="notification-dot"></span>
     </div>
-
-    <div class="avatar">AR</div>
     </div>
 </div>

@@ -27,7 +27,7 @@ if (isset($_SESSION['ErrorLogin'])) {
         <h1 id="tituloAcceso">Bienvenido de nuevo</h1>
 
         <div class="campo">
-          <label for="correo">Correo institucional</label>
+          <label for="correo">Correo electronico</label>
           <div class="campo__control">
             <i data-lucide="mail" aria-hidden="true"></i>
             <input
