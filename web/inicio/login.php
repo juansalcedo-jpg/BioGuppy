@@ -213,9 +213,6 @@ if (isset($_SESSION['ErrorLogin'])) {
 
           <input type="hidden" name="codigo" id="codigoCompleto">
 
-          <p class="reenviar-codigo">
-            ¿No te llegó? <a href="#" id="btnReenviarCodigo">Reenviar código</a>
-          </p>
         </div>
 
         <div class="modal-footer">

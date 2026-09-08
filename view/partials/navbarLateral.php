@@ -27,7 +27,7 @@ $modulo = $_GET['modulo'] ?? '';
     }
 
     .otro{
-        color: pink;
+        color: #38D7C8;
     }
 </style>
 <aside class="sidebar-biogu d-flex flex-column vh-100 position-fixed top-0 start-0">
