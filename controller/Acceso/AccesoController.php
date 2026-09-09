@@ -28,8 +28,9 @@
                     if (pg_num_rows($rol) > 0) {
                         $datosRol = pg_fetch_assoc($rol);
                         echo $datosRol['rol'] . " - " . $datosRol['subrol'];
-                        if($datosRol['rol'] == 4 && $datosRol['subrol'] == 2){
-                            $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAuxTerreno.php";
+                        if($datosRol['rol'] == 1){
+                            $_SESSION['menu_file'] = "../view/funcionesLateral/FuncSuperAdmin.php";
+                            $_SESSION['nombre_rol'] = "Super Administrador";
                         }else if($datosRol['rol'] == 4 && $datosRol['subrol'] == 1){
                             $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAuxEco.php";
                         }

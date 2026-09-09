@@ -1,5 +1,5 @@
 <?php
-$modulo = $_GET['modulo'] ?? '';
+$funcion = $_GET['funcion'] ?? '';
 ?>
 <style>
     .sidebar-biogu {
@@ -7,6 +7,11 @@ $modulo = $_GET['modulo'] ?? '';
         background-color: #10254a;
         overflow-y: auto;
         z-index: 1030;
+        transition: transform .25s ease;
+    }
+    /* Cuando el layout tiene la clase sidebar-collapsed, el sidebar se desliza fuera de pantalla */
+    .app-layout.sidebar-collapsed .sidebar-biogu {
+        transform: translateX(-100%);
     }
     .sidebar-biogu .nav-link {
         color: #c9d4e6;
@@ -43,7 +48,7 @@ $modulo = $_GET['modulo'] ?? '';
     </div>
 
     <div class="text-accent text-uppercase small fw-semibold px-3 pt-3 pb-2" style="letter-spacing:.05em; font-size:.7rem;">
-        Coord. Control Biológico
+        <?php echo $_SESSION['nombre_rol']; ?>
     </div>
 
     <ul class="nav nav-pills flex-column px-2 gap-1 flex-grow-1">
@@ -68,4 +73,3 @@ $modulo = $_GET['modulo'] ?? '';
     </a>
 
 </aside>
-

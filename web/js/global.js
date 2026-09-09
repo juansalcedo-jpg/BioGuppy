@@ -1,10 +1,12 @@
 $(document).ready(function(){
 
+    $(document).on("click", "#btnToggleSidebar", function(){
+        $(".app-layout").toggleClass("sidebar-collapsed");
+    });
+
     $(document).on("keyup","#filtro",function(){
         let data = $(this).val();
         let url = $(this).data("url");
-
-        //console.log(url);
 
         $.ajax({
             url: url,

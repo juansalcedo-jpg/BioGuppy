@@ -27,6 +27,14 @@
             }else{
                 $_SESSION['correoRecuperar'] = $correo;
                 $codigo = rand(100000, 999999);
+
+                do {
+                    $codigo = rand(100000, 999999);
+                    $sql = "SELECT COUNT(*) as total FROM codigo_recu WHERE numero_cod = '$codigo'";
+                    $result = $obj->select($sql);
+                    $row = $result->fetch_assoc();
+                } while ($row['total'] > 0);
+
                 $mail = new PHPMailer(true);
 
                 $obj = new CambioContraModel();

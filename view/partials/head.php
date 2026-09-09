@@ -7,7 +7,7 @@
     rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" 
     crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <title>Document</title>
+    <title>BioGuppy</title>
     <style>
         :root {
             --sidebar-width: 260px;
@@ -31,10 +31,16 @@
             flex-direction: column;
             min-width: 0;
             min-height: 100vh;
+            transition: margin-left .25s ease;
         }
         .page-content {
             flex: 1;
             padding: 24px;
+        }
+
+        /* Cuando el sidebar está colapsado, el contenido ocupa todo el ancho */
+        .app-layout.sidebar-collapsed .main-content {
+            margin-left: 0;
         }
     </style>
 </head>
