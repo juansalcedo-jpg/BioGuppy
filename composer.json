@@ -1,14 +1,14 @@
 {
-    "name": "user/bioguppy",
+    "name": "usuario1/bio-guppy",
     "autoload": {
         "psr-4": {
-            "User\\Bioguppy\\": "src/"
+            "Usuario1\\BioGuppy\\": "src/"
         }
     },
     "authors": [
         {
-            "name": "isabellabt12",
-            "email": "isabellabastidas.t@gmail.com"
+            "name": "Andres",
+            "email": "alvarezcartagenaandresfelipe9@gmail.com"
         }
     ],
     "require": {

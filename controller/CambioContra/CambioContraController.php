@@ -6,87 +6,121 @@
     use PHPMailer\PHPMailer\Exception;
 
     class CambioContraController{
-        public function enviarCorreo(){
-            $correo = isset($_POST['correo']) ? trim($_POST['correo']) : '';
-            
+      public function enviarCorreo(){
+    $correo = isset($_POST['correo']) ? trim($_POST['correo']) : '';
 
-            if (empty($correo)){
-                echo '<div class="alert alert-danger d-flex align-items-center" role="alert">
-                        <div>
-                        Debes ingresar un correo electrónico.
-                        </div>
-                    </div>';
-                return;
-            }else if (!filter_var($correo, FILTER_VALIDATE_EMAIL)){
-                echo '<div class="alert alert-danger d-flex align-items-center" role="alert">
-                        <div>
-                        El correo ingresado no es válido.
-                        </div>
-                    </div>';
-                return;
-            }else{
-                $_SESSION['correoRecuperar'] = $correo;
-                $codigo = rand(100000, 999999);
+    if (empty($correo)){
+        echo '<div class="alert alert-danger d-flex align-items-center" role="alert">
+                <div>
+                Debes ingresar un correo electrónico.
+                </div>
+            </div>';
+        return;
+    }else if (!filter_var($correo, FILTER_VALIDATE_EMAIL)){
+        echo '<div class="alert alert-danger d-flex align-items-center" role="alert">
+                <div>
+                El correo ingresado no es válido.
+                </div>
+            </div>';
+        return;
+    }
 
-                do {
-                    $codigo = rand(100000, 999999);
-                    $sql = "SELECT COUNT(*) as total FROM codigo_recu WHERE numero_cod = '$codigo'";
-                    $result = $obj->select($sql);
-                    $row = $result->fetch_assoc();
-                } while ($row['total'] > 0);
+    $obj = new CambioContraModel();
 
-                $mail = new PHPMailer(true);
+    $sqlUsuario = "SELECT codusuario FROM tblusuario WHERE correo = :correo AND estado = 'A'";
+    $resultUsuario = $obj->select($sqlUsuario, [':correo' => $correo]);
+    $usuario = $resultUsuario->fetch(PDO::FETCH_ASSOC);
 
-                $obj = new CambioContraModel();
+    if (!$usuario){
+        echo '<div class="alert alert-danger d-flex align-items-center" role="alert">
+                <div>
+                No existe una cuenta asociada a ese correo.
+                </div>
+            </div>';
+        return;
+    }
 
-                $sql = "INSERT INTO codigo_recu VALUES(DEFAULT, '$codigo')";
+    $codusuario = $usuario['codusuario'];
+    $_SESSION['correoRecuperar'] = $correo;
 
-                $execute = $obj->insert($sql);
+    // Generar código único, verificando el hash determinístico contra la BD
+    do {
+        $codigo = random_int(100000, 999999);
+        $codigoHash = hash_hmac('sha256', (string) $codigo, HASH_KEY_RECUPERACION);
 
-                try {
+        $sqlCheck = "SELECT COUNT(*) as total FROM tblcodigorecuperacion WHERE codigo = :codigo";
+        $resultCheck = $obj->select($sqlCheck, [':codigo' => $codigoHash]);
+        $row = $resultCheck->fetch(PDO::FETCH_ASSOC);
+    } while ($row['total'] > 0);
 
-                    $mail->isSMTP();
-                    include_once '../lib/conf/email.php';
+    $sqlInsert = "INSERT INTO tblcodigorecuperacion (codusuario, codigo, fechaexpiracion)
+                  VALUES (:codusuario, :codigo, NOW() + INTERVAL '10 minutes')";
+    $execute = $obj->insert($sqlInsert, [
+        ':codusuario' => $codusuario,
+        ':codigo'     => $codigoHash,
+    ]);
 
-                    $mail->setFrom('bioguppy@gmail.com');
-                    $mail->addAddress($correo);
+    $mail = new PHPMailer(true);
 
-                    $mail->CharSet = 'UTF-8';
-                    $mail->Encoding = 'base64';
-                    $mail->isHTML(true);
+    try {
+        $mail->isSMTP();
+        include_once '../lib/conf/email.php';
 
-                    $mail->Subject = "Código de recuperación de contraseña";
-                    $mail->Body    = "<h1>Recuperación de contraseña</h1>
-                                    <p>Tu código de verificación es: <b>$codigo</b></p>";
-                    $mail->AltBody = "Tu código de verificación es: $codigo";
-                    $mail->send();
+        $mail->setFrom('bioguppy@gmail.com');
+        $mail->addAddress($correo);
 
-                    echo '<div class="alert alert-success d-flex align-items-center" role="alert">
-                            <div>
-                            Hemos enviado un código de recuperación a tu correo.
-                            </div>
-                        </div>';
-                }catch (Exception $e) {
-                    echo '<div class="alert alert-danger d-flex align-items-center" role="alert">
-                            <div>
-                            No se pudo enviar el correo: '.$mail->ErrorInfo.'
-                            </div>
-                        </div>';
-                }
-            }
-        }
+        $mail->CharSet = 'UTF-8';
+        $mail->Encoding = 'base64';
+        $mail->isHTML(true);
+
+        $mail->Subject = "Código de recuperación de contraseña";
+        $mail->Body    = "<h1>Recuperación de contraseña</h1>
+                        <p>Tu código de verificación es: <b>$codigo</b></p>";
+        $mail->AltBody = "Tu código de verificación es: $codigo";
+        $mail->send();
+
+        echo '<div class="alert alert-success d-flex align-items-center" role="alert">
+                <div>
+                Hemos enviado un código de recuperación a tu correo.
+                </div>
+            </div>';
+    }catch (Exception $e) {
+        echo '<div class="alert alert-danger d-flex align-items-center" role="alert">
+                <div>
+                No se pudo enviar el correo: '.$mail->ErrorInfo.'
+                </div>
+            </div>';
+    }
+}
 
         public function validar_codigo(){
 
             $obj = new CambioContraModel();
 
-            $codigo = (int) $_POST['codigo'];
+            $codigoIngresado = trim($_POST['codigo'] ?? '');
+            $correo = $_SESSION['correoRecuperar'] ?? '';
 
-            $sql = "SELECT * FROM codigo_recu WHERE numero_cod = $codigo AND estado=true";
+            $sqlUsuario = "SELECT codusuario FROM tblusuario WHERE correo = :correo AND estado = 'A'";
+            $resultUsuario = $obj->select($sqlUsuario, [':correo' => $correo]);
+            $usuario = $resultUsuario->fetch(PDO::FETCH_ASSOC);
 
-            $codigo_validado = $obj->select($sql);
+            $codusuario = $usuario['codusuario'];
+            $codigoHash = hash_hmac('sha256', $codigoIngresado, HASH_KEY_RECUPERACION);
 
-            if(pg_num_rows($codigo_validado) > 0){
+            $sql = "SELECT codrecuperacion FROM tblcodigorecuperacion
+                    WHERE codusuario = :codusuario
+                      AND codigo = :codigo
+                      AND recuperado = 'N'
+                      AND estado = 'A'
+                      AND fechaexpiracion > CURRENT_TIMESTAMP";
+
+            $codigo_validado = $obj->select($sql, [
+                ':codusuario' => $codusuario,
+                ':codigo'     => $codigoHash,
+            ]);
+            $fila = $codigo_validado->fetch(PDO::FETCH_ASSOC);
+
+            if($fila){
                 echo '<div class="alert alert-success d-flex align-items-center" role="alert">
                         <div>
                         Código validado exitosamente.
@@ -100,9 +134,12 @@
                     </div>';
             }
 
-            $sql2 = "UPDATE codigo_recu SET estado = false WHERE numero_cod = $codigo";
+            $sql2 = "UPDATE tblcodigorecuperacion SET recuperado = 'S' WHERE codusuario = :codusuario AND codigo = :codigo";
 
-            $exe = $obj->update($sql2);
+            $exe = $obj->update($sql2, [
+                ':codusuario' => $codusuario,
+                ':codigo'     => $codigoHash,
+            ]);
 
         }
 
@@ -129,9 +166,12 @@
                 }else{
                     $correo = $_SESSION['correoRecuperar'];
                     $contraEncriptada = password_hash($contra, PASSWORD_DEFAULT);
-                    $sql = "UPDATE usuarios SET usu_clave = '$contraEncriptada' WHERE usu_correo = '$correo'";
+                    $sql = "UPDATE tblusuario SET contrasena = :contrasena WHERE correo = :correo";
 
-                    $execu = $obj->update($sql);
+                    $execu = $obj->update($sql, [
+                        ':contrasena' => $contraEncriptada,
+                        ':correo'     => $correo,
+                    ]);
 
                     if($execu){
                         echo '<div class="alert alert-success d-flex align-items-center" role="alert">
