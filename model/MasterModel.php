@@ -1,44 +1,54 @@
 <?php
 
-    include_once '../lib/conf/connection.php';
-    class MasterModel extends Connection{
-        public function insert($sql){
-            $result = pg_query($this->getConnection(),$sql);
+include_once '../lib/conf/connection.php';
+class MasterModel extends Connection
+{
+    public function insert(string $sql, array $params = [])
+    {
+        $stmt = $this->getConnection()->prepare($sql);
+        $stmt->execute($params);
 
-            return $result;
-        }
-        public function select($sql){
-            $result = pg_query($this->getConnection(),$sql);
-
-            return $result;
-        }
-        public function update($sql){
-            $result = pg_query($this->getConnection(),$sql);
-
-            return $result;
-        }
-        public function delete($sql){
-            $result = pg_query($this->getConnection(),$sql);
-
-            return $result;
-        }
-        public function findOne($table,$fields,$condition){
-            $sql = "SELECT $fields FROM $table WHERE $condition";
-            $result = pg_query($this->getConnection(),$sql);
-            if(pg_num_rows($result)>0){
-                return $result;
-            }else{
-                return "No se encontro ningun registro";
-            }
-        }
-        public function autoincrement($table,$field){
-            $sql= "SELECT MAX($field) FROM $table";
-            $result = pg_query($this->getConnection(),$sql);
-            $max_id = pg_fetch_array($result);
-            return $max_id[0]+1;
-        }
+        return $stmt;
     }
 
+    public function select(string $sql, array $params = [])
+    {
+        $stmt = $this->getConnection()->prepare($sql);
+        $stmt->execute($params);
 
+        return $stmt;
+    }
 
-?>
+    public function update(string $sql, array $params = [])
+    {
+        $stmt = $this->getConnection()->prepare($sql);
+        $stmt->execute($params);
+
+        return $stmt;
+    }
+
+    public function delete(string $sql, array $params = [])
+    {
+        $stmt = $this->getConnection()->prepare($sql);
+        $stmt->execute($params);
+
+        return $stmt;
+    }
+    public function findOne(string $table, string $fields, string $condition)
+    {
+        $sql = "SELECT $fields FROM $table WHERE $condition";
+        $stmt = $this->getConnection()->query($sql);
+        if ($stmt->rowCount() > 0) {
+            return $stmt;
+        } else {
+            return "No se encontro ningun registro";
+        }
+    }
+    public function autoincrement($table, $field)
+    {
+        $sql = "SELECT MAX($field) FROM $table";
+        $stmt = $this->getConnection()->query($sql);
+        $max_id = $stmt->fetch(PDO::FETCH_NUM);
+        return ($max_id[0] ?? 0) + 1;
+    }
+}

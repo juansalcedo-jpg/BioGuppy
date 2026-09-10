@@ -4,43 +4,80 @@
 
     class AccesoController{
         public function login(){
+
             $obj = new AccesoModel();
 
             $usu_correo = $_POST['usu_correo'];
             $usu_clave = $_POST['usu_clave'];
 
-            $sql = "SELECT * FROM usuarios WHERE usu_correo = '$usu_correo'";
-            $usuario = $obj->select($sql);
+            $sql = "SELECT * 
+                    FROM tblusuario 
+                    WHERE correo = :correo";
 
-            if(pg_num_rows($usuario) > 0){
-                $usu = pg_fetch_assoc($usuario);
-                $contraseñaBD = $usu['usu_clave'];
+            $usuario = $obj->select($sql, [
+                ':correo' => $usu_correo
+            ]);
 
-                if(password_verify($usu_clave, $contraseñaBD)){
-                    $_SESSION['usu_nombre'] = $usu['usu_nombre'];
-                    $_SESSION['usu_correo'] = $usu['usu_correo'];
-                    $_SESSION['usu_id'] = $usu['usu_id'];
+            if($usuario->rowCount() > 0){
+
+                $usu = $usuario->fetch(PDO::FETCH_ASSOC);
+                $contrasenaBD = $usu['contrasena'];
+
+                if(password_verify($usu_clave, $contrasenaBD)){
+
+                    $_SESSION['usu_nombre'] = $usu['nombreusuario'];
+                    $_SESSION['usu_correo'] = $usu['correo'];
+                    $_SESSION['usu_id'] = $usu['codusuario'];
                     $_SESSION['auth'] = "ok";
 
-                    $sqlrol = "SELECT rol, subrol FROM usuarios WHERE usu_correo = '$usu_correo'";
-                    $rol = $obj->select($sqlrol);
+                    $sqlrol = "SELECT r.nombrerol
+                            FROM tblusuario u
+                            INNER JOIN tblrol r
+                            ON u.codrol = r.codrol
+                            WHERE u.correo = :correo";
 
-                    if (pg_num_rows($rol) > 0) {
-                        $datosRol = pg_fetch_assoc($rol);
-                        echo $datosRol['rol'] . " - " . $datosRol['subrol'];
-                        if($datosRol['rol'] == 1){
+                    $rol = $obj->select($sqlrol, [
+                        ':correo' => $usu_correo
+                    ]);
+
+                    if($rol->rowCount() > 0){
+
+                        $datosRol = $rol->fetch(PDO::FETCH_ASSOC);
+
+                        $_SESSION['nombre_rol'] = $datosRol['nombrerol'];
+
+                        if($datosRol['nombrerol'] == 'Super Admin'){
+
                             $_SESSION['menu_file'] = "../view/funcionesLateral/FuncSuperAdmin.php";
-                            $_SESSION['nombre_rol'] = "Super Administrador";
-                        }else if($datosRol['rol'] == 4 && $datosRol['subrol'] == 1){
-                            $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAuxEco.php";
+
+                        }else if($datosRol['nombrerol'] == 'Admin'){
+
+                            $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAdmin.php";
+
+                        }else if($datosRol['nombrerol'] == 'Coordinador Control Biologico'){
+
+                            $_SESSION['menu_file'] = "../view/funcionesLateral/FuncCoordinador.php";
+
+                        }else if($datosRol['nombrerol'] == 'Auxiliar Terreno'){
+
+                            $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAuxTerreno.php";
+
+                        }else if($datosRol['nombrerol'] == 'Auxiliar Zoocriadero'){
+
+                            $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAuxZoocriadero.php";
                         }
                     }
+
                     redirect("index.php");
-                } else {
+
+                }else{
+
                     $_SESSION['ErrorLogin'] = "Correo o contraseña incorrectos";
                     redirect("inicio/login.php");
                 }
-            } else {
+
+            }else{
+
                 $_SESSION['ErrorLogin'] = "Correo o contraseña incorrectos";
                 redirect("inicio/login.php");
             }

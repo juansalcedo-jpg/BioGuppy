@@ -110,7 +110,7 @@
             $sql = "SELECT codrecuperacion FROM tblcodigorecuperacion
                     WHERE codusuario = :codusuario
                       AND codigo = :codigo
-                      AND recuperado = 'N'
+                      AND recuperado = FALSE
                       AND estado = 'A'
                       AND fechaexpiracion > CURRENT_TIMESTAMP";
 
@@ -134,7 +134,7 @@
                     </div>';
             }
 
-            $sql2 = "UPDATE tblcodigorecuperacion SET recuperado = 'S' WHERE codusuario = :codusuario AND codigo = :codigo";
+            $sql2 = "UPDATE tblcodigorecuperacion SET recuperado = TRUE WHERE codusuario = :codusuario AND codigo = :codigo";
 
             $exe = $obj->update($sql2, [
                 ':codusuario' => $codusuario,
@@ -165,6 +165,20 @@
                     </div>';
                 }else{
                     $correo = $_SESSION['correoRecuperar'];
+
+                    $sqlActual = "SELECT contrasena FROM tblusuario WHERE correo = :correo";
+                    $resultActual = $obj->select($sqlActual, [':correo' => $correo]);
+                    $usuarioActual = $resultActual->fetch(PDO::FETCH_ASSOC);
+
+                    if($usuarioActual && password_verify($contra, $usuarioActual['contrasena'])){
+                        echo '<div class="alert alert-danger d-flex align-items-center" role="alert">
+                                <div>
+                                La nueva contraseña no puede ser igual a la actual.
+                                </div>
+                            </div>';
+                        return;
+                    }
+
                     $contraEncriptada = password_hash($contra, PASSWORD_DEFAULT);
                     $sql = "UPDATE tblusuario SET contrasena = :contrasena WHERE correo = :correo";
 

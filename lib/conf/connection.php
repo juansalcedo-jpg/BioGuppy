@@ -23,12 +23,14 @@
         }
 
         private function connect(){
-            $this->link = pg_connect("host={$this->server} port={$this->port} dbname={$this->database} user={$this->user} password={$this->password}");
-
-            if(!$this->link){
-                die(pg_last_error($this->link));
-            }else{
-                //echo "conexion exitosa";
+            try{
+                $dsn = "pgsql:host={$this->server};port={$this->port};dbname={$this->database}";
+                $this->link = new PDO($dsn, $this->user, $this->password, [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                ]);
+            }catch(PDOException $e){
+                die("Error de conexion: " . $e->getMessage());
             }
         }
 
@@ -37,7 +39,7 @@
         }
 
         public function close(){
-            pg_close($this->link); 
+            $this->link = null;
         }
     }
 
