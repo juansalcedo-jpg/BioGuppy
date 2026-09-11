@@ -2,17 +2,20 @@
 
 namespace BioGuppy\Controller\Roles;
 
+use BioGuppy\Model\Roles\RolesModel;
+use PDO;
+
 class RolesController{
 
     public function createRol(){
 
-    echo "aqui va la vista create rol";
+        include_once __DIR__ . '/../../../view/Roles/createRol.php';
 
     }
 
     public function listRol(){
 
-    echo "aqui va la vista list rol";
+        include_once __DIR__ . '/../../../view/Roles/listRol.php';
 
     }
 
