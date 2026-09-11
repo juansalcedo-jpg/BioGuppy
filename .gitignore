@@ -10,11 +10,6 @@ email.php
 *.log
 *.tmp
 
-# Ignorar dependencias de Composer
-/vendor/
-
-# Ignorar dependencias de Node (si usas npm/yarn)
-/node_modules/
 
 /dist/
 /build/

@@ -2,7 +2,12 @@
     "name": "usuario1/bio-guppy",
     "autoload": {
         "psr-4": {
-            "Usuario1\\BioGuppy\\": "src/"
+            "BioGuppy\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "BioGuppy\\Tests\\": "tests/"
         }
     },
     "authors": [
@@ -13,5 +18,8 @@
     ],
     "require": {
         "phpmailer/phpmailer": "^7.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12.5"
     }
 }

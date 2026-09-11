@@ -3,15 +3,15 @@
 </div>
 
 <div class="mt-5">
-  <form action="<?php echo getUrl("Ciudades","Ciudades","postCreate")?>" method="post">
+  <form action="<?php echo getUrl('Usuarios','Usuarios','postcreateUsu')?>" method="post">
     <div class="row mb-3">
       <div class="col-md-6">
         <label for="nombre" class="form-label">Nombre</label>
-        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Juan">
+        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingrese su nombre">
       </div>
       <div class="col-md-6">
         <label for="apellido" class="form-label">Apellido</label>
-        <input type="text" class="form-control" id="apellido" name="apellido" placeholder="Pérez">
+        <input type="text" class="form-control" id="apellido" name="apellido" placeholder="Ingrese su apellido">
       </div>
     </div>
 
@@ -20,15 +20,16 @@
         <label for="tipoDocumento" class="form-label">Tipo de documento</label>
         <select class="form-select" id="tipoDocumento" name="tipoDocumento">
           <option selected disabled>Seleccione...</option>
-          <option value="cc">Cédula de ciudadanía</option>
-          <option value="ti">Tarjeta de identidad</option>
-          <option value="ce">Cédula de extranjería</option>
-          <option value="pasaporte">Pasaporte</option>
+          <?php
+                while($tipoDocu = $resultdocu->fetch(PDO::FETCH_ASSOC)){
+                    echo "<option value='".$tipoDocu['codtipodocumento']."'>".$tipoDocu['nombredocumento']."</option>";
+                }
+            ?>
         </select>
       </div>
       <div class="col-md-6">
         <label for="numeroDocumento" class="form-label">Número de documento</label>
-        <input type="text" class="form-control" id="numeroDocumento" name="numeroDocumento" placeholder="1234567890">
+        <input type="text" class="form-control" id="numeroDocumento" name="numeroDocumento" placeholder="Ingrese su número de documento">
       </div>
     </div>
 
@@ -39,7 +40,7 @@
       </div>
       <div class="col-md-6">
         <label for="celular" class="form-label">Celular</label>
-        <input type="tel" class="form-control" id="celular" name="celular" placeholder="3001234567">
+        <input type="tel" class="form-control" id="celular" name="celular" placeholder="Ingrese su celular">
       </div>
     </div>
 
@@ -48,14 +49,16 @@
         <label for="rol" class="form-label">Rol</label>
         <select class="form-select" id="rol" name="rol">
           <option selected disabled>Seleccione...</option>
-          <option value="admin">Administrador</option>
-          <option value="user">Usuario</option>
-          <option value="guest">Invitado</option>
+          <?php
+                while($tipoRol = $resultrol->fetch(PDO::FETCH_ASSOC)){
+                    echo "<option value='".$tipoRol['codrol']."'>".$tipoRol['nombrerol']."</option>";
+                }
+            ?>
         </select>
       </div>
       <div class="col-md-6">
-        <label for="passwordTemp" class="form-label">Contraseña temporal (Número Documento)</label>
-        <input type="text" class="form-control" id="passwordTemp" name="passwordTemp" placeholder="1234567890" disabled>
+        <label for="contraseñaTemp" class="form-label">Contraseña temporal (Número Documento)</label>
+        <input type="text" class="form-control" id="contraseñaTemp" name="contraseñaTemp" placeholder="Se llenará con el numero de documento que ingrese" readonly>
       </div>
     </div>
 
@@ -64,5 +67,17 @@
     </div>
   </form>
 </div>
+<?php
+  if(isset($_SESSION['error'])){
+    echo '<div class="d-flex justify-content-center">';
+      echo '<div class="alert alert-danger text-center col-md-4 mt-3 mb-3" role="alert">'
+          . $_SESSION['error'] .
+          '</div>';
+    echo '</div>';
+      unset($_SESSION['error']);
+  }
+?>
+
+
 
 

@@ -4,3 +4,22 @@ crossorigin="anonymous"></script>
 
 <script src="js/jquery.js"></script>
 <script src="js/global.js"></script>
+<script>
+  $(document).ready(function(){
+    $("#numeroDocumento").on("input", function(){
+      $("#contraseñaTemp").prop("value", $(this).val());
+    });
+  });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const alertas = document.querySelectorAll(".alert");
+  alertas.forEach(alerta => {
+    setTimeout(() => {
+      alerta.classList.remove("show");
+      setTimeout(() => alerta.remove(), 300);
+    }, 3000);
+  });
+});
+</script>
+

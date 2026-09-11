@@ -1,5 +1,10 @@
 <?php
     session_start();
+
+    // Autoload de Composer: hace que todas las clases bajo src/ (namespace
+    // BioGuppy\...) se puedan usar sin includes manuales.
+    require_once __DIR__ . '/../vendor/autoload.php';
+
     function redirect($url){
         echo "<script>";
         echo "window.location.href='$url'";
@@ -27,28 +32,22 @@
 
     function resolve(){
         $modulo = ucwords($_GET['modulo']); //Carpeta ej: Usuarios
-        $controlador = ucwords($_GET['controlador']); //Archivo ej: UsuariosController.php
+        $controlador = ucwords($_GET['controlador']); //Clase ej: UsuariosController
         $funcion = $_GET['funcion']; //Metodo en la clase: getUsers
 
-        if(is_dir("../controller/$modulo")){ //is_dir para verificar si es una carpeta
+        $nombreClase = "BioGuppy\\Controller\\$modulo\\{$controlador}Controller";
 
-            if(is_file("../controller/$modulo/".$controlador."Controller.php")){
+        if(class_exists($nombreClase)){
 
-                include_once "../controller/$modulo/$controlador"."Controller.php";
-                $nombreClase = $controlador."Controller";
+            $objeto = new $nombreClase(); //$objeto = new UsuariosController();
 
-                $objeto = new $nombreClase(); //$objeto = new UsuariosController();
-
-                if(method_exists($objeto,$funcion)){
-                    $objeto->$funcion();
-                }else{
-                    echo "El metodo $funcion no existe en el controlador $controlador";
-                }
+            if(method_exists($objeto,$funcion)){
+                $objeto->$funcion();
             }else{
-                echo "El controlador $controlador no existe en el modulo $modulo";
+                echo "El metodo $funcion no existe en el controlador $controlador";
             }
         }else{
-            echo "El modulo $modulo no existe";
+            echo "El controlador $controlador no existe en el modulo $modulo";
         }
     }
 ?>
