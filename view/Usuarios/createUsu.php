@@ -36,7 +36,7 @@
     <div class="row mb-3">
       <div class="col-md-6">
         <label for="correo" class="form-label">Correo electrónico</label>
-        <input type="email" class="form-control" id="correo" name="correo" placeholder="usuario@ejemplo.com">
+        <input type="text" class="form-control" id="correo" name="correo" placeholder="usuario@ejemplo.com">
       </div>
       <div class="col-md-6">
         <label for="celular" class="form-label">Celular</label>
