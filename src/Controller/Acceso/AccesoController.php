@@ -22,29 +22,37 @@ class AccesoController{
             ':correo' => $usu_correo
         ]);
 
-        if($usuario->rowCount() > 0){
+        $usu = $usuario->fetch(PDO::FETCH_ASSOC);
+        $contrasenaBD = $usu['contrasena'];
 
-            $usu = $usuario->fetch(PDO::FETCH_ASSOC);
-            $contrasenaBD = $usu['contrasena'];
+        if($usuario->rowCount() > 0 && password_verify($usu_clave, $contrasenaBD)){
 
-            if(password_verify($usu_clave, $contrasenaBD)){
+            $sqlrol = "SELECT r.nombrerol
+                    FROM tblusuario u
+                    INNER JOIN tblrol r
+                    ON u.codrol = r.codrol
+                    WHERE u.correo = :correo";
 
-                $_SESSION['usu_nombre'] = $usu['nombreusuario'];
-                $_SESSION['usu_correo'] = $usu['correo'];
-                $_SESSION['usu_id'] = $usu['codusuario'];
-                $_SESSION['auth'] = "ok";
+            $rol = $obj->select($sqlrol, [
+                ':correo' => $usu_correo
+            ]);
 
-                $sqlrol = "SELECT r.nombrerol
-                        FROM tblusuario u
-                        INNER JOIN tblrol r
-                        ON u.codrol = r.codrol
-                        WHERE u.correo = :correo";
+            if($rol->rowCount() > 0){
 
-                $rol = $obj->select($sqlrol, [
+                $sqlestado = "SELECT *
+                        FROM tblusuario
+                        WHERE correo = :correo
+                        AND estado = 'A'";
+
+                $estado = $obj->select($sqlestado, [
                     ':correo' => $usu_correo
                 ]);
 
-                if($rol->rowCount() > 0){
+                if($estado->rowCount() > 0){
+                    $_SESSION['usu_nombre'] = $usu['nombreusuario'];
+                    $_SESSION['usu_correo'] = $usu['correo'];
+                    $_SESSION['usu_id'] = $usu['codusuario'];
+                    $_SESSION['auth'] = "ok";
 
                     $datosRol = $rol->fetch(PDO::FETCH_ASSOC);
 
@@ -70,16 +78,13 @@ class AccesoController{
 
                         $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAuxZoocriadero.php";
                     }
+                }else{
+                    $_SESSION['ErrorLogin'] = "La cuenta esta inactiva";
+                    redirect("inicio/login.php");
                 }
 
                 redirect("index.php");
-
-            }else{
-
-                $_SESSION['ErrorLogin'] = "Correo o contraseña incorrectos";
-                redirect("inicio/login.php");
-            }
-
+                }
         }else{
 
             $_SESSION['ErrorLogin'] = "Correo o contraseña incorrectos";

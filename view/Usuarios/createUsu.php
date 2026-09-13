@@ -56,11 +56,6 @@
             ?>
         </select>
       </div>
-      <div class="col-md-6">
-        <label for="contraseñaTemp" class="form-label">Contraseña temporal (Número Documento)</label>
-        <input type="text" class="form-control" id="contraseñaTemp" name="contraseñaTemp" placeholder="Se llenará con el numero de documento que ingrese" readonly>
-      </div>
-    </div>
 
     <div class="text-center">
       <button type="submit" class="btn btn-primary">Registrar</button>
