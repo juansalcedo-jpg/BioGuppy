@@ -34,9 +34,10 @@
           <h4 class="fw-semibold mb-1">Roles</h4>
           <p class="text-muted small mb-0">Consulta y administra los roles registrados en el sistema.</p>
         </div>
-        <a href="<?php echo getUrl('Roles','Roles','createRol')?>" class="btn btn-primary px-3">
+        <button type="button" class="btn btn-primary px-3"
+                onclick="cargarFormularioModal('<?php echo getUrl('Roles','Roles','createRol') ?>', 'Registrar rol', 'rolFormRegistro', '<?php echo getUrl('Roles','Roles','listRol') ?>')"
           <i class="bi bi-plus-lg me-1"></i>Nuevo rol
-        </a>
+        </button>
       </div>
 
       <div class="card border-0 shadow-sm">
@@ -159,3 +160,5 @@
       });
   });
 </script>
+
+<?php include_once __DIR__ . '/../partials/modalFormulario.php'; ?>

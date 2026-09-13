@@ -1,11 +1,16 @@
 <?php
-
 include_once '../lib/helpers.php';
 include_once '../lib/helpersLogin.php';
 include_once '../view/partials/head.php';
 
 echo "<body>";
 echo "<div class='app-layout'>";
+
+    if(!isset($_GET['modulo'])){
+        $_GET['modulo']      = $_SESSION['modulo']      ?? null;
+        $_GET['controlador'] = $_SESSION['controlador'] ?? null;
+        $_GET['funcion']     = $_SESSION['funcion']     ?? null;
+    }
 
     include_once '../view/partials/navbarLateral.php';
 
@@ -24,5 +29,4 @@ echo "</div>";
 include_once '../view/partials/footer.php';
 echo "</body>";
 echo "</html>";
-
 ?>

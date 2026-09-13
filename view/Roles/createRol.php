@@ -26,7 +26,7 @@
     border-color: #22c1a4;
   }
 </style>
-
+<div id="rolFormRegistro">
 <div class="container-fluid py-2">
   <div class="row justify-content-center">
     <div class="col-xl-9">
@@ -154,7 +154,7 @@
     </div>
   </div>
 </div>
-
+</div>
 <?php
   if(isset($_SESSION['error'])){
 ?>
@@ -170,7 +170,7 @@
       unset($_SESSION['error']);
   }
 ?>
-
+</div>
 <script>
   // Marcar/desmarcar toda una columna (acción) para todos los módulos
   document.querySelectorAll('.check-columna').forEach(function (checkColumna) {

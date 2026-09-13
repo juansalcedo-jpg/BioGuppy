@@ -61,6 +61,9 @@ class AccesoController{
                     if($datosRol['nombrerol'] == 'Super Admin'){
 
                         $_SESSION['menu_file'] = "../view/funcionesLateral/FuncSuperAdmin.php";
+                        $_SESSION['modulo'] = 'Usuarios';
+                        $_SESSION['controlador'] = 'Usuarios';
+                        $_SESSION['funcion'] = 'listUsu';
 
                     }else if($datosRol['nombrerol'] == 'Admin'){
 
@@ -69,6 +72,9 @@ class AccesoController{
                     }else if($datosRol['nombrerol'] == 'Coordinador Control Biologico'){
 
                         $_SESSION['menu_file'] = "../view/funcionesLateral/FuncCoordinador.php";
+                        $_SESSION['modulo'] = 'Zoocriadero';
+                        $_SESSION['controlador'] = 'Zoocriadero';
+                        $_SESSION['funcion'] = 'listZoo';
 
                     }else if($datosRol['nombrerol'] == 'Auxiliar Terreno'){
 
