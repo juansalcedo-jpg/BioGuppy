@@ -7,7 +7,7 @@
 
     class ZoocriaderoController{
 
-        public function listHistZoo(){
+        public function listZoo(){
             include_once __DIR__ . '/../../../view/Zoocriadero/listZoo.php';
         }
 

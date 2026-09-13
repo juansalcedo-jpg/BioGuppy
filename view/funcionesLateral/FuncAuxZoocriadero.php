@@ -1,56 +1,70 @@
 <?php
-$usuariosAbierto = ($funcion == 'createUsu' || $funcion == 'listUsu');
-$rolesAbierto    = ($funcion == 'createRol' || $funcion == 'listRol');
+$ActividadAbierto = (
+  $funcion == 'Alimentacion' ||
+  $funcion == 'NacidosMuertos' ||
+  $funcion == 'Parametros' ||
+  $funcion == 'Limpieza' ||
+  $funcion == 'AjusteNivel' ||
+  $funcion == 'Lavado'
+);
+
+// Evaluamos si el módulo 'Mis actividades' está activo
+$misActividadesActivo = ($funcion == 'listMisActividades');
 ?>
 
-<!--  Usuarios -->
+<!-- Mis actividades -->
 <li class="nav-item">
-  <a class="nav-link fw-semibold d-flex align-items-center <?php echo $usuariosAbierto ? '' : 'collapsed'; ?>" 
-     data-bs-toggle="collapse" href="#submenuUsuarios" role="button" 
-     aria-expanded="<?php echo $usuariosAbierto ? 'true' : 'false'; ?>" 
-     aria-controls="submenuUsuarios">
-    <i class="bi bi-people-fill me-2"></i>  Usuarios
-    <i class="bi bi-caret-down-fill ms-auto"></i>
+  <a class="nav-link fw-semibold d-flex align-items-center <?php echo $misActividadesActivo ? 'active' : ''; ?>"
+    href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'listMisActividades') ?>">
+    <i class="bi bi-file-earmark-text me-2"></i> Mis actividades
   </a>
-  <div class="collapse <?php echo $usuariosAbierto ? 'show' : ''; ?>" id="submenuUsuarios">
-    <ul class="list-unstyled ps-4">
-      <li>
-        <a class="nav-link <?php echo ($funcion == 'createUsu') ? 'active' : ''; ?>" 
-           href="<?php echo getUrl('Usuarios','Usuarios','createUsu') ?>">
-          Registrar
-        </a>
-      </li>
-      <li>
-        <a class="nav-link <?php echo ($funcion == 'listUsu') ? 'active' : ''; ?>" 
-           href="<?php echo getUrl('Usuarios','Usuarios','listUsu') ?>">
-          Consultar
-        </a>
-      </li>
-    </ul>
-  </div>
 </li>
 
-<!-- Roles -->
+<!-- istrar actividad (con submódulos) -->
 <li class="nav-item">
-  <a class="nav-link fw-semibold d-flex align-items-center <?php echo $rolesAbierto ? '' : 'collapsed'; ?>" 
-     data-bs-toggle="collapse" href="#submenuRoles" role="button" 
-     aria-expanded="<?php echo $rolesAbierto ? 'true' : 'false'; ?>" 
-     aria-controls="submenuRoles">
-    <i class="bi bi-people-fill me-2"></i> Roles
+  <a class="nav-link fw-semibold d-flex align-items-center <?php echo $ActividadAbierto ? '' : 'collapsed'; ?>"
+    data-bs-toggle="collapse" href="#submenuActividad" role="button"
+    aria-expanded="<?php echo $ActividadAbierto ? 'true' : 'false'; ?>"
+    aria-controls="submenuActividad">
+    <i class="bi bi-plus-lg me-2"></i> Registrar actividad
     <i class="bi bi-caret-down-fill ms-auto"></i>
   </a>
-  <div class="collapse <?php echo $rolesAbierto ? 'show' : ''; ?>" id="submenuRoles">
+  <div class="collapse <?php echo $ActividadAbierto ? 'show' : ''; ?>" id="submenuActividad">
     <ul class="list-unstyled ps-4">
       <li>
-        <a class="nav-link <?php echo ($funcion == 'createRol') ? 'active' : ''; ?>" 
-           href="<?php echo getUrl('Roles','Roles','createRol') ?>">
-          Registrar
+        <a class="nav-link <?php echo ($funcion == 'Alimentacion') ? 'active' : ''; ?>"
+          href="<?php echo getUrl('ActividadesZoo', 'Alimentacion', 'Alimentacion') ?>">
+          <i class="bi bi-egg-fried me-2"></i> Alimentación
         </a>
       </li>
       <li>
-        <a class="nav-link <?php echo ($funcion == 'listRol') ? 'active' : ''; ?>" 
-           href="<?php echo getUrl('Roles','Roles','listRol') ?>">
-          Consultar
+        <a class="nav-link <?php echo ($funcion == 'NacidosMuertos') ? 'active' : ''; ?>"
+          href="<?php echo getUrl('ActividadesZoo', 'NacidosMuertos', 'NacidosMuertos') ?>">
+          <i class="bi bi-heart-pulse me-2"></i> Nacidos / Muertos
+        </a>
+      </li>
+      <li>
+        <a class="nav-link <?php echo ($funcion == 'Parametros') ? 'active' : ''; ?>"
+          href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'Parametros') ?>">
+          <i class="bi bi-thermometer-half me-2"></i> Parámetros fisicoquímicos
+        </a>
+      </li>
+      <li>
+        <a class="nav-link <?php echo ($funcion == 'Limpieza') ? 'active' : ''; ?>"
+          href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'Limpieza') ?>">
+          <i class="bi bi-stars me-2"></i> Limpieza
+        </a>
+      </li>
+      <li>
+        <a class="nav-link <?php echo ($funcion == 'AjusteNivel') ? 'active' : ''; ?>"
+          href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'AjusteNivel') ?>">
+          <i class="bi bi-funnel me-2"></i> Ajuste de nivel
+        </a>
+      </li>
+      <li>
+        <a class="nav-link <?php echo ($funcion == 'Lavado') ? 'active' : ''; ?>"
+          href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'Lavado') ?>">
+          <i class="bi bi-arrow-repeat me-2"></i> Lavado
         </a>
       </li>
     </ul>
