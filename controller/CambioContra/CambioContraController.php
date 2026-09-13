@@ -110,7 +110,7 @@
             $sql = "SELECT codrecuperacion FROM tblcodigorecuperacion
                     WHERE codusuario = :codusuario
                       AND codigo = :codigo
-                      AND recuperado = FALSE
+                      AND recuperado = 'N'
                       AND estado = 'A'
                       AND fechaexpiracion > CURRENT_TIMESTAMP";
 
@@ -134,7 +134,7 @@
                     </div>';
             }
 
-            $sql2 = "UPDATE tblcodigorecuperacion SET recuperado = TRUE WHERE codusuario = :codusuario AND codigo = :codigo";
+            $sql2 = "UPDATE tblcodigorecuperacion SET recuperado = 'S' WHERE codusuario = :codusuario AND codigo = :codigo";
 
             $exe = $obj->update($sql2, [
                 ':codusuario' => $codusuario,
