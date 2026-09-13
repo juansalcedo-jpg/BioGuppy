@@ -7,8 +7,8 @@
 
     class ZoocriaderoController{
 
-        public function listZoo(){
-            echo "Aqui va la vista de zoocriadero";
+        public function listHistZoo(){
+            include_once __DIR__ . '/../../../view/Zoocriadero/listZoo.php';
         }
 
     }

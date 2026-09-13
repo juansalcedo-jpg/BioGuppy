@@ -1,8 +1,8 @@
 <?php
 $zooActivo      = ($funcion == 'createZoo' || $funcion == 'listZoo' || $funcion == 'editZoo');
 $tanquesActivo  = ($funcion == 'createTan' || $funcion == 'listTan' || $funcion == 'editTan');
-$histZooActivo  = ($funcion == 'listActZoo');
-$repZooActivo   = ($funcion == 'repSeguimientoZoo' || $funcion == 'repNacidosMuertos' || $funcion == 'repTanquesZoo');
+$histZooActivo  = ($funcion == 'listHistZoo');
+$repZooActivo   = ($funcion == 'listRepoZoo');
 $sitiosActivo   = ($funcion == 'createSit' || $funcion == 'listSit' || $funcion == 'editSit');
 $histTerActivo  = ($funcion == 'listActTer');
 $repTerActivo   = ($funcion == 'repSitios' || $funcion == 'repActividadTer' || $funcion == 'repAuxiliar' || $funcion == 'repTipoDeposito');
@@ -35,7 +35,7 @@ $repTerActivo   = ($funcion == 'repSitios' || $funcion == 'repActividadTer' || $
 <!-- Historial de Actividades Zoocriadero -->
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $histZooActivo ? 'active' : ''; ?>" 
-     href="<?php echo getUrl('ActividadesZoo','ActividadesZoo','listActZoo') ?>">
+     href="<?php echo getUrl('HistorialZoo','HistorialZoo','listHistZoo') ?>">
     <i class="bi bi-layout-text-window me-2"></i></i> Historial Zoocriadero
   </a>
 </li>
@@ -50,36 +50,12 @@ $repTerActivo   = ($funcion == 'repSitios' || $funcion == 'repActividadTer' || $
 
 <!-- Reportes Zoocriadero -->
 <li class="nav-item">
-  <a class="nav-link fw-semibold d-flex align-items-center <?php echo $repZooActivo ? '' : 'collapsed'; ?>" 
-     data-bs-toggle="collapse" href="#submenuRepZoo" role="button" 
-     aria-expanded="<?php echo $repZooActivo ? 'true' : 'false'; ?>" 
-     aria-controls="submenuRepZoo">
+  <a class="nav-link fw-semibold d-flex align-items-center <?php echo $histTerActivo ? 'active' : ''; ?>" 
+     href="<?php echo getUrl('ReportesZoo','ReportesZoo','listRepoZoo') ?>">
     <i class="bi bi-bar-chart-line me-2"></i> Reportes Zoocriadero
-    <i class="bi bi-caret-down-fill ms-auto"></i>
   </a>
-  <div class="collapse <?php echo $repZooActivo ? 'show' : ''; ?>" id="submenuRepZoo">
-    <ul class="list-unstyled ps-4">
-      <li>
-        <a class="nav-link <?php echo ($funcion == 'repSeguimientoZoo') ? 'active' : ''; ?>" 
-           href="<?php echo getUrl('ReportesZoo','ReportesZoo','repSeguimientoZoo') ?>">
-          Seguimiento de actividades
-        </a>
-      </li>
-      <li>
-        <a class="nav-link <?php echo ($funcion == 'repNacidosMuertos') ? 'active' : ''; ?>" 
-           href="<?php echo getUrl('ReportesZoo','ReportesZoo','repNacidosMuertos') ?>">
-          Nacidos y muertos por tanque
-        </a>
-      </li>
-      <li>
-        <a class="nav-link <?php echo ($funcion == 'repTanquesZoo') ? 'active' : ''; ?>" 
-           href="<?php echo getUrl('ReportesZoo','ReportesZoo','repTanquesZoo') ?>">
-          Tanques por zoocriadero
-        </a>
-      </li>
-    </ul>
-  </div>
 </li>
+
 
 <!-- Reportes Terreno -->
 <li class="nav-item">

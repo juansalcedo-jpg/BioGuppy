@@ -25,4 +25,10 @@ $(document).ready(function(){
     });
 
 });
+document.getElementById('buscadorUsuarios').addEventListener('keyup', function () {
+      var filtro = this.value.toLowerCase();
+      document.querySelectorAll('#tablaUsuarios tbody tr').forEach(function (fila) {
+          fila.style.display = fila.textContent.toLowerCase().includes(filtro) ? '' : 'none';
+      });
+  });
 

@@ -19,8 +19,6 @@ echo "<div class='app-layout'>";
         echo "<div class='page-content'>";
         if(isset($_GET['modulo'])){
             resolve();
-        }else{
-            echo "hola";
         }
         echo "</div>";
     echo "</div>";

@@ -177,11 +177,24 @@ class UsuariosController{
 
         $obj = new UsuariosModel();
 
-        $sql = "SELECT u.codusuario, u.codusuario, u.nombreusuario, u.apellidousuario, u.correo, r.nombrerol, d.nombredocumento, u.numerodocumento, u.estado FROM tblusuario u
-                    INNER JOIN tblrol r ON r.codrol = u.codrol
-                    INNER JOIN tbltipodocumento d ON d.codtipodocumento = u.codtipodocumento  ORDER BY codusuario ASC";
+        $sql = "SELECT 
+                u.codusuario,
+                u.nombreusuario,
+                u.apellidousuario,
+                u.correo,
+                r.nombrerol,
+                d.nombredocumento,
+                u.numerodocumento,
+                u.estado
+            FROM tblusuario u
+            INNER JOIN tblrol r 
+                ON r.codrol = u.codrol
+            INNER JOIN tbltipodocumento d 
+                ON d.codtipodocumento = u.codtipodocumento
+            WHERE u.correo != :correo
+            ORDER BY u.codusuario ASC;";
 
-        $usuarios = $obj->select($sql);
+        $usuarios = $obj->select($sql,[':correo' => $_SESSION['usu_correo']]);
 
         include_once __DIR__ . '/../../../view/Usuarios/listUsu.php';
 
@@ -357,8 +370,10 @@ class UsuariosController{
             ':correo'            => $correo,
             ':codusuario'        => $codusuario,
         ]);
-
+        
+        $_SESSION['exito'] = "El usuario se actualizó correctamente.";
         redirect(getUrl('Usuarios','Usuarios','listUsu'));
+        exit();
 
     }
 
@@ -387,6 +402,27 @@ class UsuariosController{
             redirect(getUrl('Usuarios','Usuarios','listUsu'));
             exit();
         }
+
+    }
+
+    public function filtro(){
+            
+        $obj = new UsuariosModel();
+
+        $buscar = $_GET['buscar'];
+
+        $sql = "SELECT codusuario, nombreusuario, apellidousuario, correo, numerodocumento, usutelefono, codrol
+                FROM tblusuario
+                WHERE nombreusuario ILIKE :buscar
+                OR apellidousuario ILIKE :buscar
+                OR correo ILIKE :buscar
+                OR numerodocumento ILIKE :buscar";
+
+        $usuarios = $obj->select($sql, [
+            ':buscar' => "%$buscar%"
+        ]);
+
+        include_once __DIR__ . '/../../../view/Usuarios/filtro.php';
 
     }
 

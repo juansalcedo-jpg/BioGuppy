@@ -1,32 +1,3 @@
-<?php $moduloActivoUsuariosRoles = 'usuarios'; ?>
-
-<style>
-  .table-usuarios thead th {
-    background-color: #10254a;
-    color: #fff;
-    font-weight: 600;
-    vertical-align: middle;
-    white-space: nowrap;
-  }
-  .table-usuarios tbody tr:hover {
-    background-color: #f4f7fb;
-  }
-  .badge-rol {
-    background-color: rgba(34, 193, 164, 0.12);
-    color: #17957f;
-    font-weight: 600;
-    padding: .4em .7em;
-  }
-  .btn-icon {
-    width: 34px;
-    height: 34px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-</style>
-
 <div class="container-fluid py-2">
   <div class="row justify-content-center">
     <div class="col-xl-10">
@@ -37,7 +8,7 @@
           <p class="text-muted small mb-0">Consulta y administra los usuarios registrados en el sistema.</p>
         </div>
         <button type="button" class="btn btn-primary px-3"
-                onclick="cargarFormularioModal('<?php echo getUrl('Usuarios','Usuarios','createUsu') ?>', 'Registrar usuario', 'usuarioFormRegistro', '<?php echo getUrl('Usuarios','Usuarios','listUsu') ?>')"
+                onclick="cargarFormularioModal('<?php echo getUrl('Usuarios','Usuarios','createUsu') ?>', 'Registrar usuario', 'usuarioFormRegistro', '<?php echo getUrl('Usuarios','Usuarios','listUsu') ?>')">
           <i class="bi bi-plus-lg me-1"></i>Nuevo usuario
         </button>
       </div>
@@ -49,13 +20,14 @@
           </span>
           <div class="input-group input-group-sm" style="max-width: 260px;">
             <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
-            <input type="text" id="buscadorUsuarios" class="form-control" placeholder="Buscar usuario...">
+            <input type="text" id="buscadorUsuarios" class="form-control" placeholder="Buscar usuario..."
+                  data-url="<?php echo getUrl('Usuarios','Usuarios','filtro', false, 'ajax'); ?>">
           </div>
         </div>
 
         <div class="table-responsive">
           <table class="table table-usuarios table-striped align-middle mb-0" id="tablaUsuarios">
-            <thead>
+            <thead class="table-dark">
               <tr>
                 <th class="ps-4">Nombre</th>
                 <th>Apellido</th>
@@ -88,7 +60,7 @@
                 </td>
                 <td class="text-center">
                   <button type="button" class="btn btn-outline-primary btn-icon rounded-circle" title="Editar"
-                          onclick="cargarFormularioModal('<?php echo getUrl('Usuarios','Usuarios','getUpdateUsu',array('id'=>$usu['codusuario'])) ?>', 'Editar usuario', 'usuarioFormEdicion')">
+                          onclick="cargarFormularioModal('<?php echo getUrl('Usuarios','Usuarios','getUpdateUsu',array('id'=>$usu['codusuario'])) ?>', 'Editar usuario', 'usuarioFormEdicion', '<?php echo getUrl('Usuarios','Usuarios','listUsu') ?>')">
                     <i class="bi bi-pencil-fill"></i>
                   </button>
                 </td>
@@ -155,13 +127,5 @@
   }
 ?>
 
-<script>
-  document.getElementById('buscadorUsuarios').addEventListener('keyup', function () {
-      var filtro = this.value.toLowerCase();
-      document.querySelectorAll('#tablaUsuarios tbody tr').forEach(function (fila) {
-          fila.style.display = fila.textContent.toLowerCase().includes(filtro) ? '' : 'none';
-      });
-  });
-</script>
 
 <?php include_once __DIR__ . '/../partials/modalFormulario.php'; ?>

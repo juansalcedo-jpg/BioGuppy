@@ -144,4 +144,77 @@
               if (boton) boton.disabled = false;
           });
   }
+
+  function enviarFormularioModalPorAjax(form, contenedorId, urlExito) {
+    var alerta = document.getElementById('modalFormularioAjaxAlerta');
+    var datos = new FormData(form);
+    var boton = form.querySelector('button[type="submit"]');
+    if (boton) boton.disabled = true;
+
+    fetch(form.action, { method: 'POST', body: datos })
+        .then(r => r.text())
+        .then(texto => {
+            var match = texto.match(/window\.location\.href\s*=\s*'([^']+)'/);
+            if (!match) {
+                alerta.innerHTML = '<div class="alert alert-warning mb-3">No se pudo interpretar la respuesta del servidor.</div>';
+                return;
+            }
+
+            var destino = match[1];
+
+            // Si el controlador redirige al listado (éxito)
+            if (destino === urlExito) {
+                fetch(urlExito)
+                    .then(r => r.text())
+                    .then(html => {
+                        var parser = new DOMParser();
+                        var doc = parser.parseFromString(html, 'text/html');
+
+                        // Buscar mensaje de éxito
+                        var mensajeExito = doc.querySelector('.alert-success');
+                        if (mensajeExito) {
+                            // Cerrar modal y refrescar tabla
+                            cerrarFormularioModal();
+                            var nuevaTabla = doc.getElementById('tablaUsuarios');
+                            if (nuevaTabla) {
+                                document.getElementById('tablaUsuarios').innerHTML = nuevaTabla.innerHTML;
+                            }
+                        } else {
+                            // Si no hay éxito, mostrar error en el modal
+                            var mensajeError = doc.querySelector('.alert-danger');
+                            alerta.innerHTML = mensajeError
+                                ? mensajeError.outerHTML
+                                : '<div class="alert alert-danger mb-3">Ocurrió un error inesperado.</div>';
+                        }
+                    })
+                    .catch(() => {
+                        window.location.href = urlExito;
+                    });
+                return;
+            }
+
+            // Si redirige al mismo formulario (error de validación)
+            fetch(destino)
+                .then(r => r.text())
+                .then(html => {
+                    var parser = new DOMParser();
+                    var doc = parser.parseFromString(html, 'text/html');
+                    var seccion = doc.getElementById(contenedorId);
+                    var mensaje = seccion ? seccion.querySelector('.alert') : null;
+
+                    alerta.innerHTML = mensaje
+                        ? mensaje.outerHTML
+                        : '<div class="alert alert-danger mb-3">Revisa los datos ingresados.</div>';
+                })
+                .catch(() => {
+                    alerta.innerHTML = '<div class="alert alert-danger mb-3">Ocurrió un error, intenta nuevamente.</div>';
+                });
+        })
+        .catch(() => {
+            alerta.innerHTML = '<div class="alert alert-danger mb-3">No se pudo conectar con el servidor.</div>';
+        })
+        .finally(() => {
+            if (boton) boton.disabled = false;
+        });
+    }
 </script>
