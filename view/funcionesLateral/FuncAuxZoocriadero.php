@@ -8,14 +8,13 @@ $ActividadAbierto = (
   $funcion == 'Lavado'
 );
 
-// Evaluamos si el módulo 'Mis actividades' está activo
-$misActividadesActivo = ($funcion == 'listMisActividades');
+$misActividadesActivo = ($funcion == 'ActividadesListZoo');
 ?>
 
 <!-- Mis actividades -->
 <li class="nav-item">
-  <a class="nav-link fw-semibold d-flex align-items-center <?php echo $misActividadesActivo ? 'active' : ''; ?>"
-    href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'listMisActividades') ?>">
+  <a class="nav-link fw-semibold d-flex align-items-center <?php echo $ActividadesListZoo ? 'active' : ''; ?>"
+    href="<?php echo getUrl('ActividadesListZoo', 'ActividadesListZoo', 'ActividadesListZoo') ?>">
     <i class="bi bi-file-earmark-text me-2"></i> Mis actividades
   </a>
 </li>
@@ -45,25 +44,25 @@ $misActividadesActivo = ($funcion == 'listMisActividades');
       </li>
       <li>
         <a class="nav-link <?php echo ($funcion == 'Parametros') ? 'active' : ''; ?>"
-          href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'Parametros') ?>">
+          href="<?php echo getUrl('ActividadesZoo', 'Parametros', 'Parametros') ?>">
           <i class="bi bi-thermometer-half me-2"></i> Parámetros fisicoquímicos
         </a>
       </li>
       <li>
         <a class="nav-link <?php echo ($funcion == 'Limpieza') ? 'active' : ''; ?>"
-          href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'Limpieza') ?>">
+          href="<?php echo getUrl('ActividadesZoo', 'Limpieza', 'Limpieza') ?>">
           <i class="bi bi-stars me-2"></i> Limpieza
         </a>
       </li>
       <li>
         <a class="nav-link <?php echo ($funcion == 'AjusteNivel') ? 'active' : ''; ?>"
-          href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'AjusteNivel') ?>">
+          href="<?php echo getUrl('ActividadesZoo', 'AjusteNivel', 'AjusteNivel') ?>">
           <i class="bi bi-funnel me-2"></i> Ajuste de nivel
         </a>
       </li>
       <li>
         <a class="nav-link <?php echo ($funcion == 'Lavado') ? 'active' : ''; ?>"
-          href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'Lavado') ?>">
+          href="<?php echo getUrl('ActividadesZoo', 'Lavado', 'Lavado') ?>">
           <i class="bi bi-arrow-repeat me-2"></i> Lavado
         </a>
       </li>

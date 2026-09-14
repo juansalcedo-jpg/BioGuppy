@@ -27,27 +27,8 @@
                             </div>
                         </div>
 
-                        <!-- Navegación por Pestañas / Tabs -->
-                        <ul class="nav nav-tabs mb-4 border-bottom">
-                            <li class="nav-item">
-                                <a class="nav-link active fw-semibold text-primary border-0 border-bottom border-primary border-3" href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'regAlimentacion'); ?>">Alimentación</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-secondary fw-semibold" href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'regNacidosMuertos'); ?>">Nacidos/Muertos</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-secondary fw-semibold" href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'regParametros'); ?>">Parámetros</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-secondary fw-semibold" href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'regLimpieza'); ?>">Limpieza</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-secondary fw-semibold" href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'regAjusteNivel'); ?>">Ajuste de nivel</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-secondary fw-semibold" href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'regLavado'); ?>">Lavado</a>
-                            </li>
-                        </ul>
+                        <!-- Titulo -->
+                        <h5 class="fw-bold mb-4 text-dark">Nacidos/Muertos</h5>
 
                         <!-- Campos Específicos: Tipo de Alimentación y Horario -->
                         <div class="row g-3 mb-4">
