@@ -79,6 +79,9 @@ class AccesoController{
                     }else if($datosRol['nombrerol'] == 'Auxiliar Terreno'){
 
                         $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAuxTerreno.php";
+                        $_SESSION['modulo'] = 'ActividadesTer';
+                        $_SESSION['controlador'] = 'ActividadesTer';
+                        $_SESSION['funcion'] = 'listMisActividades';
 
                     }else if($datosRol['nombrerol'] == 'Auxiliar Zoocriadero'){
 
