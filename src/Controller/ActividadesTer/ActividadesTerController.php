@@ -66,10 +66,6 @@ class ActividadesTerController{
         return $this->consultarSeguro($obj, $sql);
     }
 
-    // ===================================================================
-    // INSPECCION (RF023)
-    // ===================================================================
-
     public function Inspeccion(){
         $obj = new ActividadesTerModel();
         $depositos = $this->obtenerDepositosActivos($obj);
