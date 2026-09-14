@@ -8,7 +8,7 @@
           <p class="text-muted small mb-0">Consulta y administra los usuarios registrados en el sistema.</p>
         </div>
         <button type="button" class="btn btn-primary px-3"
-                onclick="cargarFormularioModal('<?php echo getUrl('Usuarios','Usuarios','createUsu') ?>', 'Registrar usuario', 'usuarioFormRegistro', '<?php echo getUrl('Usuarios','Usuarios','listUsu') ?>')">
+                onclick="cargarFormularioModal('<?php echo getUrl('Usuarios','Usuarios','createUsu') ?>', 'Registrar usuario', 'usuarioFormRegistro', '<?php echo getUrl('Usuarios','Usuarios','listUsu') ?>', 'tablaUsuarios')">
           <i class="bi bi-plus-lg me-1"></i>Nuevo usuario
         </button>
       </div>
@@ -60,7 +60,7 @@
                 </td>
                 <td class="text-center">
                   <button type="button" class="btn btn-outline-primary btn-icon rounded-circle" title="Editar"
-                          onclick="cargarFormularioModal('<?php echo getUrl('Usuarios','Usuarios','getUpdateUsu',array('id'=>$usu['codusuario'])) ?>', 'Editar usuario', 'usuarioFormEdicion', '<?php echo getUrl('Usuarios','Usuarios','listUsu') ?>')">
+                          onclick="cargarFormularioModal('<?php echo getUrl('Usuarios','Usuarios','getUpdateUsu',array('id'=>$usu['codusuario'])) ?>', 'Editar usuario', 'usuarioFormEdicion', '<?php echo getUrl('Usuarios','Usuarios','listUsu') ?>', 'tablaUsuarios')">
                     <i class="bi bi-pencil-fill"></i>
                   </button>
                 </td>

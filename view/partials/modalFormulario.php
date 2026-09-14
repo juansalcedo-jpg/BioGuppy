@@ -36,8 +36,12 @@
    * devuelve `url`. `urlExito` es la URL a la que el controlador redirige
    * cuando TODO sale bien (normalmente el listado del módulo) — se usa
    * para distinguir "éxito" de "error de validación" sin tocar el backend.
+   * `idTabla` (opcional) es el id de la tabla en la página de listado que
+   * se debe refrescar al guardar con éxito (ej: "tablaUsuarios",
+   * "tablaDepositos", "tablaMisActividadesTer") -- si no se pasa, se hace
+   * una navegación completa a `urlExito` en vez de refrescar solo la tabla.
    */
-  function cargarFormularioModal(url, titulo, contenedorId, urlExito) {
+  function cargarFormularioModal(url, titulo, contenedorId, urlExito, idTabla) {
       var modalEl = document.getElementById('modalFormularioAjax');
       var contenido = document.getElementById('modalFormularioAjaxContenido');
       var alerta = document.getElementById('modalFormularioAjaxAlerta');
@@ -64,7 +68,7 @@
 
               contenido.innerHTML = seccion.innerHTML;
               ejecutarScriptsInyectados(contenido);
-              prepararFormularioAjax(contenedorId, urlExito);
+              prepararFormularioAjax(contenedorId, urlExito, idTabla);
           })
           .catch(function () {
               contenido.innerHTML = '<div class="alert alert-danger mb-0">Ocurrió un error al cargar el formulario. Intenta nuevamente.</div>';
@@ -83,18 +87,29 @@
   }
 
   // Intercepta el submit del formulario que se acaba de inyectar en el modal.
-  function prepararFormularioAjax(contenedorId, urlExito) {
+  function prepararFormularioAjax(contenedorId, urlExito, idTabla) {
       var contenido = document.getElementById('modalFormularioAjaxContenido');
       var form = contenido.querySelector('form');
       if (!form) return;
 
       form.addEventListener('submit', function (evento) {
           evento.preventDefault();
-          enviarFormularioModalPorAjax(form, contenedorId, urlExito);
+          enviarFormularioModalPorAjax(form, contenedorId, urlExito, idTabla);
       });
   }
 
-  function enviarFormularioModalPorAjax(form, contenedorId, urlExito) {
+  /**
+   * UNICA version de esta funcion (antes existian DOS declaradas con el
+   * mismo nombre en este archivo -- en JavaScript, cuando eso pasa, la
+   * segunda pisa silenciosamente a la primera sin ningun error en
+   * consola. Esa segunda version tenia escrito a mano "tablaUsuarios",
+   * asi que para cualquier otro modulo -Depositos, ActividadesTer- nunca
+   * encontraba la tabla, y terminaba mostrando "error" en el modal
+   * aunque el guardado en la base de datos SI hubiera funcionado. Esta
+   * version unica usa el parametro "idTabla" en vez de un nombre fijo,
+   * para que funcione igual en cualquier modulo que la use).
+   */
+  function enviarFormularioModalPorAjax(form, contenedorId, urlExito, idTabla) {
       var alerta = document.getElementById('modalFormularioAjaxAlerta');
       var datos = new FormData(form);
       var boton = form.querySelector('button[type="submit"]');
@@ -113,8 +128,34 @@
               var destino = match[1];
 
               if (destino === urlExito) {
-                  // Éxito: el controlador ya guardó todo, navegamos de verdad al listado
-                  window.location.href = destino;
+                  // Exito: pedimos la pagina de listado para (a) leer el
+                  // mensaje verde que dejo el controlador en sesion y
+                  // (b) refrescar solo la tabla, sin recargar toda la pagina.
+                  fetch(urlExito)
+                      .then(function (r) { return r.text(); })
+                      .then(function (html) {
+                          var parser = new DOMParser();
+                          var doc = parser.parseFromString(html, 'text/html');
+                          var mensajeExito = doc.querySelector('.alert-success');
+
+                          cerrarFormularioModal();
+
+                          if (idTabla) {
+                              var nuevaTabla = doc.getElementById(idTabla);
+                              var tablaActual = document.getElementById(idTabla);
+                              if (nuevaTabla && tablaActual) {
+                                  tablaActual.innerHTML = nuevaTabla.innerHTML;
+                              }
+                          }
+
+                          if (mensajeExito) {
+                              mostrarAlertaFlotante(mensajeExito.outerHTML);
+                          }
+                      })
+                      .catch(function () {
+                          // Si algo falla releyendo la pagina, al menos navegamos
+                          window.location.href = urlExito;
+                      });
                   return;
               }
 
@@ -145,76 +186,28 @@
           });
   }
 
-  function enviarFormularioModalPorAjax(form, contenedorId, urlExito) {
-    var alerta = document.getElementById('modalFormularioAjaxAlerta');
-    var datos = new FormData(form);
-    var boton = form.querySelector('button[type="submit"]');
-    if (boton) boton.disabled = true;
+  // Cierra el modal genérico (usado al terminar con éxito).
+  function cerrarFormularioModal() {
+      var modalEl = document.getElementById('modalFormularioAjax');
+      var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+      modal.hide();
+  }
 
-    fetch(form.action, { method: 'POST', body: datos })
-        .then(r => r.text())
-        .then(texto => {
-            var match = texto.match(/window\.location\.href\s*=\s*'([^']+)'/);
-            if (!match) {
-                alerta.innerHTML = '<div class="alert alert-warning mb-3">No se pudo interpretar la respuesta del servidor.</div>';
-                return;
-            }
-
-            var destino = match[1];
-
-            // Si el controlador redirige al listado (éxito)
-            if (destino === urlExito) {
-                fetch(urlExito)
-                    .then(r => r.text())
-                    .then(html => {
-                        var parser = new DOMParser();
-                        var doc = parser.parseFromString(html, 'text/html');
-
-                        // Buscar mensaje de éxito
-                        var mensajeExito = doc.querySelector('.alert-success');
-                        if (mensajeExito) {
-                            // Cerrar modal y refrescar tabla
-                            cerrarFormularioModal();
-                            var nuevaTabla = doc.getElementById('tablaUsuarios');
-                            if (nuevaTabla) {
-                                document.getElementById('tablaUsuarios').innerHTML = nuevaTabla.innerHTML;
-                            }
-                        } else {
-                            // Si no hay éxito, mostrar error en el modal
-                            var mensajeError = doc.querySelector('.alert-danger');
-                            alerta.innerHTML = mensajeError
-                                ? mensajeError.outerHTML
-                                : '<div class="alert alert-danger mb-3">Ocurrió un error inesperado.</div>';
-                        }
-                    })
-                    .catch(() => {
-                        window.location.href = urlExito;
-                    });
-                return;
-            }
-
-            // Si redirige al mismo formulario (error de validación)
-            fetch(destino)
-                .then(r => r.text())
-                .then(html => {
-                    var parser = new DOMParser();
-                    var doc = parser.parseFromString(html, 'text/html');
-                    var seccion = doc.getElementById(contenedorId);
-                    var mensaje = seccion ? seccion.querySelector('.alert') : null;
-
-                    alerta.innerHTML = mensaje
-                        ? mensaje.outerHTML
-                        : '<div class="alert alert-danger mb-3">Revisa los datos ingresados.</div>';
-                })
-                .catch(() => {
-                    alerta.innerHTML = '<div class="alert alert-danger mb-3">Ocurrió un error, intenta nuevamente.</div>';
-                });
-        })
-        .catch(() => {
-            alerta.innerHTML = '<div class="alert alert-danger mb-3">No se pudo conectar con el servidor.</div>';
-        })
-        .finally(() => {
-            if (boton) boton.disabled = false;
-        });
-    }
+  // Muestra el mensaje de éxito como una alerta flotante arriba a la
+  // derecha (mismo lugar/estilo donde ya aparecen los mensajes normales
+  // de la pagina), y se autodestruye sola despues de unos segundos --
+  // igual que el resto de alertas del sistema (ver footer.php).
+  function mostrarAlertaFlotante(htmlAlerta) {
+      var contenedor = document.createElement('div');
+      contenedor.style.position = 'fixed';
+      contenedor.style.top = '80px';
+      contenedor.style.right = '20px';
+      contenedor.style.zIndex = '2000';
+      contenedor.style.minWidth = '300px';
+      contenedor.innerHTML = htmlAlerta;
+      document.body.appendChild(contenedor);
+      setTimeout(function () {
+          contenedor.remove();
+      }, 3000);
+  }
 </script>

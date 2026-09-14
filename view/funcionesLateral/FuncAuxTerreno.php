@@ -19,7 +19,8 @@ $misActividadesActivo = ($funcion == 'listMisActividades');
   </a>
 </li>
 
-<!-- Depósitos -->
+<!-- Depositos: una sola interfaz (lista + boton "Nuevo" que abre modal),
+     igual que Usuarios -->
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $depositosActivo ? 'active' : ''; ?>"
     href="<?php echo getUrl('Depositos', 'Depositos', 'listDep') ?>">

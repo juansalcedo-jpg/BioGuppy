@@ -1,26 +1,40 @@
+<?php
+/**
+ * listDep.php
+ * ------------------------------------------------------------
+ * Listado del catalogo de TIPOS de deposito (tbltipodeposito).
+ * $tiposDeposito llega desde DepositosController::listDep() como
+ * un PDOStatement (se recorre abajo con while(...->fetch(...))).
+ *
+ * El buscador de arriba (#buscadorDepositos) filtra en el propio
+ * navegador con JavaScript -- no va al servidor -- porque el
+ * catalogo es chico (unos pocos tipos) y asi responde al instante.
+ * Ver el <script> al final del archivo.
+ */
+?>
 <div class="container-fluid py-2">
   <div class="row justify-content-center">
     <div class="col-xl-10">
 
       <div class="d-flex flex-wrap align-items-end justify-content-between mb-4 gap-2">
         <div>
-          <h4 class="fw-semibold mb-1">Depósitos</h4>
-          <p class="text-muted small mb-0">Consulta y registra los depósitos encontrados en los sitios de terreno.</p>
+          <h4 class="fw-semibold mb-1">Tipos de depósito</h4>
+          <p class="text-muted small mb-0">Catálogo de tipos de depósito usados al registrar sitios y actividades de terreno.</p>
         </div>
         <button type="button" class="btn btn-primary px-3"
-                onclick="cargarFormularioModal('<?php echo getUrl('Depositos','Depositos','create') ?>', 'Registrar depósito', 'depositoFormRegistro', '<?php echo getUrl('Depositos','Depositos','listDep') ?>')">
-          <i class="bi bi-plus-lg me-1"></i>Nuevo depósito
+                onclick="cargarFormularioModal('<?php echo getUrl('Depositos','Depositos','create') ?>', 'Registrar tipo de depósito', 'depositoFormRegistro', '<?php echo getUrl('Depositos','Depositos','listDep') ?>', 'tablaDepositos')">
+          <i class="bi bi-plus-lg me-1"></i>Nuevo tipo de depósito
         </button>
       </div>
 
       <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
           <span class="fw-semibold">
-            <i class="bi bi-bucket me-2 text-primary"></i>Depósitos registrados
+            <i class="bi bi-bucket me-2 text-primary"></i>Tipos registrados
           </span>
-          <div class="input-group input-group-sm" style="max-width: 260px;">
+          <div class="input-group input-group-sm w-50">
             <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
-            <input type="text" id="buscadorDepositos" class="form-control" placeholder="Buscar depósito..."
+            <input type="text" id="buscadorDepositos" class="form-control" placeholder="Buscar tipo de depósito..."
                   data-url="<?php echo getUrl('Depositos','Depositos','filtro', false, 'ajax'); ?>">
           </div>
         </div>
@@ -29,11 +43,8 @@
           <table class="table table-striped align-middle mb-0" id="tablaDepositos">
             <thead class="table-dark">
               <tr>
-                <th class="ps-4">Sitio</th>
-                <th>Comuna</th>
-                <th>Barrio</th>
-                <th>Tipo de depósito</th>
-                <th>Fecha registro</th>
+                <th class="ps-4">Nombre</th>
+                <th>Fecha de creación</th>
                 <th class="text-center">Estado</th>
                 <th class="text-center">Editar</th>
                 <th class="text-center">Inhabilitar</th>
@@ -41,18 +52,15 @@
             </thead>
             <tbody>
               <?php
-                $hayDepositos = isset($depositos) && $depositos && $depositos->rowCount() > 0;
-                if ($hayDepositos):
-                    while($dep = $depositos->fetch(PDO::FETCH_ASSOC)):
+                $hayTipos = isset($tiposDeposito) && $tiposDeposito && $tiposDeposito->rowCount() > 0;
+                if ($hayTipos):
+                    while($tipo = $tiposDeposito->fetch(PDO::FETCH_ASSOC)):
               ?>
               <tr>
-                <td class="ps-4"><?php echo htmlspecialchars($dep['sitio']); ?></td>
-                <td><?php echo htmlspecialchars($dep['comuna']); ?></td>
-                <td><?php echo htmlspecialchars($dep['barrio']); ?></td>
-                <td><?php echo htmlspecialchars($dep['tipo_deposito']); ?></td>
-                <td><?php echo htmlspecialchars($dep['fecha_registro']); ?></td>
+                <td class="ps-4"><?php echo htmlspecialchars($tipo['nombredeposito']); ?></td>
+                <td><?php echo htmlspecialchars($tipo['fechacreacion']); ?></td>
                 <td class="text-center">
-                  <?php if ($dep['estado'] === 'Activo'): ?>
+                  <?php if ($tipo['estado'] === 'A'): ?>
                     <span class="badge bg-success-subtle text-success-emphasis">Activo</span>
                   <?php else: ?>
                     <span class="badge bg-secondary-subtle text-secondary-emphasis">Inactivo</span>
@@ -60,16 +68,27 @@
                 </td>
                 <td class="text-center">
                   <button type="button" class="btn btn-outline-primary btn-icon rounded-circle" title="Editar"
-                          onclick="cargarFormularioModal('<?php echo getUrl('Depositos','Depositos','getUpdate',array('id'=>$dep['id'])) ?>', 'Editar depósito', 'depositoFormEdicion', '<?php echo getUrl('Depositos','Depositos','listDep') ?>')">
+                          onclick="cargarFormularioModal('<?php echo getUrl('Depositos','Depositos','getUpdate',array('id'=>$tipo['id'])) ?>', 'Editar tipo de depósito', 'depositoFormEdicion', '<?php echo getUrl('Depositos','Depositos','listDep') ?>', 'tablaDepositos')">
                     <i class="bi bi-pencil-fill"></i>
                   </button>
                 </td>
                 <td class="text-center">
-                  <a href="<?php echo getUrl('Depositos','Depositos','delete',array('id'=>$dep['id'])) ?>"
-                     class="btn btn-outline-danger btn-icon rounded-circle" title="Inhabilitar"
-                     onclick="return confirm('¿Seguro que deseas inhabilitar este depósito?')">
-                    <i class="bi bi-eye-slash"></i>
-                  </a>
+                  <!-- Icono cambia segun el estado, igual que en Usuarios:
+                       Activo -> boton rojo para inhabilitar (bi-slash-circle);
+                       Inactivo -> boton verde para habilitar (bi-check-lg).
+                       Sin confirm(): igual que Usuarios, el cambio se aplica
+                       directo al hacer clic. -->
+                  <?php if ($tipo['estado'] === 'A'): ?>
+                    <a href="<?php echo getUrl('Depositos','Depositos','delete',array('id'=>$tipo['id'])) ?>"
+                       class="btn btn-outline-danger btn-icon rounded-circle" title="Inhabilitar">
+                      <i class="bi bi-slash-circle"></i>
+                    </a>
+                  <?php else: ?>
+                    <a href="<?php echo getUrl('Depositos','Depositos','delete',array('id'=>$tipo['id'])) ?>"
+                       class="btn btn-outline-success btn-icon rounded-circle" title="Activar">
+                      <i class="bi bi-check-lg"></i>
+                    </a>
+                  <?php endif; ?>
                 </td>
               </tr>
               <?php
@@ -77,9 +96,9 @@
                 else:
               ?>
               <tr>
-                <td colspan="8" class="text-center text-muted py-5">
+                <td colspan="5" class="text-center text-muted py-5">
                   <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-                  No hay depósitos registrados todavía.
+                  No hay tipos de depósito registrados todavía.
                 </td>
               </tr>
               <?php endif; ?>
@@ -91,3 +110,52 @@
     </div>
   </div>
 </div>
+
+<!-- Buscador en vivo: filtra las filas ya cargadas en la tabla sin recargar la pagina -->
+<script>
+  var buscadorDep = document.getElementById('buscadorDepositos');
+  if (buscadorDep) {
+    buscadorDep.addEventListener('keyup', function () {
+      var filtro = this.value.toLowerCase();
+      document.querySelectorAll('#tablaDepositos tbody tr').forEach(function (fila) {
+        fila.style.display = fila.textContent.toLowerCase().includes(filtro) ? '' : 'none';
+      });
+    });
+  }
+</script>
+
+<?php
+  // Mensajes de error/exito que deja el controlador en sesion (ej. despues
+  // de inhabilitar/habilitar). Mismo bloque que usa Usuarios/listUsu.php.
+  if(isset($_SESSION['error'])){
+?>
+<div class="row justify-content-center">
+  <div class="col-xl-10">
+    <div class="alert alert-danger d-flex align-items-center mt-3 mb-0" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      <div><?php echo $_SESSION['error']; ?></div>
+    </div>
+  </div>
+</div>
+<?php
+      unset($_SESSION['error']);
+  }
+  if(isset($_SESSION['exito'])){
+?>
+<div class="row justify-content-center">
+  <div class="col-xl-10">
+    <div class="alert alert-success d-flex align-items-center mt-3 mb-0" role="alert">
+      <i class="bi bi-check-circle-fill me-2"></i>
+      <div><?php echo $_SESSION['exito']; ?></div>
+    </div>
+  </div>
+</div>
+<?php
+      unset($_SESSION['exito']);
+  }
+?>
+
+<!-- SIN esto, cargarFormularioModal() no existe en esta pagina y los
+     botones de "Nuevo"/"Editar" no hacen absolutamente nada al hacer clic
+     (sin ningun error visible) -- exactamente lo que estaba pasando. -->
+<?php include_once __DIR__ . '/../partials/modalFormulario.php'; ?>

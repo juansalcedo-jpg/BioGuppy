@@ -14,6 +14,31 @@ use PDO;
 class DepositosController{
 
     // ---------------------------------------------------------------
+    // HELPER: ejecuta una consulta de SOLO LECTURA (para mostrar
+    // datos) protegida contra errores de base de datos -- si la
+    // tabla no existe, la columna cambio, o la conexion falla, en
+    // vez de dejar que el error rompa toda la pagina, se devuelve
+    // "false" y la VISTA se encarga de mostrar su estado normal de
+    // "no hay datos" (exactamente lo mismo que ya pasa cuando la
+    // tabla existe pero esta vacia). El detalle tecnico igual queda
+    // en el log del servidor para poder depurarlo.
+    //
+    // OJO: esto es SOLO para consultas que alimentan una vista de
+    // lectura (listar, buscar, llenar un combo). Las consultas que
+    // son parte de GUARDAR datos (insert/update) no usan este
+    // helper a proposito: si un guardado falla, el usuario SI debe
+    // enterarse (no se le puede hacer creer que guardo cuando no).
+    // ---------------------------------------------------------------
+    private function consultarSeguro($obj, $sql, $params = []){
+        try{
+            return $obj->select($sql, $params);
+        }catch(\Throwable $error){
+            error_log("Consulta fallida en DepositosController: " . $error->getMessage());
+            return false;
+        }
+    }
+
+    // ---------------------------------------------------------------
     // LISTAR: todos los tipos de deposito del catalogo.
     // ---------------------------------------------------------------
     public function listDep(){
@@ -24,7 +49,7 @@ class DepositosController{
                 FROM tbltipodeposito
                 ORDER BY nombredeposito ASC";
 
-        $tiposDeposito = $obj->select($sql);
+        $tiposDeposito = $this->consultarSeguro($obj, $sql);
 
         include_once __DIR__ . '/../../../view/Depositos/listDep.php';
 
@@ -173,7 +198,7 @@ class DepositosController{
                 WHERE nombredeposito ILIKE :buscar
                 ORDER BY nombredeposito ASC";
 
-        $tiposDeposito = $obj->select($sql, [':buscar' => "%$buscar%"]);
+        $tiposDeposito = $this->consultarSeguro($obj, $sql, [':buscar' => "%$buscar%"]);
 
         include_once __DIR__ . '/../../../view/Depositos/filtroDep.php';
 
