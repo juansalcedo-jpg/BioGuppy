@@ -12,7 +12,7 @@
 
       <!-- TARJETA CONTENEDORA -->
       <div class="card border-0 shadow-sm">
-        
+
         <!-- ENCABEZADO DE TARJETA CON FILTROS -->
         <div class="card-header bg-white border-bottom py-3">
           <div class="d-flex align-items-center mb-3">
@@ -21,9 +21,9 @@
           </div>
 
           <!-- FORMULARIO DE FILTROS -->
-          <form id="formFiltroHistorial" action="<?php echo getUrl('ActividadesZoo','ActividadesZoo','filtro', false, 'ajax'); ?>" method="POST">
+          <form id="formFiltroHistorial" action="<?php echo getUrl('HistorialZoo', 'HistorialZoo', 'filtro', false, 'ajax'); ?>" method="POST">
             <div class="row g-2 align-items-end">
-              
+
               <div class="col-6 col-md-2">
                 <label for="fechaDesde" class="form-label small text-muted mb-1">Desde</label>
                 <input type="date" id="fechaDesde" name="fechaDesde" class="form-control form-control-sm">
@@ -39,7 +39,7 @@
                 <select id="selectZoocriadero" name="codzoocriadero" class="form-select form-select-sm">
                   <option value="">Todos</option>
                   <?php if (isset($zoocriaderos) && $zoocriaderos): ?>
-                    <?php while($z = $zoocriaderos->fetch(PDO::FETCH_ASSOC)): ?>
+                    <?php while ($z = $zoocriaderos->fetch(PDO::FETCH_ASSOC)): ?>
                       <option value="<?php echo $z['codzoocriadero']; ?>"><?php echo htmlspecialchars($z['nombrezoocriadero']); ?></option>
                     <?php endwhile; ?>
                   <?php endif; ?>
@@ -51,7 +51,7 @@
                 <select id="selectTipoActividad" name="codtipoactividad" class="form-select form-select-sm">
                   <option value="">Todos</option>
                   <?php if (isset($tiposActividad) && $tiposActividad): ?>
-                    <?php while($tipo = $tiposActividad->fetch(PDO::FETCH_ASSOC)): ?>
+                    <?php while ($tipo = $tiposActividad->fetch(PDO::FETCH_ASSOC)): ?>
                       <option value="<?php echo $tipo['codtipoactividad']; ?>"><?php echo htmlspecialchars($tipo['nombreactividad']); ?></option>
                     <?php endwhile; ?>
                   <?php endif; ?>
@@ -84,44 +84,44 @@
             </thead>
             <tbody>
               <?php
-                $hayActividades = isset($actividades) && $actividades && $actividades->rowCount() > 0;
-                if ($hayActividades):
-                    while($act = $actividades->fetch(PDO::FETCH_ASSOC)):
+              $hayActividades = isset($actividades) && $actividades && $actividades->rowCount() > 0;
+              if ($hayActividades):
+                while ($act = $actividades->fetch(PDO::FETCH_ASSOC)):
               ?>
-              <tr>
-                <td class="ps-4"><?php echo htmlspecialchars($act['fecha']); ?></td>
-                <td class="fw-semibold"><?php echo htmlspecialchars($act['tipo_actividad']); ?></td>
-                <td>
-                  <span class="text-muted small"><?php echo htmlspecialchars($act['tanque']); ?> · </span>
-                  <?php echo htmlspecialchars($act['zoocriadero']); ?>
-                </td>
-                <td><?php echo htmlspecialchars($act['responsable']); ?></td>
-                <td><small class="text-muted"><?php echo htmlspecialchars($act['observaciones']); ?></small></td>
-                <td class="text-center">
-                  <?php if ($act['estado'] === 'A'): ?>
-                    <span class="badge bg-success">Activo</span>
-                  <?php else: ?>
-                    <span class="badge bg-danger">Inactivo</span>
-                  <?php endif; ?>
-                </td>
-                <td class="text-center">
-                  <a href="<?php echo getUrl('ActividadesZoo','ActividadesZoo','delete', array('id' => $act['codactividad'])) ?>"
-                     class="btn btn-danger btn-sm btn-icon rounded-circle" title="Inhabilitar"
-                     onclick="return confirm('¿Seguro que deseas inhabilitar esta actividad?')">
-                    <i class="bi bi-trash-fill"></i>
-                  </a>
-                </td>
-              </tr>
-              <?php
-                    endwhile;
-                else:
-              ?>
-              <tr>
-                <td colspan="7" class="text-center text-muted py-5">
-                  <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-                  No se encontraron actividades registradas en este rango.
-                </td>
-              </tr>
+                  <tr>
+                    <td class="ps-4"><?php echo htmlspecialchars($act['fecha']); ?></td>
+                    <td class="fw-semibold"><?php echo htmlspecialchars($act['tipo_actividad']); ?></td>
+                    <td>
+                      <span class="text-muted small"><?php echo htmlspecialchars($act['tanque']); ?> · </span>
+                      <?php echo htmlspecialchars($act['zoocriadero']); ?>
+                    </td>
+                    <td><?php echo htmlspecialchars($act['responsable']); ?></td>
+                    <td><small class="text-muted"><?php echo htmlspecialchars($act['observaciones']); ?></small></td>
+                    <td class="text-center">
+                      <?php if ($act['estado'] === 'A'): ?>
+                        <span class="badge bg-success">Activo</span>
+                      <?php else: ?>
+                        <span class="badge bg-danger">Inactivo</span>
+                      <?php endif; ?>
+                    </td>
+                    <td class="text-center">
+                      <a href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'delete', array('id' => $act['codactividad'])) ?>"
+                        class="btn btn-danger btn-sm btn-icon rounded-circle" title="Inhabilitar"
+                        onclick="return confirm('¿Seguro que deseas inhabilitar esta actividad?')">
+                        <i class="bi bi-trash-fill"></i>
+                      </a>
+                    </td>
+                  </tr>
+                <?php
+                endwhile;
+              else:
+                ?>
+                <tr>
+                  <td colspan="7" class="text-center text-muted py-5">
+                    <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                    No se encontraron actividades registradas en este rango.
+                  </td>
+                </tr>
               <?php endif; ?>
             </tbody>
           </table>

@@ -1,115 +1,167 @@
-<div class="container-fluid py-4">
+<div class="container-fluid py-2">
     <div class="row justify-content-center">
-        <div class="col-12 col-xl-11">
+        <div class="col-xl-11">
 
-            <!-- Título Principal -->
-            <h2 class="text-center fw-bold mb-4 text-dark">Mis Actividades Registradas</h2>
-
-            <!-- Tarjeta Principal -->
-            <div class="card border-0 shadow-sm rounded-3">
-                <div class="card-body p-4">
-
-                    <!-- Encabezado con Ícono y Contador -->
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="bi bi-file-earmark-text text-primary fs-5 me-2"></i>
-                        <h5 class="fw-bold m-0 text-dark">
-                            Actividades (<?php echo isset($actividades) ? count($actividades) : 4; ?>)
-                        </h5>
-                    </div>
-
-                    <!-- Tabla de Actividades -->
-                    <div class="table-responsive">
-                        <table class="table table-borderless align-middle mb-0">
-                            <thead style="background-color: #0d1b2a;" class="text-white">
-                                <tr>
-                                    <th scope="col" class="py-3 px-3 fw-semibold">Fecha</th>
-                                    <th scope="col" class="py-3 px-3 fw-semibold">Tipo de actividad</th>
-                                    <th scope="col" class="py-3 px-3 fw-semibold">Tanque / Referencia</th>
-                                    <th scope="col" class="py-3 px-3 fw-semibold text-center">Estado</th>
-                                    <th scope="col" class="py-3 px-3 fw-semibold text-center">Editar</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if (!empty($actividades)): ?>
-                                    <?php foreach ($actividades as $act): ?>
-                                        <tr class="border-bottom" style="background-color: #f8f9fa;">
-                                            <td class="py-3 px-3 text-dark"><?php echo $act['fecha']; ?></td>
-                                            <td class="py-3 px-3 fw-bold text-dark"><?php echo $act['tipo_actividad']; ?></td>
-                                            <td class="py-3 px-3 text-secondary"><?php echo $act['tanque_referencia']; ?></td>
-                                            <td class="py-3 px-3 text-center">
-                                                <?php if ($act['estado'] == 'Activo'): ?>
-                                                    <span class="badge bg-success rounded-pill px-3 py-2">Activo</span>
-                                                <?php else: ?>
-                                                    <span class="badge bg-danger rounded-pill px-3 py-2">Inactivo</span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td class="py-3 px-3 text-center">
-                                                <?php if ($act['estado'] == 'Activo'): ?>
-                                                    <a href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'editActividad', array('id' => $act['id'])); ?>" class="btn btn-primary btn-sm rounded-3 px-2 py-1">
-                                                        <i class="bi bi-pencil-fill"></i>
-                                                    </a>
-                                                <?php endif; ?>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <!-- Datos estáticos de muestra matching exacto con la imagen -->
-                                    <tr class="border-bottom" style="background-color: #f8f9fa;">
-                                        <td class="py-3 px-3 text-dark">2024-07-12</td>
-                                        <td class="py-3 px-3 fw-bold text-dark">Alimentación</td>
-                                        <td class="py-3 px-3 text-secondary">T-001 · Zoocriadero La Flora</td>
-                                        <td class="py-3 px-3 text-center">
-                                            <span class="badge bg-success rounded-pill px-3 py-2">Activo</span>
-                                        </td>
-                                        <td class="py-3 px-3 text-center">
-                                            <a href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'editAlimentacion', array('id' => 1)); ?>" class="btn btn-primary btn-sm rounded-3 px-2 py-1">
-                                                <i class="bi bi-pencil-fill"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    <tr class="border-bottom" style="background-color: #f8f9fa;">
-                                        <td class="py-3 px-3 text-dark">2024-07-12</td>
-                                        <td class="py-3 px-3 fw-bold text-dark">Nacidos/Muertos</td>
-                                        <td class="py-3 px-3 text-secondary">T-002 · Zoocriadero La Flora</td>
-                                        <td class="py-3 px-3 text-center">
-                                            <span class="badge bg-success rounded-pill px-3 py-2">Activo</span>
-                                        </td>
-                                        <td class="py-3 px-3 text-center">
-                                            <a href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'editNacidosMuertos', array('id' => 2)); ?>" class="btn btn-primary btn-sm rounded-3 px-2 py-1">
-                                                <i class="bi bi-pencil-fill"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    <tr class="border-bottom" style="background-color: #f8f9fa;">
-                                        <td class="py-3 px-3 text-dark">2024-07-11</td>
-                                        <td class="py-3 px-3 fw-bold text-dark">Parámetros fisicoquímicos</td>
-                                        <td class="py-3 px-3 text-secondary">T-001 · Zoocriadero La Flora</td>
-                                        <td class="py-3 px-3 text-center">
-                                            <span class="badge bg-success rounded-pill px-3 py-2">Activo</span>
-                                        </td>
-                                        <td class="py-3 px-3 text-center">
-                                            <a href="<?php echo getUrl('ActividadesZoo', 'ActividadesZoo', 'editParametros', array('id' => 3)); ?>" class="btn btn-primary btn-sm rounded-3 px-2 py-1">
-                                                <i class="bi bi-pencil-fill"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    <tr class="border-bottom" style="background-color: #f8f9fa;">
-                                        <td class="py-3 px-3 text-dark">2024-07-10</td>
-                                        <td class="py-3 px-3 fw-bold text-dark">Limpieza</td>
-                                        <td class="py-3 px-3 text-secondary">T-003 · Zoocriadero Agua Blanca</td>
-                                        <td class="py-3 px-3 text-center">
-                                            <span class="badge bg-danger rounded-pill px-3 py-2">Inactivo</span>
-                                        </td>
-                                        <td class="py-3 px-3 text-center"></td>
-                                    </tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-                    </div>
-
+            <!-- ENCABEZADO DE LA VISTA -->
+            <div class="d-flex flex-wrap align-items-end justify-content-between mb-4 gap-2">
+                <div>
+                    <h4 class="fw-semibold mb-1">Mis actividades — Terreno</h4>
+                    <p class="text-muted small mb-0">Consulta y filtra las actividades de terreno que has registrado.</p>
                 </div>
+            </div>
+
+            <!-- TARJETA CONTENEDORA -->
+            <div class="card border-0 shadow-sm">
+
+                <!-- ENCABEZADO DE TARJETA CON FILTROS -->
+                <div class="card-header bg-white border-bottom py-3">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-file-earmark-text text-primary me-2 fs-5"></i>
+                        <span class="fw-semibold">Actividades registradas por mí</span>
+                    </div>
+
+                    <!-- FORMULARIO DE FILTROS -->
+                    <form id="formFiltroMisActividadesTer" action="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'filtro', false, 'ajax'); ?>" method="POST">
+                        <div class="row g-2 align-items-end">
+
+                            <!-- Filtro por MES (no por dia): el documento del proyecto no
+                   especifica que tan preciso debe ser el filtro de fecha,
+                   asi que se simplifico a un solo selector de mes/año en
+                   vez de pedir fecha "desde" y "hasta" por separado. -->
+                            <div class="col-6 col-md-2">
+                                <label for="mesFiltro" class="form-label small text-muted mb-1">Mes</label>
+                                <input type="month" id="mesFiltro" name="mes" class="form-control form-control-sm">
+                            </div>
+
+                            <div class="col-12 col-md-3">
+                                <label for="selectzoocriadero" class="form-label small text-muted mb-1">Zoocriadero</label>
+                                <select id="selectzoocriadero" name="codzoocriadero" class="form-select form-select-sm">
+                                    <option value="">Todos</option>
+                                    <?php if (isset($zoocriaderos) && $zoocriaderos): ?>
+                                        <?php while ($dep = $zoocriaderos->fetch(PDO::FETCH_ASSOC)): ?>
+                                            <option value="<?php echo $dep['id']; ?>"><?php echo htmlspecialchars($dep['tipozoocriadero'] . ' — ' . $dep['nombresitio']); ?></option>
+                                        <?php endwhile; ?>
+                                    <?php endif; ?>
+                                </select>
+                            </div>
+
+                            <div class="col-12 col-md-3">
+                                <label for="selectTipoActividad" class="form-label small text-muted mb-1">Tipo de actividad</label>
+                                <select id="selectTipoActividad" name="tipoactividad" class="form-select form-select-sm">
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12 col-md-2 d-grid">
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-funnel me-1"></i>Filtrar
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+
+                <!-- TABLA DE RESULTADOS -->
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle mb-0" id="tablaMisActividadesTer">
+                        <thead class="table-dark">
+                            <tr>
+                                <th class="ps-4">Fecha</th>
+                                <th>Tipo de actividad</th>
+                                <th>Zoocriadero</th>
+                                <th>Tanque</th>
+                                <th class="text-center">Estado</th>
+                                <th class="text-center">Editar</th>
+                                <th class="text-center">Inhabilitar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $hayActividades = isset($actividades) && $actividades && $actividades->rowCount() > 0;
+                            if ($hayActividades):
+                                while ($act = $actividades->fetch(PDO::FETCH_ASSOC)):
+                            ?>
+                                    <tr>
+                                        <td class="ps-4"><?php echo htmlspecialchars($act['fecha']); ?></td>
+                                        <td class="fw-semibold"><?php echo htmlspecialchars($act['tipo_actividad']); ?></td>
+                                        <td><?php echo htmlspecialchars($act['zoocriadero']); ?></td>
+                                        <td><span class="text-muted small"><?php echo htmlspecialchars($act['sitio']); ?></span></td>
+                                        <td class="text-center">
+                                            <?php if ($act['estado'] === 'A'): ?>
+                                                <span class="badge bg-success">Activo</span>
+                                            <?php else: ?>
+                                                <span class="badge bg-danger">Inactivo</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-outline-primary btn-icon rounded-circle" title="Editar"
+                                                onclick="cargarFormularioModal('<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'getUpdate', array('id' => $act['id'])) ?>', 'Editar actividad', 'actividadTerFormEdicion', '<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'listMisActividades') ?>', 'tablaMisActividadesTer')">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </button>
+                                        </td>
+                                        <td class="text-center">
+                                            <!-- Mismo patron rojo/verde de Usuarios y zoocriaderos, sin confirm(). -->
+                                            <?php if ($act['estado'] === 'A'): ?>
+                                                <a href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'delete', array('id' => $act['id'])) ?>"
+                                                    class="btn btn-outline-danger btn-icon rounded-circle" title="Inhabilitar">
+                                                    <i class="bi bi-slash-circle"></i>
+                                                </a>
+                                            <?php else: ?>
+                                                <a href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'delete', array('id' => $act['id'])) ?>"
+                                                    class="btn btn-outline-success btn-icon rounded-circle" title="Activar">
+                                                    <i class="bi bi-check-lg"></i>
+                                                </a>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php
+                                endwhile;
+                            else:
+                                ?>
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-5">
+                                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                        No has registrado actividades en este rango.
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
 
         </div>
     </div>
 </div>
+
+<?php
+// Mensajes de error/exito que deja el controlador en sesion.
+if (isset($_SESSION['error'])) {
+?>
+    <div class="row justify-content-center">
+        <div class="col-xl-11">
+            <div class="alert alert-danger d-flex align-items-center mt-3 mb-0" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <div><?php echo $_SESSION['error']; ?></div>
+            </div>
+        </div>
+    </div>
+<?php
+    unset($_SESSION['error']);
+}
+if (isset($_SESSION['exito'])) {
+?>
+    <div class="row justify-content-center">
+        <div class="col-xl-11">
+            <div class="alert alert-success d-flex align-items-center mt-3 mb-0" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <div><?php echo $_SESSION['exito']; ?></div>
+            </div>
+        </div>
+    </div>
+<?php
+    unset($_SESSION['exito']);
+}
+?>

@@ -3,13 +3,22 @@
         'name' => 'usuario1/bio-guppy',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'bb8af0a556764fb1f553d6868370a12468aeb63b',
+        'reference' => 'e4b220571509d4d5fd33765727164a02d6d7f1ca',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
         'dev' => true,
     ),
     'versions' => array(
+        'jpgraph/jpgraph' => array(
+            'pretty_version' => '4.0.2',
+            'version' => '4.0.2.0',
+            'reference' => 'e82db7da6a546d3926c24c9a346226da7aa49094',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../jpgraph/jpgraph',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'myclabs/deep-copy' => array(
             'pretty_version' => '1.14.0',
             'version' => '1.14.0.0',
@@ -247,7 +256,7 @@
         'usuario1/bio-guppy' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'bb8af0a556764fb1f553d6868370a12468aeb63b',
+            'reference' => 'e4b220571509d4d5fd33765727164a02d6d7f1ca',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
