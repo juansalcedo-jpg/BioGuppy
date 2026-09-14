@@ -8,7 +8,7 @@ $ActividadAbierto = (
   $funcion == 'Lavado'
 );
 
-$misActividadesActivo = ($funcion == 'ActividadesListZoo');
+$ActividadesListZoo = ($funcion == 'ActividadesListZoo');
 ?>
 
 <!-- Mis actividades -->
@@ -21,7 +21,7 @@ $misActividadesActivo = ($funcion == 'ActividadesListZoo');
 
 <!-- istrar actividad (con submódulos) -->
 <li class="nav-item">
-  <a class="nav-link fw-semibold d-flex align-items-center <?php echo $ActividadAbierto ? '' : 'collapsed'; ?>"
+  <a class="nav-link fw-semibold d-flex align-items-center <?php echo $misActividadesActivo ? '' : 'collapsed'; ?>"
     data-bs-toggle="collapse" href="#submenuActividad" role="button"
     aria-expanded="<?php echo $ActividadAbierto ? 'true' : 'false'; ?>"
     aria-controls="submenuActividad">
