@@ -92,6 +92,10 @@ class AccesoController{
                     }else if($datosRol['nombrerol'] == 'Auxiliar Zoocriadero'){
 
                         $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAuxZoocriadero.php";
+                        $_SESSION['modulo'] = 'ActividadesListZoo';
+                        $_SESSION['controlador'] = 'ActividadesListZoo';
+                        $_SESSION['funcion'] = 'ActividadesListZoo';
+                        
                     }
                 }else{
                     $_SESSION['ErrorLogin'] = "La cuenta esta inactiva";

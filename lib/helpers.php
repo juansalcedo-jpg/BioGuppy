@@ -4,6 +4,7 @@
     // Autoload de Composer: hace que todas las clases bajo src/ (namespace
     // BioGuppy\...) se puedan usar sin includes manuales.
     require_once __DIR__ . '/../vendor/autoload.php';
+    require_once __DIR__ . '/permisos.php';
 
     function redirect($url){
         echo "<script>";
@@ -34,6 +35,21 @@
         $modulo = ucwords($_GET['modulo']); //Carpeta ej: Usuarios
         $controlador = ucwords($_GET['controlador']); //Clase ej: UsuariosController
         $funcion = $_GET['funcion']; //Metodo en la clase: getUsers
+
+        if (!usuarioTienePermiso($modulo, $controlador, $funcion)) {
+
+            if (!isset($_SESSION['nombre_rol'])) {
+                redirect("inicio/login.php");
+            } else {
+                $_SESSION['error'] = "No tienes permisos para acceder a esa función.";
+                redirect(getUrl(
+                    $_SESSION['modulo'] ?? 'Usuarios',
+                    $_SESSION['controlador'] ?? 'Usuarios',
+                    $_SESSION['funcion'] ?? 'listUsu'
+                ));
+            }
+            exit();
+        }
 
         $nombreClase = "BioGuppy\\Controller\\$modulo\\{$controlador}Controller";
 
