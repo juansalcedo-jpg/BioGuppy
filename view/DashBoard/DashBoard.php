@@ -19,7 +19,7 @@
                                 <i class="bi bi-layers fs-3"></i>
                             </div>
                             <div>
-                                <h3 class="fw-bold mb-0 text-dark"><?php echo htmlspecialchars($kpis['tanques_activos'] ?? 0); ?></h3>
+                                <h3 class="fw-bold mb-0 text-dark"><?php echo htmlspecialchars($tanques['tanques_activos'] ?? 0); ?></h3>
                                 <span class="text-muted small">Tanques activos</span>
                             </div>
                         </div>
@@ -33,7 +33,7 @@
                                 <i class="bi bi-geo-alt fs-3"></i>
                             </div>
                             <div>
-                                <h3 class="fw-bold mb-0 text-dark"><?php echo htmlspecialchars($kpis['sitios_visitados'] ?? 0); ?></h3>
+                                <h3 class="fw-bold mb-0 text-dark"><?php echo htmlspecialchars($sitios['sitios_visitados'] ?? 0); ?></h3>
                                 <span class="text-muted small">Sitios visitados</span>
                             </div>
                         </div>
@@ -47,7 +47,7 @@
                                 <i class="bi bi-activity fs-3"></i>
                             </div>
                             <div>
-                                <h3 class="fw-bold mb-0 text-dark"><?php echo htmlspecialchars($kpis['actividades_mes'] ?? 0); ?></h3>
+                                <h3 class="fw-bold mb-0 text-dark"><?php echo htmlspecialchars($actividades['actividades_mes'] ?? 0); ?></h3>
                                 <span class="text-muted small">Actividades del mes</span>
                             </div>
                         </div>
@@ -61,7 +61,7 @@
                                 <i class="bi bi-exclamation-triangle fs-3"></i>
                             </div>
                             <div>
-                                <h3 class="fw-bold mb-0 text-dark"><?php echo htmlspecialchars($kpis['focos_larvas'] ?? 0); ?></h3>
+                                <h3 class="fw-bold mb-0 text-dark"><?php echo htmlspecialchars($larvas['focos_larvas'] ?? 0); ?></h3>
                                 <span class="text-muted small">Focos con larvas</span>
                             </div>
                         </div>

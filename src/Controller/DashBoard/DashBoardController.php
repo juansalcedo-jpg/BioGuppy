@@ -2,14 +2,114 @@
 
 namespace BioGuppy\Controller\DashBoard;
 
+require_once __DIR__ . '/../../../vendor/autoload.php';
+
 use BioGuppy\Model\DashBoard\DashBoardModel;
+use Amenadiel\JpGraph\Graph\Graph;
+use Amenadiel\JpGraph\Plot\BarPlot;
+use Amenadiel\JpGraph\Plot\GroupBarPlot;
 use PDO;
 
-class DashBoardController{
+class DashBoardController
+{
 
-    public function listDashboard(){
+    // Método 1: Renderiza la vista HTML con las tarjetas métricas
+    public function listDashboard()
+    {
+        $obj = new DashBoardModel();
+
+        $sqlTanques = "SELECT COUNT(*) AS tanques_activos
+                       FROM tblzootanque
+                       WHERE estado = 'A'";
+        $resultT = $obj->select($sqlTanques);
+        $tanques = $resultT->fetch(PDO::FETCH_ASSOC);
+
+        $sqlSitios = "SELECT COUNT(DISTINCT codsitio) AS sitios_visitados
+                      FROM tblactividadterreno
+                      WHERE DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE)";
+        $results = $obj->select($sqlSitios);
+        $sitios = $results->fetch(PDO::FETCH_ASSOC);
+
+        $sqlActividades = "SELECT COUNT(*) AS actividades_mes
+            FROM (
+                SELECT codactividad, fecha FROM tblactividadterreno
+                WHERE DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE)
+                UNION ALL
+                SELECT codactividad, fecha FROM tblactividadzoo
+                WHERE DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE)
+            ) AS todas";
+        $resultA = $obj->select($sqlActividades);
+        $actividades = $resultA->fetch(PDO::FETCH_ASSOC);
+
+        $sqlLarvas = "SELECT COUNT(DISTINCT codsitio) AS focos_larvas
+                      FROM tblactividadterreno
+                      WHERE larvas = 'S'
+                      AND DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE)";
+        $resultL = $obj->select($sqlLarvas);
+        $larvas = $resultL->fetch(PDO::FETCH_ASSOC);
+
+        // Se incluye únicamente la vista HTML
         include_once __DIR__ . '/../../../view/DashBoard/DashBoard.php';
     }
-}
 
-?>
+    // Método 2: Exclusivo para generar y transmitir el gráfico de barras como binario
+    public function graficaBarras()
+    {
+        error_reporting(0);
+        ini_set('display_errors', 0);
+
+        $obj = new DashBoardModel();
+
+        $sql = "SELECT TO_CHAR(fecha, 'Mon') AS mes,
+                       SUM(pecesnacidos) AS nacidos,
+                       SUM(pecesmuertos) AS muertos
+                FROM tblactividadzoo
+                WHERE DATE_TRUNC('month', fecha) BETWEEN DATE_TRUNC('month', CURRENT_DATE - INTERVAL '6 months')
+                                                     AND DATE_TRUNC('month', CURRENT_DATE)
+                GROUP BY mes, DATE_TRUNC('month', fecha)
+                ORDER BY DATE_TRUNC('month', fecha)";
+        $result = $obj->select($sql)->fetchAll(PDO::FETCH_ASSOC);
+
+        $meses = [];
+        $nacidos = [];
+        $muertos = [];
+
+        if (!empty($result)) {
+            foreach ($result as $row) {
+                $meses[]   = trim($row['mes']);
+                $nacidos[] = (int)($row['nacidos'] ?? 0);
+                $muertos[] = (int)($row['muertos'] ?? 0);
+            }
+        }
+
+        if (empty($meses) || empty($nacidos) || empty($muertos)) {
+            $meses   = ['Sin datos'];
+            $nacidos = [0];
+            $muertos = [0];
+        }
+
+        $graph = new Graph(800, 400);
+        $graph->SetScale('textlin');
+        $graph->xaxis->SetTickLabels($meses);
+        $graph->title->Set('Producción mensual de guppies');
+
+        $barNacidos = new BarPlot($nacidos);
+        $barNacidos->SetFillColor('#0d6efd');
+        $barNacidos->SetLegend('Nacidos');
+
+        $barMuertos = new BarPlot($muertos);
+        $barMuertos->SetFillColor('#dc3545');
+        $barMuertos->SetLegend('Muertos');
+
+        $group = new GroupBarPlot([$barNacidos, $barMuertos]);
+        $graph->Add($group);
+
+        // Limpieza de cualquier buffer previo antes de enviar la imagen
+        if (ob_get_length()) {
+            ob_clean();
+        }
+
+        $graph->Stroke();
+        exit;
+    }
+}
