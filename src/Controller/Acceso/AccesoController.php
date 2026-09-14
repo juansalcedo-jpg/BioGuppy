@@ -7,9 +7,15 @@ use PDO;
 
 class AccesoController{
 
+    private $obj;
+
+    public function __construct($model = null){
+        $this->obj = $model ?? new AccesoModel();
+    }
+
     public function login(){
 
-        $obj = new AccesoModel();
+        $obj = $this->obj;
 
         $usu_correo = $_POST['usu_correo'];
         $usu_clave = $_POST['usu_clave'];

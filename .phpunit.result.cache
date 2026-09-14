@@ -1,0 +1,1 @@
+{"version":2,"defects":{"BioGuppy\\Tests\\AccesoControllerTest::testLoginConUsuarioValido":7},"times":{"BioGuppy\\Tests\\AccesoControllerTest::testLoginConUsuarioValido":0.253,"BioGuppy\\Tests\\AccesoControllerTest::testLoginConCredencialesIncorrectas":0.103}}

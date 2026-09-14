@@ -11,3 +11,5 @@ class NacidosMuertosController{
         include_once __DIR__ . '/../../../view/ActividadesZoo/NacidosMuertos.php';
     }
 }
+
+?>
