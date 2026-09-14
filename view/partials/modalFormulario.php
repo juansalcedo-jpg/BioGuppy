@@ -185,7 +185,6 @@
               if (boton) boton.disabled = false;
           });
   }
-
   // Cierra el modal genérico (usado al terminar con éxito).
   function cerrarFormularioModal() {
       var modalEl = document.getElementById('modalFormularioAjax');

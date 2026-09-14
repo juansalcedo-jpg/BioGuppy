@@ -169,6 +169,7 @@ class UsuariosController{
             ':contrasena'     => $contraseñaTemp,
         ]);
 
+        $_SESSION['exito'] = "El usuario se registró correctamente.";
         redirect(getUrl('Usuarios','Usuarios','listUsu'));
 
     }
