@@ -1,19 +1,4 @@
 <?php
-/**
- * filtroMisActividades.php
- * ------------------------------------------------------------
- * Este archivo SI esta en uso activo -- es la respuesta del filtro
- * de "Mis actividades" (fecha desde/hasta, deposito, tipo). El
- * <script> agregado al final de listMisActividades.php intercepta
- * el submit del formulario, lo manda por fetch() a
- * ActividadesTer->filtro(), y mete lo que este archivo devuelva
- * directo dentro del <tbody> de la tabla (por eso aqui solo hay
- * filas <tr>, sin el <table> que las envuelve).
- *
- * $actividades llega desde ActividadesTerController::filtro(), ya
- * limitado al usuario en sesion (un auxiliar nunca ve actividades
- * de otro, ni siquiera filtrando).
- */
 ?>
 <?php if ($actividades && $actividades->rowCount() > 0): ?>
     <?php while($act = $actividades->fetch(PDO::FETCH_ASSOC)): ?>

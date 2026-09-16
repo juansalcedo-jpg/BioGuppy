@@ -24,10 +24,7 @@
           <form id="formFiltroMisActividadesTer" action="<?php echo getUrl('ActividadesTer','ActividadesTer','filtro', false, 'ajax'); ?>" method="POST">
             <div class="row g-2 align-items-end">
 
-              <!-- Filtro por MES (no por dia): el documento del proyecto no
-                   especifica que tan preciso debe ser el filtro de fecha,
-                   asi que se simplifico a un solo selector de mes/año en
-                   vez de pedir fecha "desde" y "hasta" por separado. -->
+              <!-- Filtro por MES -->
               <div class="col-6 col-md-2">
                 <label for="mesFiltro" class="form-label small text-muted mb-1">Mes</label>
                 <input type="month" id="mesFiltro" name="mes" class="form-control form-control-sm">
@@ -105,7 +102,6 @@
                   </button>
                 </td>
                 <td class="text-center">
-                  <!-- Mismo patron rojo/verde de Usuarios y Depositos, sin confirm(). -->
                   <?php if ($act['estado'] === 'A'): ?>
                     <a href="<?php echo getUrl('ActividadesTer','ActividadesTer','delete',array('id'=>$act['id'])) ?>"
                        class="btn btn-outline-danger btn-icon rounded-circle" title="Inhabilitar">
@@ -141,7 +137,6 @@
 </div>
 
 <?php
-  // Mensajes de error/exito que deja el controlador en sesion.
   if(isset($_SESSION['error'])){
 ?>
 <div class="row justify-content-center">
@@ -169,25 +164,6 @@
       unset($_SESSION['exito']);
   }
 ?>
-
-<!-- ============================================================
-     FILTRO POR AJAX (fecha desde/hasta, deposito, tipo de actividad)
-     ------------------------------------------------------------
-     El <form> de arriba (formFiltroMisActividadesTer) ya apunta a
-     ActividadesTer->filtro() vía web/ajax.php (esa ruta especial
-     devuelve SOLO el HTML que el controlador genera, sin el menú
-     lateral ni el encabezado -- ver web/ajax.php).
-
-     Sin este script, al hacer clic en "Filtrar" el navegador
-     navegaría de verdad a esa URL y se veria solo la tabla suelta,
-     sin el resto de la pagina. Por eso interceptamos el "submit":
-       1) evitamos que el formulario navegue (preventDefault)
-       2) mandamos los datos del formulario por fetch()
-       3) el controlador filtro() responde con las filas <tr> ya
-          armadas (mismo archivo view/ActividadesTer/filtroMisActividades.php
-          que usa el listado normal)
-       4) reemplazamos el <tbody> de la tabla con esa respuesta
-     ============================================================ -->
 <script>
   var formFiltro = document.getElementById('formFiltroMisActividadesTer');
   if (formFiltro) {
@@ -209,7 +185,4 @@
   }
 </script>
 
-<!-- SIN esto, cargarFormularioModal() no existe en esta pagina y el boton
-     "Editar" no hace absolutamente nada al hacer clic (sin ningun error
-     visible) -- exactamente lo que estaba pasando. -->
 <?php include_once __DIR__ . '/../partials/modalFormulario.php'; ?>

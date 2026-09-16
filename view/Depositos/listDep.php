@@ -1,16 +1,4 @@
 <?php
-/**
- * listDep.php
- * ------------------------------------------------------------
- * Listado del catalogo de TIPOS de deposito (tbltipodeposito).
- * $tiposDeposito llega desde DepositosController::listDep() como
- * un PDOStatement (se recorre abajo con while(...->fetch(...))).
- *
- * El buscador de arriba (#buscadorDepositos) filtra en el propio
- * navegador con JavaScript -- no va al servidor -- porque el
- * catalogo es chico (unos pocos tipos) y asi responde al instante.
- * Ver el <script> al final del archivo.
- */
 ?>
 <div class="container-fluid py-2">
   <div class="row justify-content-center">
@@ -22,7 +10,8 @@
           <p class="text-muted small mb-0">Catálogo de tipos de depósito usados al registrar sitios y actividades de terreno.</p>
         </div>
         <button type="button" class="btn btn-primary px-3"
-                onclick="cargarFormularioModal('<?php echo getUrl('Depositos','Depositos','create') ?>', 'Registrar tipo de depósito', 'depositoFormRegistro', '<?php echo getUrl('Depositos','Depositos','listDep') ?>', 'tablaDepositos')">
+                onclick="cargarFormularioModal('<?php echo getUrl('Depositos','Depositos','create') ?>', 
+                'Registrar tipo de depósito', 'depositoFormRegistro', '<?php echo getUrl('Depositos','Depositos','listDep') ?>', 'tablaDepositos')">
           <i class="bi bi-plus-lg me-1"></i>Nuevo tipo de depósito
         </button>
       </div>
@@ -73,11 +62,7 @@
                   </button>
                 </td>
                 <td class="text-center">
-                  <!-- Icono cambia segun el estado, igual que en Usuarios:
-                       Activo -> boton rojo para inhabilitar (bi-slash-circle);
-                       Inactivo -> boton verde para habilitar (bi-check-lg).
-                       Sin confirm(): igual que Usuarios, el cambio se aplica
-                       directo al hacer clic. -->
+                  <!-- El icono cambia segun el estado -->
                   <?php if ($tipo['estado'] === 'A'): ?>
                     <a href="<?php echo getUrl('Depositos','Depositos','delete',array('id'=>$tipo['id'])) ?>"
                        class="btn btn-outline-danger btn-icon rounded-circle" title="Inhabilitar">
@@ -111,7 +96,7 @@
   </div>
 </div>
 
-<!-- Buscador en vivo: filtra las filas ya cargadas en la tabla sin recargar la pagina -->
+<!-- filtra las filas ya cargadas en la tabla sin recargar la pagina -->
 <script>
   var buscadorDep = document.getElementById('buscadorDepositos');
   if (buscadorDep) {
@@ -125,8 +110,6 @@
 </script>
 
 <?php
-  // Mensajes de error/exito que deja el controlador en sesion (ej. despues
-  // de inhabilitar/habilitar). Mismo bloque que usa Usuarios/listUsu.php.
   if(isset($_SESSION['error'])){
 ?>
 <div class="row justify-content-center">
@@ -155,7 +138,4 @@
   }
 ?>
 
-<!-- SIN esto, cargarFormularioModal() no existe en esta pagina y los
-     botones de "Nuevo"/"Editar" no hacen absolutamente nada al hacer clic
-     (sin ningun error visible) -- exactamente lo que estaba pasando. -->
 <?php include_once __DIR__ . '/../partials/modalFormulario.php'; ?>

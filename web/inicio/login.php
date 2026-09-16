@@ -238,11 +238,23 @@ if (isset($_SESSION['ErrorLogin'])) {
           <p class="small">Crea tu nueva contraseña.</p>
 
           <label for="nuevaContrasena" class="form-label">Nueva contraseña</label>
-          <input type="password" class="form-control" id="nuevaContrasena" name="nuevaContrasena">
+<div class="campo__control">
+  <i data-lucide="lock" aria-hidden="true"></i>
+  <input type="password" id="nuevaContrasena" name="nuevaContrasena">
+  <button type="button" class="boton-mostrar-clave" data-target="nuevaContrasena" aria-label="Mostrar contraseña">
+    <i data-lucide="eye" aria-hidden="true"></i>
+  </button>
+</div>
 
-          <label for="confirmarContrasena" class="form-label">Confirmar contraseña</label>
-          <input type="password" class="form-control" id="confirmarContrasena" name="confirmarContrasena">
-        </div>
+<label for="confirmarContrasena" class="form-label">Confirmar contraseña</label>
+<div class="campo__control">
+  <i data-lucide="lock" aria-hidden="true"></i>
+  <input type="password" id="confirmarContrasena" name="confirmarContrasena">
+  <button type="button" class="boton-mostrar-clave" data-target="confirmarContrasena" aria-label="Mostrar contraseña">
+    <i data-lucide="eye" aria-hidden="true"></i>
+  </button>
+</div>
+</div>
 
         <div class="modal-footer">
           <button type="submit" class="btn-enviar-recuperacion w-100">Guardar contraseña</button>

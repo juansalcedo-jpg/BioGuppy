@@ -1,4 +1,3 @@
-<!-- Modal genérico reutilizable para cargar formularios (Registrar/Editar) sin recargar la página -->
 <div class="modal fade" id="modalFormularioAjax" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content">
@@ -31,16 +30,7 @@
 </style>
 
 <script>
-  /**
-   * Abre el modal genérico y carga dentro el fragmento de formulario que
-   * devuelve `url`. `urlExito` es la URL a la que el controlador redirige
-   * cuando TODO sale bien (normalmente el listado del módulo) — se usa
-   * para distinguir "éxito" de "error de validación" sin tocar el backend.
-   * `idTabla` (opcional) es el id de la tabla en la página de listado que
-   * se debe refrescar al guardar con éxito (ej: "tablaUsuarios",
-   * "tablaDepositos", "tablaMisActividadesTer") -- si no se pasa, se hace
-   * una navegación completa a `urlExito` en vez de refrescar solo la tabla.
-   */
+ 
   function cargarFormularioModal(url, titulo, contenedorId, urlExito, idTabla) {
       var modalEl = document.getElementById('modalFormularioAjax');
       var contenido = document.getElementById('modalFormularioAjaxContenido');
@@ -75,9 +65,6 @@
           });
   }
 
-  // Los <script> insertados vía innerHTML no se ejecutan solos (limitación del
-  // navegador); esto los vuelve a crear para que sí corran (ej: los checkbox
-  // de "marcar toda la columna" en Registrar rol).
   function ejecutarScriptsInyectados(contenedor) {
       contenedor.querySelectorAll('script').forEach(function (scriptViejo) {
           var scriptNuevo = document.createElement('script');
@@ -85,8 +72,6 @@
           scriptViejo.replaceWith(scriptNuevo);
       });
   }
-
-  // Intercepta el submit del formulario que se acaba de inyectar en el modal.
   function prepararFormularioAjax(contenedorId, urlExito, idTabla) {
       var contenido = document.getElementById('modalFormularioAjaxContenido');
       var form = contenido.querySelector('form');
@@ -98,17 +83,6 @@
       });
   }
 
-  /**
-   * UNICA version de esta funcion (antes existian DOS declaradas con el
-   * mismo nombre en este archivo -- en JavaScript, cuando eso pasa, la
-   * segunda pisa silenciosamente a la primera sin ningun error en
-   * consola. Esa segunda version tenia escrito a mano "tablaUsuarios",
-   * asi que para cualquier otro modulo -Depositos, ActividadesTer- nunca
-   * encontraba la tabla, y terminaba mostrando "error" en el modal
-   * aunque el guardado en la base de datos SI hubiera funcionado. Esta
-   * version unica usa el parametro "idTabla" en vez de un nombre fijo,
-   * para que funcione igual en cualquier modulo que la use).
-   */
   function enviarFormularioModalPorAjax(form, contenedorId, urlExito, idTabla) {
       var alerta = document.getElementById('modalFormularioAjaxAlerta');
       var datos = new FormData(form);
@@ -128,9 +102,6 @@
               var destino = match[1];
 
               if (destino === urlExito) {
-                  // Exito: pedimos la pagina de listado para (a) leer el
-                  // mensaje verde que dejo el controlador en sesion y
-                  // (b) refrescar solo la tabla, sin recargar toda la pagina.
                   fetch(urlExito)
                       .then(function (r) { return r.text(); })
                       .then(function (html) {
@@ -159,9 +130,6 @@
                   return;
               }
 
-              // Error de validación: el controlador dejó el mensaje en sesión
-              // y redirige al mismo formulario. Lo pedimos aparte para leerlo,
-              // sin perder lo que el usuario ya había escrito en el modal.
               fetch(destino)
                   .then(function (r) { return r.text(); })
                   .then(function (html) {
@@ -185,17 +153,13 @@
               if (boton) boton.disabled = false;
           });
   }
-  // Cierra el modal genérico (usado al terminar con éxito).
+
   function cerrarFormularioModal() {
       var modalEl = document.getElementById('modalFormularioAjax');
       var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
       modal.hide();
   }
 
-  // Muestra el mensaje de éxito como una alerta flotante arriba a la
-  // derecha (mismo lugar/estilo donde ya aparecen los mensajes normales
-  // de la pagina), y se autodestruye sola despues de unos segundos --
-  // igual que el resto de alertas del sistema (ver footer.php).
   function mostrarAlertaFlotante(htmlAlerta) {
       var contenedor = document.createElement('div');
       contenedor.style.position = 'fixed';
