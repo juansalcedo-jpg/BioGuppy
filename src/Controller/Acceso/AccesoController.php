@@ -71,9 +71,12 @@ class AccesoController{
                         $_SESSION['controlador'] = 'Usuarios';
                         $_SESSION['funcion'] = 'listUsu';
 
-                    }else if($datosRol['nombrerol'] == 'Admin'){
+                    } else if ($datosRol['nombrerol'] == 'Administrador') {
 
                         $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAdmin.php";
+                        $_SESSION['modulo'] = 'Dashboard';
+                        $_SESSION['controlador'] = 'Dashboard';
+                        $_SESSION['funcion'] = 'listDashboard';
 
                     }else if($datosRol['nombrerol'] == 'Coordinador Control Biologico'){
 

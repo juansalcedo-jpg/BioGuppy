@@ -18,8 +18,8 @@ $GLOBALS['PERMISOS_POR_ROL'] = [
         'pares' => ['Usuarios:Usuarios', 'Roles:Roles', 'Auditoria:Auditoria', 'Parametros:Parametros'],
     ],
 
-    'Admin' => [
-        'pares' => ['Usuarios:Usuarios', 'Roles:Roles'],
+    'Administrador' => [
+        'pares' => ['Dashboard:Dashboard', 'Catalogos:Catalogos'],
     ],
 
     'Coordinador Control Biologico' => [
@@ -27,6 +27,7 @@ $GLOBALS['PERMISOS_POR_ROL'] = [
             'Zoocriadero:Zoocriadero',
             'Tanques:Tanques',
             'Sitios:Sitios',
+            'Depositos:Depositos',
             'HistorialZoo:HistorialZoo',
             'ReportesZoo:ReportesZoo',
             'ReportesTer:ReportesTer',
@@ -49,9 +50,7 @@ $GLOBALS['PERMISOS_POR_ROL'] = [
     ],
 
     'Auxiliar Terreno' => [
-        'pares' => [
-            'Depositos:Depositos',
-        ],
+        'pares' => [],
         'funciones_por_par' => [
             'ActividadesTer:ActividadesTer' => ['listMisActividades', 'Inspeccion', 'Siembra', 'Seguimiento', 'Resiembra'],
         ],

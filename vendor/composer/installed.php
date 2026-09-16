@@ -3,13 +3,22 @@
         'name' => 'usuario1/bio-guppy',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'bb8af0a556764fb1f553d6868370a12468aeb63b',
+        'reference' => '31cced13d4c770874cdd6560b2282a91becd3da1',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
         'dev' => true,
     ),
     'versions' => array(
+        'amenadiel/jpgraph' => array(
+            'pretty_version' => 'v4.1.1',
+            'version' => '4.1.1.0',
+            'reference' => 'e196d51a520a4182cc26240b4a0744495706f11a',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../amenadiel/jpgraph',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'myclabs/deep-copy' => array(
             'pretty_version' => '1.14.0',
             'version' => '1.14.0.0',
@@ -247,7 +256,7 @@
         'usuario1/bio-guppy' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'bb8af0a556764fb1f553d6868370a12468aeb63b',
+            'reference' => '31cced13d4c770874cdd6560b2282a91becd3da1',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
