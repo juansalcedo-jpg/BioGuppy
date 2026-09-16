@@ -4,31 +4,9 @@ namespace BioGuppy\Controller\Depositos;
 
 use BioGuppy\Model\Depositos\DepositosModel;
 use PDO;
-
-// Este controlador maneja el CATALOGO de tipos de deposito
-// (tbltipodeposito): Piscina abandonada, aguas estancadas, fuente,
-// construccion. El "Sitio" (lugar fisico) lo maneja el Coordinador en
-// su propio modulo; el Auxiliar Terreno solo consulta/mantiene el
-// catalogo de tipos que despues selecciona al registrar un Sitio o una
-// actividad.
 class DepositosController{
 
-    // ---------------------------------------------------------------
-    // HELPER: ejecuta una consulta de SOLO LECTURA (para mostrar
-    // datos) protegida contra errores de base de datos -- si la
-    // tabla no existe, la columna cambio, o la conexion falla, en
-    // vez de dejar que el error rompa toda la pagina, se devuelve
-    // "false" y la VISTA se encarga de mostrar su estado normal de
-    // "no hay datos" (exactamente lo mismo que ya pasa cuando la
-    // tabla existe pero esta vacia). El detalle tecnico igual queda
-    // en el log del servidor para poder depurarlo.
-    //
-    // OJO: esto es SOLO para consultas que alimentan una vista de
-    // lectura (listar, buscar, llenar un combo). Las consultas que
-    // son parte de GUARDAR datos (insert/update) no usan este
-    // helper a proposito: si un guardado falla, el usuario SI debe
-    // enterarse (no se le puede hacer creer que guardo cuando no).
-    // ---------------------------------------------------------------
+//lo mismo de actividadesterrenocontroller para la vista y la base de datos, verificar 
     private function consultarSeguro($obj, $sql, $params = []){
         try{
             return $obj->select($sql, $params);
@@ -38,9 +16,7 @@ class DepositosController{
         }
     }
 
-    // ---------------------------------------------------------------
-    // LISTAR: todos los tipos de deposito del catalogo.
-    // ---------------------------------------------------------------
+//
     public function listDep(){
 
         $obj = new DepositosModel();
@@ -55,16 +31,12 @@ class DepositosController{
 
     }
 
-    // ---------------------------------------------------------------
-    // FORMULARIO DE REGISTRO
-    // ---------------------------------------------------------------
+    // formulario de registro
     public function create(){
         include_once __DIR__ . '/../../../view/Depositos/createDep.php';
     }
 
-    // ---------------------------------------------------------------
-    // GUARDAR REGISTRO: valida y crea un nuevo tipo de deposito.
-    // ---------------------------------------------------------------
+    //  valida y crea un nuevo tipo de deposito.
     public function postCreateDep(){
 
         $obj = new DepositosModel();
@@ -77,7 +49,7 @@ class DepositosController{
             exit();
         }
 
-        // Validando que no exista ya un tipo de deposito con ese nombre
+// valida que no exista ya un tipo de deposito con ese nombre
         $sqlValidar = "SELECT codtipodeposito FROM tbltipodeposito WHERE nombredeposito ILIKE :nombre";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre])->fetch(PDO::FETCH_ASSOC);
 
@@ -98,9 +70,7 @@ class DepositosController{
 
     }
 
-    // ---------------------------------------------------------------
-    // FORMULARIO DE EDICION
-    // ---------------------------------------------------------------
+    // formulario de edicion
     public function getUpdate(){
 
         $obj = new DepositosModel();
@@ -114,9 +84,7 @@ class DepositosController{
 
     }
 
-    // ---------------------------------------------------------------
-    // GUARDAR EDICION
-    // ---------------------------------------------------------------
+    // guardar edicion
     public function postUpdateDep(){
 
         $obj = new DepositosModel();
@@ -136,7 +104,7 @@ class DepositosController{
             exit();
         }
 
-        // Validando que no exista OTRO tipo de deposito (distinto a este) con el mismo nombre
+// validando que no exista otro tipo de deposito diferente a este con el mismo nombre
         $sqlValidar = "SELECT codtipodeposito FROM tbltipodeposito WHERE nombredeposito ILIKE :nombre AND codtipodeposito != :id";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre, ':id' => $id])->fetch(PDO::FETCH_ASSOC);
 
@@ -155,9 +123,7 @@ class DepositosController{
 
     }
 
-    // ---------------------------------------------------------------
-    // INHABILITAR / HABILITAR
-    // ---------------------------------------------------------------
+    // inhabilitar y habilitar
     public function delete(){
 
         $obj = new DepositosModel();

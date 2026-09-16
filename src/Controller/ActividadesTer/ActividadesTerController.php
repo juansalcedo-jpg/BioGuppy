@@ -6,18 +6,8 @@ use BioGuppy\Model\ActividadesTer\ActividadesTerModel;
 use PDO;
 
 class ActividadesTerController{
+// funcion nueva base de datos y view, revisar despues mas a fondo.
 
-    // -----------------------------------------------------------------
-    // HELPER: version seguro de select() para consultas de SOLO LECTURA
-    // (listar, llenar combos). Si la consulta falla (tabla/columna que
-    // no existe, etc.), en vez de dejar que el error rompa toda la
-    // pagina, devuelve "false" -- la vista ya sabe mostrar su estado
-    // normal de "no hay datos" con eso (mismo comportamiento que si la
-    // tabla existiera pero estuviera vacia). El detalle tecnico queda
-    // en el log del servidor. Las consultas de escritura (insert/update)
-    // NO usan este helper a proposito: si guardar falla, el usuario
-    // debe enterarse, no se le puede hacer creer que si se guardo.
-    // -----------------------------------------------------------------
     private function consultarSeguro($obj, $sql, $params = []){
         try{
             return $obj->select($sql, $params);
@@ -26,37 +16,17 @@ class ActividadesTerController{
             return false;
         }
     }
+    
+// busca el codigo de un tipo de actividad de terreno por su nombre en el catalogo tbltipoactividadterreno
 
-    // -----------------------------------------------------------------
-    // HELPER: busca el codigo de un tipo de actividad de terreno por su
-    // nombre (Inspeccion / Siembra / Seguimiento / Resiembra) en el
-    // catalogo tbltipoactividadterreno. Se hace por nombre (no por un
-    // ID fijo) porque el ID real depende de como haya quedado sembrada
-    // la tabla en cada instalacion de la BD.
-    // -----------------------------------------------------------------
     private function obtenerCodTipoActividad($obj, $nombre){
         $sql = "SELECT codtipoactividad FROM tbltipoactividadterreno WHERE nombreactividad ILIKE :nombre LIMIT 1";
-        $resultado = $obj->select($sql, [':nombre' => $nombre])->fetch(PDO::FETCH_ASSOC);
+        $resultado = $obj->select($sql, [':nombre' => $nombre])->fetch(PDO::FETCH_ASSOC); 
         return $resultado ? $resultado['codtipoactividad'] : null;
     }
 
-    // -----------------------------------------------------------------
-    // HELPER: trae los depositos disponibles para el combo "Deposito" de
-    // los 4 formularios de registro. Solo se muestran sitios ACTIVOS
-    // (s.estado = 'A') Y cuyo tipo de deposito tambien este ACTIVO
-    // (td.estado = 'A'): si el Coordinador inhabilita el sitio, o el
-    // Auxiliar inhabilita el tipo de deposito desde el catalogo, ese
-    // sitio deja de poder elegirse para registrar actividades NUEVAS
-    // -- pero las actividades YA registradas con ese tipo/sitio NO se
-    // tocan, se mantiene el historial tal cual quedo (por eso "Mis
-    // actividades" sigue mostrando el nombre del deposito de registros
-    // viejos aunque el tipo ya este inhabilitado).
-    //
-    // Es una consulta de SOLO LECTURA (llena un combo): usa
-    // consultarSeguro(), asi que si tblsitio o tbltipodeposito no
-    // existen todavia, el combo simplemente sale vacio en vez de
-    // tumbar la pagina completa.
-    // -----------------------------------------------------------------
+//solo aparecen sitios donde tanto el sitio como su tipo de depósito están activos
+    
     private function obtenerDepositosActivos($obj){
         $sql = "SELECT s.codsitio AS id, s.nombresitio, td.nombredeposito AS tipodeposito
                 FROM tblsitio s
@@ -65,28 +35,32 @@ class ActividadesTerController{
                 ORDER BY s.nombresitio ASC";
         return $this->consultarSeguro($obj, $sql);
     }
-
+//trae los datos del catálogo e incluye la vista
     public function Inspeccion(){
         $obj = new ActividadesTerModel();
         $depositos = $this->obtenerDepositosActivos($obj);
         include_once __DIR__ . '/../../../view/ActividadesTer/Inspeccion.php';
     }
-
+//
     public function postCreateInspeccion(){
 
         $obj = new ActividadesTerModel();
 
-        $depositoId = $_POST['deposito_id'] ?? null;
+        $depositoId = $_POST['deposito_id'] ?? null; // ??: operador de fusion null, es para campos donde no existe un valor
         $fecha      = $_POST['fecha_actividad'] ?? null;
-        $hora       = $_POST['hora_actividad'] ?: null;
+        $hora       = $_POST['hora_actividad'] ?: null; //?: es parecido solo que muestra que el valor xiste pero esta vacio, muestra en este caso una cadena de texto vacia no que no existe como ??
         $ph         = $_POST['ph'] !== '' ? $_POST['ph'] : null;
         $temperatura = $_POST['temperatura'] !== '' ? $_POST['temperatura'] : null;
+
+        // lo mismo, solo que en vez de null ponemos 0 para la cantidad
+
         $larvasAedes = $_POST['larvas_aedes'] !== '' ? $_POST['larvas_aedes'] : 0;
         $pupas       = $_POST['pupas'] !== '' ? $_POST['pupas'] : 0;
         $larvasCulex = $_POST['larvas_culex'] !== '' ? $_POST['larvas_culex'] : 0;
+
         $observaciones = $_POST['observaciones'] ?? '';
 
-        // Validando campos obligatorios
+        // Validando campos obligatorios, solo 2 deposito y fecha.
         if(empty($depositoId) || empty($fecha)){
             $_SESSION['error'] = "El depósito y la fecha son obligatorios.";
             redirect(getUrl('ActividadesTer','ActividadesTer','Inspeccion'));
@@ -103,7 +77,7 @@ class ActividadesTerController{
         $obj->insert($sql, [
             ':codtipoactividad' => $codTipo,
             ':codsitio'         => $depositoId,
-            ':codusuario'       => $_SESSION['usu_id'],
+            ':codusuario'       => $_SESSION['usu_id'], //este es el dato para saber "quién" registró la actividad, se guardó ahí al iniciar sesión
             ':fecha'            => $fecha,
             ':hora'             => $hora,
             ':ph'               => $ph,
@@ -120,10 +94,7 @@ class ActividadesTerController{
 
     }
 
-    // ===================================================================
-    // SIEMBRA (RF024)
-    // ===================================================================
-
+//
     public function Siembra(){
         $obj = new ActividadesTerModel();
         $depositos = $this->obtenerDepositosActivos($obj);
@@ -175,10 +146,6 @@ class ActividadesTerController{
 
     }
 
-    // ===================================================================
-    // SEGUIMIENTO (RF025)
-    // ===================================================================
-
     public function Seguimiento(){
         $obj = new ActividadesTerModel();
         $depositos = $this->obtenerDepositosActivos($obj);
@@ -225,10 +192,6 @@ class ActividadesTerController{
         exit();
 
     }
-
-    // ===================================================================
-    // RESIEMBRA (RF026)
-    // ===================================================================
 
     public function Resiembra(){
         $obj = new ActividadesTerModel();
@@ -281,11 +244,7 @@ class ActividadesTerController{
 
     }
 
-    // ===================================================================
-    // MIS ACTIVIDADES (RF027 / consulta propia del auxiliar) — solo
-    // muestra lo que el usuario autenticado ha registrado.
-    // ===================================================================
-
+// 
     public function listMisActividades(){
 
         $obj = new ActividadesTerModel();
@@ -300,32 +259,22 @@ class ActividadesTerController{
                 FROM tblactividadterreno a
                 INNER JOIN tbltipoactividadterreno t ON t.codtipoactividad = a.codtipoactividad
                 INNER JOIN tblsitio s ON s.codsitio = a.codsitio
-                INNER JOIN tbltipodeposito td ON td.codtipodeposito = s.codtipodeposito
+                INNER JOIN tbltipodeposito td ON td.codtipodeposito = s.codtipodeposito  
                 WHERE a.codusuario = :codusuario
                 ORDER BY a.fecha DESC, a.codactividad DESC";
-
+//es para mostrar estos 3 datos: actividad, sitio y tipo de depósito del sitio en una fila
         $actividades = $this->consultarSeguro($obj, $sql, [':codusuario' => $_SESSION['usu_id']]);
 
         // Se cargan tambien los depositos activos, para el combo de filtro
         $depositos = $this->obtenerDepositosActivos($obj);
-
+// aqui se llena el select de Deposito ene l formulario del filtro
         include_once __DIR__ . '/../../../view/ActividadesTer/listMisActividades.php';
 
     }
 
-    // -----------------------------------------------------------------
-    // BUSCADOR (ajax) de "Mis actividades": filtra por rango de fecha,
-    // deposito y tipo de actividad, siempre limitado al propio usuario.
-    // -----------------------------------------------------------------
     public function filtro(){
 
         $obj = new ActividadesTerModel();
-
-        // "mes" llega del <input type="month"> como texto "YYYY-MM" (o
-        // vacio si no se eligio). A partir de ahi calculamos el primer
-        // dia de ese mes y el primer dia del mes SIGUIENTE, para poder
-        // filtrar con un rango simple (fecha >= inicio AND fecha < fin)
-        // -mas eficiente para Postgres que comparar mes a mes con texto.
         $mes = $_POST['mes'] ?: null;
         $mesInicio = null;
         $mesFin = null;
@@ -366,11 +315,7 @@ class ActividadesTerController{
 
     }
 
-    // ===================================================================
-    // EDITAR (RF027): el auxiliar solo puede editar actividades que el
-    // mismo registro (se valida comparando codusuario contra la sesion).
-    // ===================================================================
-
+//
     public function getUpdate(){
 
         $obj = new ActividadesTerModel();
@@ -384,7 +329,7 @@ class ActividadesTerController{
 
         $actividad = $obj->select($sql, [':id' => $id])->fetch(PDO::FETCH_ASSOC);
 
-        // No permitir editar un registro que no le pertenece al usuario
+// No permitir editar un registro que no le pertenece al usuario
         if(!$actividad || $actividad['codusuario'] != $_SESSION['usu_id']){
             $_SESSION['error'] = "No tiene permisos para editar este registro.";
             redirect(getUrl('ActividadesTer','ActividadesTer','listMisActividades'));
@@ -403,7 +348,7 @@ class ActividadesTerController{
 
         $codactividad = $_POST['codactividad'] ?? null;
 
-        // Se vuelve a validar la propiedad del registro antes de actualizar
+// Se vuelve a validar la propiedad del registro antes de actualizar
         $sqlDueno = "SELECT codusuario FROM tblactividadterreno WHERE codactividad = :id";
         $dueno = $obj->select($sqlDueno, [':id' => $codactividad])->fetch(PDO::FETCH_ASSOC);
 
@@ -423,8 +368,7 @@ class ActividadesTerController{
             exit();
         }
 
-        // Se actualizan todos los campos posibles; los que no aplican al
-        // tipo de actividad simplemente llegan vacios/null desde el form.
+// Se actualizan todos los campos posibles, los que no aplican al tipo de actividad simplemente llegan vacios/null desde el form
         $sql = "UPDATE tblactividadterreno SET
                     fecha = :fecha,
                     hora = :hora,
@@ -465,12 +409,6 @@ class ActividadesTerController{
         exit();
 
     }
-
-    // -----------------------------------------------------------------
-    // INHABILITAR / HABILITAR (mismo patron rojo/verde que Depositos y
-    // Usuarios). Igual que en postUpdate(), se verifica que el registro
-    // sea del usuario en sesion antes de tocarlo.
-    // -----------------------------------------------------------------
     public function delete(){
 
         $obj = new ActividadesTerModel();

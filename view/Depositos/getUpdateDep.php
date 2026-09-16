@@ -1,17 +1,4 @@
 <?php
-/**
- * getUpdateDep.php
- * ------------------------------------------------------------
- * Formulario de EDICION de un tipo de deposito (ej: "Piscina
- * abandonada"). Llega aqui cuando el usuario hace clic en el lapiz
- * de la tabla de Depositos -> cargarFormularioModal() (ver
- * listDep.php) pide esta vista por AJAX y la mete dentro del modal
- * generico (modalFormulario.php).
- *
- * $tipoDeposito llega ya armado desde DepositosController::getUpdate():
- * es un PDOStatement con UNA sola fila (el registro que se va a editar).
- * Lo convertimos aqui en un array asociativo con fetch().
- */
 $tipo = $tipoDeposito->fetch(PDO::FETCH_ASSOC);
 ?>
 <div id="depositoFormEdicion">
