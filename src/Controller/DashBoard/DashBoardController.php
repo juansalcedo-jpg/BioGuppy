@@ -8,6 +8,8 @@ use BioGuppy\Model\DashBoard\DashBoardModel;
 use Amenadiel\JpGraph\Graph\Graph;
 use Amenadiel\JpGraph\Plot\BarPlot;
 use Amenadiel\JpGraph\Plot\GroupBarPlot;
+use Amenadiel\JpGraph\Graph\PieGraph;
+use Amenadiel\JpGraph\Plot\PiePlot;
 use PDO;
 
 class DashBoardController
@@ -111,5 +113,92 @@ class DashBoardController
 
         $graph->Stroke();
         exit;
+    }
+
+    public function graficaPastel()
+    {
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        ob_start();
+
+        try {
+            $obj = new DashBoardModel();
+
+            $sql = "SELECT nombreactividad, COUNT(*) AS total
+                FROM (
+                    SELECT t.nombreactividad 
+                    FROM tblactividadterreno a
+                    INNER JOIN tbltipoactividadterreno t ON a.codtipoactividad = t.codtipoactividad
+                    UNION ALL
+                    SELECT z.nombreactividad 
+                    FROM tblactividadzoo a
+                    INNER JOIN tbltipoactividadzoo z ON a.codtipoactividad = z.codtipoactividad
+                ) AS union_actividades
+                WHERE nombreactividad IS NOT NULL AND TRIM(nombreactividad) != ''
+                GROUP BY nombreactividad
+                ORDER BY total DESC";
+
+            $result = $obj->select($sql);
+            $data = $result ? $result->fetchAll(PDO::FETCH_ASSOC) : [];
+
+            $etiquetas = [];
+            $valores   = [];
+
+            if (!empty($data)) {
+                foreach ($data as $row) {
+                    $total = (int)$row['total'];
+                    if ($total > 0) {
+                        // Nombre de la actividad que aparecerá en la gráfica
+                        $etiquetas[] = trim($row['nombreactividad']) . "\n(%.1f%%)";
+                        $valores[]   = $total;
+                    }
+                }
+            }
+
+            if (empty($valores)) {
+                $etiquetas = ["Sin datos\n(%.1f%%)"];
+                $valores   = [1];
+            }
+
+            // 1. Aumentamos las dimensiones del lienzo a 360x300 px
+            $graph = new PieGraph(360, 300);
+            $graph->SetMarginColor('white');
+            $graph->SetFrame(false);
+
+            // 2. Crear Plot de Pastel
+            $pie = new PiePlot($valores);
+
+            // Asignar el nombre del área/tipo de actividad directamente al gráfico
+            $pie->SetLabels($etiquetas);
+
+            // Aumentar el tamaño del círculo pastel
+            $pie->SetSize(0.50);
+            $pie->SetCenter(0.5, 0.5);
+
+            // Posición de la etiqueta sobre las porciones
+            $pie->SetLabelPos(0.55);
+
+            // Paleta de colores
+            $colores = ['#3b82f6', '#38bdf8', '#34d399', '#fbbf24', '#a855f7', '#94a3b8'];
+            $pie->SetSliceColors($colores);
+
+            $graph->Add($pie);
+
+            if (ob_get_length()) {
+                ob_clean();
+            }
+
+            header("Content-Type: image/png");
+            $graph->Stroke();
+            exit;
+        } catch (\Throwable $e) {
+            if (ob_get_length()) {
+                ob_clean();
+            }
+            header("Content-Type: text/html; charset=utf-8");
+            echo "<b>Error:</b> " . $e->getMessage();
+            exit;
+        }
     }
 }
