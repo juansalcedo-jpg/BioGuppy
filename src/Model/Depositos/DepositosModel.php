@@ -6,3 +6,4 @@ use BioGuppy\Model\MasterModel;
 class DepositosModel extends MasterModel{
 
 }
+?>

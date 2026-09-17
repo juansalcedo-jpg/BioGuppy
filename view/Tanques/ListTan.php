@@ -8,7 +8,7 @@
           <p class="text-muted small mb-0">Consulta y administra los tanques registrados en el sistema.</p>
         </div>
         <button type="button" class="btn btn-primary px-3"
-                onclick="cargarFormularioModal('<?php echo getUrl('Tanques','Tanques','create') ?>', 'Registrar tanque', 'tanqueFormRegistro', '<?php echo getUrl('Tanques','Tanques','list') ?>')">
+                onclick="cargarFormularioModal('<?php echo getUrl('Tanques','Tanques','create') ?>', 'Registrar tanque', 'tanqueFormRegistro', '<?php echo getUrl('Tanques','Tanques','listTan') ?>', 'tablaTanques')">
           <i class="bi bi-plus-lg me-1"></i>Nuevo tanque
         </button>
       </div>
@@ -58,7 +58,7 @@
                 </td>
                 <td class="text-center">
                   <button type="button" class="btn btn-outline-primary btn-icon rounded-circle" title="Editar"
-                          onclick="cargarFormularioModal('<?php echo getUrl('Tanques','Tanques','getUpdate',array('id'=>$tanque['id'])) ?>', 'Editar tanque', 'tanqueFormEdicion', '<?php echo getUrl('Tanques','Tanques','list') ?>')">
+                          onclick="cargarFormularioModal('<?php echo getUrl('Tanques','Tanques','getUpdate',array('id'=>$tanque['id'])) ?>', 'Editar tanque', 'tanqueFormEdicion', '<?php echo getUrl('Tanques','Tanques','listTan') ?>', 'tablaTanques')">
                     <i class="bi bi-pencil-fill"></i>
                   </button>
                 </td>
@@ -89,3 +89,48 @@
     </div>
   </div>
 </div>
+
+<!-- filtra las filas ya cargadas en la tabla sin recargar la pagina -->
+<script>
+  var buscadorTan = document.getElementById('buscadorTanques');
+  if (buscadorTan) {
+    buscadorTan.addEventListener('keyup', function () {
+      var filtro = this.value.toLowerCase();
+      document.querySelectorAll('#tablaTanques tbody tr').forEach(function (fila) {
+        fila.style.display = fila.textContent.toLowerCase().includes(filtro) ? '' : 'none';
+      });
+    });
+  }
+</script>
+
+<?php
+  if(isset($_SESSION['error'])){
+?>
+<div class="row justify-content-center">
+  <div class="col-xl-10">
+    <div class="alert alert-danger d-flex align-items-center mt-3 mb-0" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      <div><?php echo $_SESSION['error']; ?></div>
+    </div>
+  </div>
+</div>
+<?php
+      unset($_SESSION['error']);
+  }
+  if(isset($_SESSION['exito'])){
+?>
+<div class="row justify-content-center">
+  <div class="col-xl-10">
+    <div class="alert alert-success d-flex align-items-center mt-3 mb-0" role="alert">
+      <i class="bi bi-check-circle-fill me-2"></i>
+      <div><?php echo $_SESSION['exito']; ?></div>
+    </div>
+  </div>
+</div>
+<?php
+      unset($_SESSION['exito']);
+  }
+?>
+
+<?php include_once __DIR__ . '/../partials/modalFormulario.php'; ?>
+
