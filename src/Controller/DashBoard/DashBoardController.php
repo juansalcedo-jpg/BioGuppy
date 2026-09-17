@@ -28,24 +28,28 @@ class DashBoardController
 
         $sqlSitios = "SELECT COUNT(DISTINCT codsitio) AS sitios_visitados
                       FROM tblactividadterreno
-                      WHERE DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE)";
+                      WHERE estado = 'A'
+                      AND DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE)";
         $results = $obj->select($sqlSitios);
         $sitios = $results->fetch(PDO::FETCH_ASSOC);
 
         $sqlActividades = "SELECT COUNT(*) AS actividades_mes
             FROM (
                 SELECT codactividad, fecha FROM tblactividadterreno
-                WHERE DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE)
+                WHERE estado = 'A'
+                AND DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE)
                 UNION ALL
                 SELECT codactividad, fecha FROM tblactividadzoo
-                WHERE DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE)
+                WHERE estado = 'A'
+                AND DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE)
             ) AS todas";
         $resultA = $obj->select($sqlActividades);
         $actividades = $resultA->fetch(PDO::FETCH_ASSOC);
 
         $sqlLarvas = "SELECT COUNT(DISTINCT codsitio) AS focos_larvas
                       FROM tblactividadterreno
-                      WHERE larvas = 'S'
+                      WHERE estado = 'A'
+                      AND (larvasaedes = 'S' OR pupas = 'S' OR larvasculex = 'S')
                       AND DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE)";
         $resultL = $obj->select($sqlLarvas);
         $larvas = $resultL->fetch(PDO::FETCH_ASSOC);
@@ -63,11 +67,12 @@ class DashBoardController
         $obj = new DashBoardModel();
 
         $sql = "SELECT TO_CHAR(fecha, 'Mon') AS mes,
-                       SUM(pecesnacidos) AS nacidos,
-                       SUM(pecesmuertos) AS muertos
+                       COALESCE(SUM(pecesnacidos), 0) AS nacidos,
+                       COALESCE(SUM(pecesmuertos), 0) AS muertos
                 FROM tblactividadzoo
-                WHERE DATE_TRUNC('month', fecha) BETWEEN DATE_TRUNC('month', CURRENT_DATE - INTERVAL '6 months')
-                                                     AND DATE_TRUNC('month', CURRENT_DATE)
+                WHERE estado = 'A'
+                AND DATE_TRUNC('month', fecha) BETWEEN DATE_TRUNC('month', CURRENT_DATE - INTERVAL '6 months')
+                                                   AND DATE_TRUNC('month', CURRENT_DATE)
                 GROUP BY mes, DATE_TRUNC('month', fecha)
                 ORDER BY DATE_TRUNC('month', fecha)";
         $result = $obj->select($sql)->fetchAll(PDO::FETCH_ASSOC);
@@ -130,10 +135,12 @@ class DashBoardController
                     SELECT t.nombreactividad 
                     FROM tblactividadterreno a
                     INNER JOIN tbltipoactividadterreno t ON a.codtipoactividad = t.codtipoactividad
+                    WHERE a.estado = 'A'
                     UNION ALL
                     SELECT z.nombreactividad 
                     FROM tblactividadzoo a
                     INNER JOIN tbltipoactividadzoo z ON a.codtipoactividad = z.codtipoactividad
+                    WHERE a.estado = 'A'
                 ) AS union_actividades
                 WHERE nombreactividad IS NOT NULL AND TRIM(nombreactividad) != ''
                 GROUP BY nombreactividad
