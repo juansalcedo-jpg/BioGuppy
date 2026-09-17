@@ -21,8 +21,9 @@ class ZoocriaderoController
                     z.direccion,
                     c.nombrecomuna AS comuna,
                     b.nombrebarrio AS barrio,
-                    z.auxencargado AS encargado,
+                    u.nombreusuario || ' ' || u.apellidousuario AS encargado,
                     z.estado
+
                 FROM tblzoocriadero z
 
                 INNER JOIN tblbarrio b
@@ -30,6 +31,9 @@ class ZoocriaderoController
 
                 INNER JOIN tblcomuna c
                     ON c.codcomuna = b.codcomuna
+
+                INNER JOIN tblusuario u
+                    ON u.codusuario = z.codusuario
 
                 ORDER BY z.codzoocriadero ASC";
 
@@ -41,14 +45,14 @@ class ZoocriaderoController
 
 
     // ---------------------------------------------------------------
-    // FORMULARIO PARA REGISTRAR ZOOCRIADERO
+    // FORMULARIO CREAR
     // ---------------------------------------------------------------
     public function create()
     {
         $obj = new Zoocriaderocor();
 
 
-        // COMUNAS ACTIVAS
+        // COMUNAS
         $sqlComunas = "SELECT
                             codcomuna,
                             nombrecomuna
@@ -59,7 +63,7 @@ class ZoocriaderoController
         $comunas = $obj->select($sqlComunas);
 
 
-        // BARRIOS ACTIVOS
+        // BARRIOS
         $sqlBarrios = "SELECT
                             codbarrio,
                             codcomuna,
@@ -71,20 +75,41 @@ class ZoocriaderoController
         $barrios = $obj->select($sqlBarrios);
 
 
+        // AUXILIARES ZOOCRIADERO
+        $sqlAuxiliares = "SELECT
+                                u.codusuario,
+                                u.nombreusuario,
+                                u.apellidousuario
+
+                          FROM tblusuario u
+
+                          INNER JOIN tblrol r
+                              ON r.codrol = u.codrol
+
+                          WHERE r.codrol = 4
+                          AND u.estado = 'A'
+                          AND r.estado = 'A'
+
+                          ORDER BY
+                              u.nombreusuario ASC,
+                              u.apellidousuario ASC";
+
+        $auxiliares = $obj->select($sqlAuxiliares);
+
+
         include_once __DIR__
             . '/../../../view/Zoocriadero/create.php';
     }
 
 
     // ---------------------------------------------------------------
-    // REGISTRAR ZOOCRIADERO
+    // REGISTRAR
     // ---------------------------------------------------------------
     public function postCreateZoo()
     {
         $obj = new Zoocriaderocor();
 
 
-        // DATOS DEL FORMULARIO
         $nombre =
             trim($_POST['nombre'] ?? '');
 
@@ -97,41 +122,27 @@ class ZoocriaderoController
         $codbarrio =
             $_POST['codbarrio'] ?? '';
 
-        $auxencargado =
-            trim($_POST['encargado'] ?? '');
+        // AQUÍ LLEGA EL CODUSUARIO DEL AUXILIAR
+        $codusuarioAuxiliar =
+            $_POST['encargado'] ?? '';
 
         $estado =
             isset($_POST['estado']) ? 'A' : 'I';
 
 
-        // USUARIO QUE ESTÁ REGISTRANDO
-        $codusuario =
-            $_SESSION['usu_id'] ?? null;
-
-
-        // VALIDAR SESIÓN
-        if (empty($codusuario)) {
-
-            $_SESSION['error'] =
-                "Tu sesión expiró, vuelve a iniciar sesión.";
-
-            redirect("inicio/login.php");
-
-            exit();
-        }
-
-
+        // -----------------------------------------------------------
         // VALIDAR CAMPOS
+        // -----------------------------------------------------------
         if (
             empty($nombre) ||
             empty($direccion) ||
             empty($codcomuna) ||
             empty($codbarrio) ||
-            empty($auxencargado)
+            empty($codusuarioAuxiliar)
         ) {
 
             $_SESSION['error'] =
-                "Nombre, dirección, comuna, barrio y encargado son obligatorios.";
+                "Todos los campos son obligatorios.";
 
             redirect(
                 getUrl(
@@ -145,7 +156,9 @@ class ZoocriaderoController
         }
 
 
+        // -----------------------------------------------------------
         // VALIDAR COMUNA
+        // -----------------------------------------------------------
         $sqlComuna = "SELECT codcomuna
                       FROM tblcomuna
                       WHERE codcomuna = :codcomuna
@@ -176,7 +189,9 @@ class ZoocriaderoController
         }
 
 
-        // VALIDAR BARRIO Y COMUNA
+        // -----------------------------------------------------------
+        // VALIDAR BARRIO
+        // -----------------------------------------------------------
         $sqlBarrio = "SELECT codbarrio
                       FROM tblbarrio
                       WHERE codbarrio = :codbarrio
@@ -209,7 +224,48 @@ class ZoocriaderoController
         }
 
 
+        // VALIDAR AUXILIAR
+       
+        $sqlAuxiliar = "SELECT
+                            u.codusuario
+
+                        FROM tblusuario u
+
+                        INNER JOIN tblrol r
+                            ON r.codrol = u.codrol
+
+                        WHERE u.codusuario = :codusuario
+                        AND r.codrol = 4
+                        AND u.estado = 'A'
+                        AND r.estado = 'A'";
+
+        $auxiliarExiste = $obj->select(
+            $sqlAuxiliar,
+            [
+                ':codusuario' => $codusuarioAuxiliar
+            ]
+        )->fetch(PDO::FETCH_ASSOC);
+
+
+        if (!$auxiliarExiste) {
+
+            $_SESSION['error'] =
+                "El auxiliar seleccionado no es válido.";
+
+            redirect(
+                getUrl(
+                    'Zoocriadero',
+                    'Zoocriadero',
+                    'create'
+                )
+            );
+
+            exit();
+        }
+
+
         // VALIDAR NOMBRE REPETIDO
+       
         $sqlValidar = "SELECT codzoocriadero
                        FROM tblzoocriadero
                        WHERE nombrezoocriadero ILIKE :nombre";
@@ -239,14 +295,14 @@ class ZoocriaderoController
         }
 
 
-        // REGISTRAR
+        // INSERTAR
+       
         $sql = "INSERT INTO tblzoocriadero
                 (
                     codusuario,
                     codbarrio,
                     nombrezoocriadero,
                     direccion,
-                    auxencargado,
                     fechacreacion,
                     estado
                 )
@@ -256,7 +312,6 @@ class ZoocriaderoController
                     :codbarrio,
                     :nombre,
                     :direccion,
-                    :auxencargado,
                     DEFAULT,
                     :estado
                 )";
@@ -265,11 +320,10 @@ class ZoocriaderoController
         $obj->insert(
             $sql,
             [
-                ':codusuario' => $codusuario,
+                ':codusuario' => $codusuarioAuxiliar,
                 ':codbarrio' => $codbarrio,
                 ':nombre' => $nombre,
                 ':direccion' => $direccion,
-                ':auxencargado' => $auxencargado,
                 ':estado' => $estado
             ]
         );
@@ -292,7 +346,7 @@ class ZoocriaderoController
 
 
     // ---------------------------------------------------------------
-    // FORMULARIO DE EDICIÓN
+    // FORMULARIO EDITAR
     // ---------------------------------------------------------------
     public function getUpdate()
     {
@@ -302,11 +356,7 @@ class ZoocriaderoController
             $_GET['id'] ?? null;
 
 
-        // VALIDAR ID
         if (empty($id)) {
-
-            $_SESSION['error'] =
-                "Zoocriadero no válido.";
 
             redirect(
                 getUrl(
@@ -320,19 +370,19 @@ class ZoocriaderoController
         }
 
 
-        // TRAER ZOOCRIADERO
         $sqlZoo = "SELECT
                         z.codzoocriadero,
+                        z.codusuario,
                         z.nombrezoocriadero,
                         z.direccion,
                         z.codbarrio,
-                        z.auxencargado,
                         z.estado,
                         b.codcomuna
+
                    FROM tblzoocriadero z
 
                    INNER JOIN tblbarrio b
-                        ON b.codbarrio = z.codbarrio
+                       ON b.codbarrio = z.codbarrio
 
                    WHERE z.codzoocriadero = :id";
 
@@ -345,25 +395,7 @@ class ZoocriaderoController
         )->fetch(PDO::FETCH_ASSOC);
 
 
-        // VALIDAR QUE EXISTA
-        if (!$zoocriadero) {
-
-            $_SESSION['error'] =
-                "El zoocriadero no existe.";
-
-            redirect(
-                getUrl(
-                    'Zoocriadero',
-                    'Zoocriadero',
-                    'listZoo'
-                )
-            );
-
-            exit();
-        }
-
-
-        // COMUNAS ACTIVAS
+        // COMUNAS
         $sqlComunas = "SELECT
                             codcomuna,
                             nombrecomuna
@@ -371,11 +403,10 @@ class ZoocriaderoController
                        WHERE estado = 'A'
                        ORDER BY nombrecomuna ASC";
 
-        $comunas =
-            $obj->select($sqlComunas);
+        $comunas = $obj->select($sqlComunas);
 
 
-        // BARRIOS ACTIVOS
+        // BARRIOS
         $sqlBarrios = "SELECT
                             codbarrio,
                             codcomuna,
@@ -384,25 +415,44 @@ class ZoocriaderoController
                        WHERE estado = 'A'
                        ORDER BY nombrebarrio ASC";
 
-        $barrios =
-            $obj->select($sqlBarrios);
+        $barrios = $obj->select($sqlBarrios);
 
 
-        // CARGAR FORMULARIO
+        // AUXILIARES
+        $sqlAuxiliares = "SELECT
+                                u.codusuario,
+                                u.nombreusuario,
+                                u.apellidousuario
+
+                          FROM tblusuario u
+
+                          INNER JOIN tblrol r
+                              ON r.codrol = u.codrol
+
+                          WHERE r.codrol = 4
+                          AND u.estado = 'A'
+                          AND r.estado = 'A'
+
+                          ORDER BY
+                              u.nombreusuario ASC,
+                              u.apellidousuario ASC";
+
+        $auxiliares = $obj->select($sqlAuxiliares);
+
+
         include_once __DIR__
             . '/../../../view/Zoocriadero/Getupdatezoo.php';
     }
 
 
     // ---------------------------------------------------------------
-    // GUARDAR EDICIÓN
+    // ACTUALIZAR
     // ---------------------------------------------------------------
     public function postUpdateZoo()
     {
         $obj = new Zoocriaderocor();
 
 
-        // DATOS DEL FORMULARIO
         $id =
             $_POST['codzoocriadero'] ?? null;
 
@@ -418,42 +468,24 @@ class ZoocriaderoController
         $codbarrio =
             $_POST['codbarrio'] ?? '';
 
-        $auxencargado =
-            trim($_POST['encargado'] ?? '');
+        $codusuarioAuxiliar =
+            $_POST['encargado'] ?? '';
 
         $estado =
             isset($_POST['estado']) ? 'A' : 'I';
 
 
-        // VALIDAR ID
-        if (empty($id)) {
-
-            $_SESSION['error'] =
-                "Zoocriadero no válido.";
-
-            redirect(
-                getUrl(
-                    'Zoocriadero',
-                    'Zoocriadero',
-                    'listZoo'
-                )
-            );
-
-            exit();
-        }
-
-
-        // VALIDAR CAMPOS
         if (
+            empty($id) ||
             empty($nombre) ||
             empty($direccion) ||
             empty($codcomuna) ||
             empty($codbarrio) ||
-            empty($auxencargado)
+            empty($codusuarioAuxiliar)
         ) {
 
             $_SESSION['error'] =
-                "Nombre, dirección, comuna, barrio y encargado son obligatorios.";
+                "Todos los campos son obligatorios.";
 
             redirect(
                 getUrl(
@@ -470,95 +502,32 @@ class ZoocriaderoController
         }
 
 
-        // VALIDAR COMUNA
-        $sqlComuna = "SELECT codcomuna
-                      FROM tblcomuna
-                      WHERE codcomuna = :codcomuna
-                      AND estado = 'A'";
+        // VALIDAR AUXILIAR
+        $sqlAuxiliar = "SELECT
+                            u.codusuario
 
-        $comunaExiste = $obj->select(
-            $sqlComuna,
+                        FROM tblusuario u
+
+                        INNER JOIN tblrol r
+                            ON r.codrol = u.codrol
+
+                        WHERE u.codusuario = :codusuario
+                        AND r.codrol = 4
+                        AND u.estado = 'A'
+                        AND r.estado = 'A'";
+
+        $auxiliarExiste = $obj->select(
+            $sqlAuxiliar,
             [
-                ':codcomuna' => $codcomuna
+                ':codusuario' => $codusuarioAuxiliar
             ]
         )->fetch(PDO::FETCH_ASSOC);
 
 
-        if (!$comunaExiste) {
+        if (!$auxiliarExiste) {
 
             $_SESSION['error'] =
-                "La comuna seleccionada no es válida.";
-
-            redirect(
-                getUrl(
-                    'Zoocriadero',
-                    'Zoocriadero',
-                    'getUpdate',
-                    [
-                        'id' => $id
-                    ]
-                )
-            );
-
-            exit();
-        }
-
-
-        // VALIDAR BARRIO Y COMUNA
-        $sqlBarrio = "SELECT codbarrio
-                      FROM tblbarrio
-                      WHERE codbarrio = :codbarrio
-                      AND codcomuna = :codcomuna
-                      AND estado = 'A'";
-
-        $barrioExiste = $obj->select(
-            $sqlBarrio,
-            [
-                ':codbarrio' => $codbarrio,
-                ':codcomuna' => $codcomuna
-            ]
-        )->fetch(PDO::FETCH_ASSOC);
-
-
-        if (!$barrioExiste) {
-
-            $_SESSION['error'] =
-                "El barrio seleccionado no pertenece a la comuna.";
-
-            redirect(
-                getUrl(
-                    'Zoocriadero',
-                    'Zoocriadero',
-                    'getUpdate',
-                    [
-                        'id' => $id
-                    ]
-                )
-            );
-
-            exit();
-        }
-
-
-        // VALIDAR NOMBRE REPETIDO
-        $sqlValidar = "SELECT codzoocriadero
-                       FROM tblzoocriadero
-                       WHERE nombrezoocriadero ILIKE :nombre
-                       AND codzoocriadero != :id";
-
-        $existe = $obj->select(
-            $sqlValidar,
-            [
-                ':nombre' => $nombre,
-                ':id' => $id
-            ]
-        )->fetch(PDO::FETCH_ASSOC);
-
-
-        if ($existe) {
-
-            $_SESSION['error'] =
-                "Ya existe otro zoocriadero con ese nombre.";
+                "El auxiliar seleccionado no es válido.";
 
             redirect(
                 getUrl(
@@ -577,22 +546,24 @@ class ZoocriaderoController
 
         // ACTUALIZAR
         $sql = "UPDATE tblzoocriadero
+
                 SET
+                    codusuario = :codusuario,
+                    codbarrio = :codbarrio,
                     nombrezoocriadero = :nombre,
                     direccion = :direccion,
-                    codbarrio = :codbarrio,
-                    auxencargado = :auxencargado,
                     estado = :estado
+
                 WHERE codzoocriadero = :id";
 
 
         $obj->update(
             $sql,
             [
+                ':codusuario' => $codusuarioAuxiliar,
+                ':codbarrio' => $codbarrio,
                 ':nombre' => $nombre,
                 ':direccion' => $direccion,
-                ':codbarrio' => $codbarrio,
-                ':auxencargado' => $auxencargado,
                 ':estado' => $estado,
                 ':id' => $id
             ]
@@ -616,7 +587,7 @@ class ZoocriaderoController
 
 
     // ---------------------------------------------------------------
-    // INHABILITAR / HABILITAR
+    // HABILITAR / INHABILITAR
     // ---------------------------------------------------------------
     public function delete()
     {
@@ -624,23 +595,6 @@ class ZoocriaderoController
 
         $id =
             $_GET['id'] ?? null;
-
-
-        if (empty($id)) {
-
-            $_SESSION['error'] =
-                "Zoocriadero no válido.";
-
-            redirect(
-                getUrl(
-                    'Zoocriadero',
-                    'Zoocriadero',
-                    'listZoo'
-                )
-            );
-
-            exit();
-        }
 
 
         $actual = $obj->select(
@@ -655,18 +609,7 @@ class ZoocriaderoController
 
         if (!$actual) {
 
-            $_SESSION['error'] =
-                "El zoocriadero no existe.";
-
-            redirect(
-                getUrl(
-                    'Zoocriadero',
-                    'Zoocriadero',
-                    'listZoo'
-                )
-            );
-
-            exit();
+            return;
         }
 
 
@@ -687,10 +630,6 @@ class ZoocriaderoController
         );
 
 
-        $_SESSION['exito'] =
-            "El estado del zoocriadero se actualizó correctamente.";
-
-
         redirect(
             getUrl(
                 'Zoocriadero',
@@ -704,7 +643,7 @@ class ZoocriaderoController
 
 
     // ---------------------------------------------------------------
-    // BUSCADOR AJAX
+    // FILTRO
     // ---------------------------------------------------------------
     public function filtro()
     {
@@ -720,7 +659,7 @@ class ZoocriaderoController
                     z.direccion,
                     c.nombrecomuna AS comuna,
                     b.nombrebarrio AS barrio,
-                    z.auxencargado AS encargado,
+                    u.nombreusuario || ' ' || u.apellidousuario AS encargado,
                     z.estado
 
                 FROM tblzoocriadero z
@@ -731,12 +670,16 @@ class ZoocriaderoController
                 INNER JOIN tblcomuna c
                     ON c.codcomuna = b.codcomuna
 
+                INNER JOIN tblusuario u
+                    ON u.codusuario = z.codusuario
+
                 WHERE
                     z.nombrezoocriadero ILIKE :buscar
                     OR z.direccion ILIKE :buscar
                     OR c.nombrecomuna ILIKE :buscar
                     OR b.nombrebarrio ILIKE :buscar
-                    OR z.auxencargado ILIKE :buscar
+                    OR u.nombreusuario ILIKE :buscar
+                    OR u.apellidousuario ILIKE :buscar
 
                 ORDER BY z.codzoocriadero ASC";
 
