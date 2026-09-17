@@ -1,3 +1,5 @@
+<?php
+?>
 <div class="container-fluid py-2">
   <div class="row justify-content-center">
     <div class="col-xl-10">
@@ -8,7 +10,8 @@
           <p class="text-muted small mb-0">Consulta y administra los zoocriaderos registrados en el sistema.</p>
         </div>
         <button type="button" class="btn btn-primary px-3"
-                onclick="cargarFormularioModal('<?php echo getUrl('Zoocriaderos','Zoocriaderos','create') ?>', 'Registrar zoocriadero', 'zoocriaderoFormRegistro', '<?php echo getUrl('Zoocriaderos','Zoocriaderos','list') ?>')">
+                onclick="cargarFormularioModal('<?php echo getUrl('Zoocriadero','Zoocriadero','create') ?>',
+                'Registrar zoocriadero', 'zoocriaderoFormRegistro', '<?php echo getUrl('Zoocriadero','Zoocriadero','listZoo') ?>', 'tablaZoocriaderos')">
           <i class="bi bi-plus-lg me-1"></i>Nuevo zoocriadero
         </button>
       </div>
@@ -21,7 +24,7 @@
           <div class="input-group input-group-sm" style="max-width: 260px;">
             <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
             <input type="text" id="buscadorZoocriaderos" class="form-control" placeholder="Buscar zoocriadero..."
-                  data-url="<?php echo getUrl('Zoocriaderos','Zoocriaderos','filtro', false, 'ajax'); ?>">
+                  data-url="<?php echo getUrl('Zoocriadero','Zoocriadero','filtro', false, 'ajax'); ?>">
           </div>
         </div>
 
@@ -33,7 +36,7 @@
                 <th>Dirección</th>
                 <th>Comuna</th>
                 <th>Barrio</th>
-                <th>Encargado</th>
+                <th> Aux Encargado</th>
                 <th class="text-center">Estado</th>
                 <th class="text-center">Editar</th>
                 <th class="text-center">Inhabilitar</th>
@@ -52,26 +55,31 @@
                 <td><?php echo htmlspecialchars($zoo['barrio']); ?></td>
                 <td><?php echo htmlspecialchars($zoo['encargado']); ?></td>
                 <td class="text-center">
-                  <?php if ($zoo['estado'] === 'Activo'): ?>
+                  <?php if ($zoo['estado'] === 'A'): ?>
                     <span class="badge bg-success-subtle text-success-emphasis">Activo</span>
-                  <?php elseif ($zoo['estado'] === 'Mantenimiento'): ?>
-                    <span class="badge bg-warning-subtle text-warning-emphasis">Mantenimiento</span>
                   <?php else: ?>
                     <span class="badge bg-secondary-subtle text-secondary-emphasis">Inactivo</span>
                   <?php endif; ?>
                 </td>
                 <td class="text-center">
                   <button type="button" class="btn btn-outline-primary btn-icon rounded-circle" title="Editar"
-                          onclick="cargarFormularioModal('<?php echo getUrl('Zoocriaderos','Zoocriaderos','getUpdate',array('id'=>$zoo['id'])) ?>', 'Editar zoocriadero', 'zoocriaderoFormEdicion', '<?php echo getUrl('Zoocriaderos','Zoocriaderos','list') ?>')">
+                          onclick="cargarFormularioModal('<?php echo getUrl('Zoocriadero','Zoocriadero','getUpdate',array('id'=>$zoo['id'])) ?>', 'Editar zoocriadero', 'zoocriaderoFormEdicion', '<?php echo getUrl('Zoocriadero','Zoocriadero','listZoo') ?>', 'tablaZoocriaderos')">
                     <i class="bi bi-pencil-fill"></i>
                   </button>
                 </td>
                 <td class="text-center">
-                  <a href="<?php echo getUrl('Zoocriaderos','Zoocriaderos','delete',array('id'=>$zoo['id'])) ?>"
-                     class="btn btn-outline-danger btn-icon rounded-circle" title="Inhabilitar"
-                     onclick="return confirm('¿Seguro que deseas inhabilitar el zoocriadero <?php echo $zoo['nombre']; ?>?')">
-                    <i class="bi bi-eye-slash"></i>
-                  </a>
+                  <?php if ($zoo['estado'] === 'A'): ?>
+                    <a href="<?php echo getUrl('Zoocriadero','Zoocriadero','delete',array('id'=>$zoo['id'])) ?>"
+                       class="btn btn-outline-danger btn-icon rounded-circle" title="Inhabilitar"
+                       onclick="return confirm('¿Seguro que deseas inhabilitar el zoocriadero <?php echo htmlspecialchars($zoo['nombre']); ?>?')">
+                      <i class="bi bi-eye-slash"></i>
+                    </a>
+                  <?php else: ?>
+                    <a href="<?php echo getUrl('Zoocriadero','Zoocriadero','delete',array('id'=>$zoo['id'])) ?>"
+                       class="btn btn-outline-success btn-icon rounded-circle" title="Activar">
+                      <i class="bi bi-check-lg"></i>
+                    </a>
+                  <?php endif; ?>
                 </td>
               </tr>
               <?php
@@ -93,3 +101,47 @@
     </div>
   </div>
 </div>
+
+<!-- filtra las filas ya cargadas en la tabla sin recargar la pagina -->
+<script>
+  var buscadorZoo = document.getElementById('buscadorZoocriaderos');
+  if (buscadorZoo) {
+    buscadorZoo.addEventListener('keyup', function () {
+      var filtro = this.value.toLowerCase();
+      document.querySelectorAll('#tablaZoocriaderos tbody tr').forEach(function (fila) {
+        fila.style.display = fila.textContent.toLowerCase().includes(filtro) ? '' : 'none';
+      });
+    });
+  }
+</script>
+
+<?php
+  if(isset($_SESSION['error'])){
+?>
+<div class="row justify-content-center">
+  <div class="col-xl-10">
+    <div class="alert alert-danger d-flex align-items-center mt-3 mb-0" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      <div><?php echo $_SESSION['error']; ?></div>
+    </div>
+  </div>
+</div>
+<?php
+      unset($_SESSION['error']);
+  }
+  if(isset($_SESSION['exito'])){
+?>
+<div class="row justify-content-center">
+  <div class="col-xl-10">
+    <div class="alert alert-success d-flex align-items-center mt-3 mb-0" role="alert">
+      <i class="bi bi-check-circle-fill me-2"></i>
+      <div><?php echo $_SESSION['exito']; ?></div>
+    </div>
+  </div>
+</div>
+<?php
+      unset($_SESSION['exito']);
+  }
+?>
+
+<?php include_once __DIR__ . '/../partials/modalFormulario.php'; ?>
