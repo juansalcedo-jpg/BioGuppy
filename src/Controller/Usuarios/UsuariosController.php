@@ -7,6 +7,32 @@ use PDO;
 
 class UsuariosController{
 
+    // Llama al procedimiento sp_registrar_bitacora ya existente en la BD
+    private function registrarBitacora($obj, $accion, $modulo, $idregistro = null, $valoranterior = null, $valornuevo = null){
+
+        $codusuario = $_SESSION['usu_id'] ?? null;
+
+        if(empty($codusuario)){
+            return; // si no hay sesión activa, no se registra nada
+        }
+
+        $sql = "CALL sp_registrar_bitacora(:codusuario, :accion, :modulo, :idregistro, :valoranterior, :valornuevo)";
+
+        try{
+            $obj->insert($sql, [
+                ':codusuario'    => $codusuario,
+                ':accion'        => $accion,
+                ':modulo'        => $modulo,
+                ':idregistro'    => $idregistro,
+                ':valoranterior' => $valoranterior,
+                ':valornuevo'    => $valornuevo,
+            ]);
+        }catch(\Throwable $error){
+            error_log("No se pudo registrar en bitácora: " . $error->getMessage());
+        }
+
+    }
+
     public function createUsu(){
 
         $obj = new UsuariosModel();
@@ -168,6 +194,19 @@ class UsuariosController{
             ':correo'     => $correo,
             ':contrasena'     => $contraseñaTemp,
         ]);
+
+        // AUDITORÍA: buscamos el id recién creado (el correo es único)
+        $nuevoId = $obj->select("SELECT codusuario FROM tblusuario WHERE correo = :correo", [':correo' => $correo])
+                        ->fetch(PDO::FETCH_ASSOC);
+
+        $this->registrarBitacora(
+            $obj,
+            'INSERT',
+            'Usuarios',
+            $nuevoId['codusuario'] ?? null,
+            null,
+            "Usuario: $nombre $apellido, Correo: $correo, Documento: $numeroDocumento"
+        );
 
         $_SESSION['exito'] = "El usuario se registró correctamente.";
         redirect(getUrl('Usuarios','Usuarios','listUsu'));
@@ -350,6 +389,10 @@ class UsuariosController{
             exit();
         }
 
+        // AUDITORÍA: capturamos el valor anterior antes de sobreescribirlo
+        $anterior = $obj->select("SELECT nombreusuario, apellidousuario, correo, usutelefono FROM tblusuario WHERE codusuario = :id", [':id' => $codusuario])
+                         ->fetch(PDO::FETCH_ASSOC);
+
         // Se actualiza el usuario (la contraseña no se toca aquí, tiene su propio flujo)
         $sql = "UPDATE tblusuario SET
                     codrol = :codrol,
@@ -371,7 +414,16 @@ class UsuariosController{
             ':correo'            => $correo,
             ':codusuario'        => $codusuario,
         ]);
-        
+
+        $this->registrarBitacora(
+            $obj,
+            'UPDATE',
+            'Usuarios',
+            $codusuario,
+            $anterior ? "{$anterior['nombreusuario']} {$anterior['apellidousuario']}, {$anterior['correo']}, {$anterior['usutelefono']}" : null,
+            "$nombre $apellido, $correo, $celular"
+        );
+
         $_SESSION['exito'] = "El usuario se actualizó correctamente.";
         redirect(getUrl('Usuarios','Usuarios','listUsu'));
         exit();
@@ -395,6 +447,16 @@ class UsuariosController{
         $execute = $obj->update($sql,[":id"=>$id]);
 
         if($execute){
+
+            $this->registrarBitacora(
+                $obj,
+                'UPDATE',
+                'Usuarios',
+                $id,
+                $estado === 'A' ? 'Activo' : 'Inactivo',
+                $estado === 'A' ? 'Inactivo' : 'Activo'
+            );
+
             $_SESSION['exito'] = "Se cambio el estado del usuario correctamente.";
             redirect(getUrl('Usuarios','Usuarios','listUsu'));
             exit();

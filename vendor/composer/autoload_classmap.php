@@ -1028,7 +1028,6 @@ return array(
     'PharIo\\Manifest\\CopyrightInformation' => $vendorDir . '/phar-io/manifest/src/values/CopyrightInformation.php',
     'PharIo\\Manifest\\ElementCollection' => $vendorDir . '/phar-io/manifest/src/xml/ElementCollection.php',
     'PharIo\\Manifest\\ElementCollectionException' => $vendorDir . '/phar-io/manifest/src/exceptions/ElementCollectionException.php',
-    'PharIo\\Manifest\\Email' => $vendorDir . '/phar-io/manifest/src/values/Email.php',
     'PharIo\\Manifest\\Exception' => $vendorDir . '/phar-io/manifest/src/exceptions/Exception.php',
     'PharIo\\Manifest\\ExtElement' => $vendorDir . '/phar-io/manifest/src/xml/ExtElement.php',
     'PharIo\\Manifest\\ExtElementCollection' => $vendorDir . '/phar-io/manifest/src/xml/ExtElementCollection.php',

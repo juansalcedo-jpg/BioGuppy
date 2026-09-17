@@ -49,9 +49,9 @@
           </form>
         </div>
 
-        <div class="table-responsive">
+        <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
           <table class="table table-striped align-middle mb-0" id="tablaAuditoria">
-            <thead class="table-dark">
+            <thead class="table-dark" style="position: sticky; top: 0; z-index: 1;">
               <tr>
                 <th class="ps-4">Fecha / Hora</th>
                 <th>Usuario</th>
