@@ -19,15 +19,6 @@ $misActividadesActivo = ($funcion == 'listMisActividades');
   </a>
 </li>
 
-<!-- Depositos: una sola interfaz (lista + boton "Nuevo" que abre modal),
-     igual que Usuarios -->
-<li class="nav-item">
-  <a class="nav-link fw-semibold d-flex align-items-center <?php echo $depositosActivo ? 'active' : ''; ?>"
-    href="<?php echo getUrl('Depositos', 'Depositos', 'listDep') ?>">
-    <i class="bi bi-bucket me-2"></i> Depósitos
-  </a>
-</li>
-
 <!-- Registrar actividad (con submódulos) -->
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $registrarActividadAbierto ? '' : 'collapsed'; ?>"

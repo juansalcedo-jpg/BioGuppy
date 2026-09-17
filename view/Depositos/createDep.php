@@ -1,20 +1,4 @@
 <?php
-/**
- * createDep.php
- * ------------------------------------------------------------
- * Formulario de REGISTRO de un nuevo tipo de deposito (catalogo
- * tbltipodeposito). Se abre DENTRO DE UN MODAL (igual que Usuarios
- * al registrar un usuario): el boton "+ Nuevo tipo de deposito" en
- * listDep.php llama a cargarFormularioModal(), que hace fetch() de
- * esta vista y busca el <div id="depositoFormRegistro"> de abajo
- * para inyectarlo dentro del modal generico (modalFormulario.php).
- *
- * OJO: esto NO registra un "sitio" -- el sitio (comuna, barrio,
- * direccion) lo maneja el Coordinador en su propio modulo (todavia
- * sin construir). Esta pantalla solo mantiene el catalogo de TIPOS
- * de deposito que despues se usan al registrar un sitio o una
- * actividad de terreno.
- */
 ?>
 <div id="depositoFormRegistro">
 <div class="container-fluid py-2">
@@ -39,8 +23,6 @@
             <div class="row">
               <div class="col-md-8">
                 <label for="nombre_deposito" class="form-label fw-semibold">Nombre</label>
-                <!-- input-group con icono a la izquierda, mismo estilo que
-                     usa el Administrador en Usuarios/createUsu.php -->
                 <div class="input-group">
                   <span class="input-group-text bg-light"><i class="bi bi-bucket"></i></span>
                   <input type="text" class="form-control" id="nombre_deposito" name="nombre_deposito" placeholder="Ej: Piscina abandonada, aguas estancadas...">

@@ -1,5 +1,3 @@
-// LOGIN
-
 document.addEventListener('DOMContentLoaded', () => {
   activarMostrarClave();
   activarOndaAlHacerClic();
@@ -70,19 +68,22 @@ function enviarFormularioPorAjax(formulario, { alHaberExito, alHaberError } = {}
 
 // --- 1. Mostrar / ocultar contraseña ---
 function activarMostrarClave() {
-  const botonMostrarClave = document.getElementById('botonMostrarClave');
-  const campoClave = document.getElementById('clave');
-  if (!botonMostrarClave || !campoClave) return;
+  const botones = document.querySelectorAll('.boton-mostrar-clave');
 
-  botonMostrarClave.addEventListener('click', () => {
-    const estabaOculta = campoClave.type === 'password';
-    campoClave.type = estabaOculta ? 'text' : 'password';
+  botones.forEach((boton) => {
+    const idCampo = boton.dataset.target || 'clave';
+    const campo = document.getElementById(idCampo);
+    if (!campo) return;
 
-    botonMostrarClave.setAttribute('aria-pressed', String(estabaOculta));
-    botonMostrarClave.setAttribute('aria-label', estabaOculta ? 'Ocultar contraseña' : 'Mostrar contraseña');
+    boton.addEventListener('click', () => {
+      const estabaOculta = campo.type === 'password';
+      campo.type = estabaOculta ? 'text' : 'password';
 
-    botonMostrarClave.innerHTML = `<i data-lucide="${estabaOculta ? 'eye-off' : 'eye'}" aria-hidden="true"></i>`;
-    activarIconos();
+      boton.setAttribute('aria-pressed', String(estabaOculta));
+      boton.setAttribute('aria-label', estabaOculta ? 'Ocultar contraseña' : 'Mostrar contraseña');
+      boton.innerHTML = `<i data-lucide="${estabaOculta ? 'eye-off' : 'eye'}" aria-hidden="true"></i>`;
+      lucide.createIcons();
+    });
   });
 }
 

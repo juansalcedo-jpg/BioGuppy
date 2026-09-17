@@ -26,6 +26,19 @@ class ComposerStaticInit50a1a37438cf3855f53c8d3c30dfce73
             'BioGuppy\\Tests\\' => 15,
             'BioGuppy\\' => 9,
         ),
+        'A' =>
+        array (
+            'Amenadiel\\JpGraph\\Util\\' => 23,
+            'Amenadiel\\JpGraph\\Themes\\' => 25,
+            'Amenadiel\\JpGraph\\Text\\' => 23,
+            'Amenadiel\\JpGraph\\Plot\\' => 23,
+            'Amenadiel\\JpGraph\\Image\\' => 24,
+            'Amenadiel\\JpGraph\\Graph\\Tick\\' => 29,
+            'Amenadiel\\JpGraph\\Graph\\Scale\\' => 30,
+            'Amenadiel\\JpGraph\\Graph\\Axis\\' => 29,
+            'Amenadiel\\JpGraph\\Graph\\' => 24,
+            'Amenadiel\\JpGraph\\' => 18,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -48,6 +61,46 @@ class ComposerStaticInit50a1a37438cf3855f53c8d3c30dfce73
         'BioGuppy\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
+        ),
+        'Amenadiel\\JpGraph\\Util\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/amenadiel/jpgraph/src/util',
+        ),
+        'Amenadiel\\JpGraph\\Themes\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/amenadiel/jpgraph/src/themes',
+        ),
+        'Amenadiel\\JpGraph\\Text\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/amenadiel/jpgraph/src/text',
+        ),
+        'Amenadiel\\JpGraph\\Plot\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/amenadiel/jpgraph/src/plot',
+        ),
+        'Amenadiel\\JpGraph\\Image\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/amenadiel/jpgraph/src/image',
+        ),
+        'Amenadiel\\JpGraph\\Graph\\Tick\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/amenadiel/jpgraph/src/graph/tick',
+        ),
+        'Amenadiel\\JpGraph\\Graph\\Scale\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/amenadiel/jpgraph/src/graph/scale',
+        ),
+        'Amenadiel\\JpGraph\\Graph\\Axis\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/amenadiel/jpgraph/src/graph/axis',
+        ),
+        'Amenadiel\\JpGraph\\Graph\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/amenadiel/jpgraph/src/graph',
+        ),
+        'Amenadiel\\JpGraph\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/amenadiel/jpgraph/src',
         ),
     );
 

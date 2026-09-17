@@ -1,21 +1,4 @@
 <?php
-/**
- * filtroDep.php
- * ------------------------------------------------------------
- * NOTA: este archivo esta LISTO pero actualmente no se usa desde
- * el navegador -- el buscador de Depositos (listDep.php) filtra en
- * el propio navegador con JavaScript (mas rapido, sin ir al
- * servidor, ver el <script> al final de listDep.php), asi que este
- * archivo queda disponible para el dia que se quiera cambiar a un
- * filtro real contra la base de datos (por ejemplo si el catalogo
- * crece mucho y ya no tiene sentido cargarlo completo).
- *
- * Devuelve SOLO las filas <tr> de la tabla (sin el <table> que las
- * envuelve), pensado para inyectarse dentro de un <tbody> ya
- * existente via fetch()/AJAX -- por eso no tiene el
- * "<div class=container-fluid>" ni nada de la pagina completa.
- * $tiposDeposito llega desde DepositosController::filtro().
- */
 ?>
 <?php if ($tiposDeposito && $tiposDeposito->rowCount() > 0): ?>
     <?php while($tipo = $tiposDeposito->fetch(PDO::FETCH_ASSOC)): ?>

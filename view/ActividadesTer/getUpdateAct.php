@@ -1,29 +1,5 @@
 <?php
-  /**
-   * getUpdateAct.php
-   * ------------------------------------------------------------
-   * Formulario de EDICION de una actividad de terreno YA registrada.
-   * Llega aqui desde el lapiz de "Mis actividades" (listMisActividades.php)
-   * -> cargarFormularioModal() pide esta vista por AJAX.
-   *
-   * $actividad llega desde ActividadesTerController::getUpdate() ya
-   * como array asociativo (no como PDOStatement -- ahi si viene
-   * ->fetch()'eado) y con dos verificaciones YA hechas por el
-   * controlador antes de mostrar este formulario:
-   *   1) que el registro exista
-   *   2) que el codusuario del registro sea el mismo que esta en
-   *      sesion (para que un auxiliar no pueda editar actividades
-   *      de otro con solo cambiar el "id" en la URL)
-   *
-   * Como las 4 actividades (Inspeccion/Siembra/Seguimiento/Resiembra)
-   * comparten una sola tabla en la BD pero cada una usa columnas
-   * distintas, aqui abajo se decide -segun el nombre de la
-   * actividad- que bloque de campos mostrar. Asi el formulario de
-   * edicion siempre coincide con el formulario de registro original.
-   */
-  // Segun el tipo de actividad, se muestran unicamente los campos que
-  // le corresponden (los mismos que se usan en cada formulario de registro).
-  $tipo = strtoupper($actividad['nombreactividad']);
+$tipo = strtoupper($actividad['nombreactividad']);
   $esInspeccion  = (strpos($tipo, 'INSPEC') !== false);
   $esSiembra     = (strpos($tipo, 'SIEMBRA') !== false);
   $esSeguimiento = (strpos($tipo, 'SEGUIMIENTO') !== false);
