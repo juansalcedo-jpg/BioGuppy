@@ -33,7 +33,6 @@
             <thead class="table-dark">
               <tr>
                 <th class="ps-4">Nombre</th>
-                <th>Fecha de creación</th>
                 <th class="text-center">Estado</th>
                 <th class="text-center">Editar</th>
                 <th class="text-center">Inhabilitar</th>
@@ -47,7 +46,6 @@
               ?>
               <tr>
                 <td class="ps-4"><?php echo htmlspecialchars($tipo['nombredeposito']); ?></td>
-                <td><?php echo htmlspecialchars($tipo['fechacreacion']); ?></td>
                 <td class="text-center">
                   <?php if ($tipo['estado'] === 'A'): ?>
                     <span class="badge bg-success-subtle text-success-emphasis">Activo</span>
@@ -81,7 +79,7 @@
                 else:
               ?>
               <tr>
-                <td colspan="5" class="text-center text-muted py-5">
+                <td colspan="4" class="text-center text-muted py-5">
                   <i class="bi bi-inbox fs-3 d-block mb-2"></i>
                   No hay tipos de depósito registrados todavía.
                 </td>

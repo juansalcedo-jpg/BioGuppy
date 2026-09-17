@@ -28,7 +28,7 @@ class ActividadesTerController{
 //solo aparecen sitios donde tanto el sitio como su tipo de depósito están activos
     
     private function obtenerDepositosActivos($obj){
-        $sql = "SELECT s.codsitio AS id, s.nombresitio, td.nombredeposito AS tipodeposito
+        $sql = "SELECT s.codsitio AS id, s.nombresitio, td.nombretipodeposito AS tipodeposito
                 FROM tblsitio s
                 INNER JOIN tbltipodeposito td ON td.codtipodeposito = s.codtipodeposito
                 WHERE s.estado = 'A' AND td.estado = 'A'
@@ -253,7 +253,7 @@ class ActividadesTerController{
                     a.codactividad AS id,
                     a.fecha,
                     t.nombreactividad AS tipo_actividad,
-                    td.nombredeposito AS deposito,
+                    td.nombretipodeposito AS deposito,
                     s.nombresitio AS sitio,
                     a.estado
                 FROM tblactividadterreno a
@@ -290,7 +290,7 @@ class ActividadesTerController{
                     a.codactividad AS id,
                     a.fecha,
                     t.nombreactividad AS tipo_actividad,
-                    td.nombredeposito AS deposito,
+                    td.nombretipodeposito AS deposito,
                     s.nombresitio AS sitio,
                     a.estado
                 FROM tblactividadterreno a

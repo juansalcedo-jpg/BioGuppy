@@ -21,9 +21,9 @@ class DepositosController{
 
         $obj = new DepositosModel();
 
-        $sql = "SELECT codtipodeposito AS id, nombredeposito, fechacreacion, estado
+        $sql = "SELECT codtipodeposito AS id, nombretipodeposito, fechacreacion, estado
                 FROM tbltipodeposito
-                ORDER BY nombredeposito ASC";
+                ORDER BY nombretipodeposito ASC";
 
         $tiposDeposito = $this->consultarSeguro($obj, $sql);
 
@@ -50,7 +50,7 @@ class DepositosController{
         }
 
 // valida que no exista ya un tipo de deposito con ese nombre
-        $sqlValidar = "SELECT codtipodeposito FROM tbltipodeposito WHERE nombredeposito ILIKE :nombre";
+        $sqlValidar = "SELECT codtipodeposito FROM tbltipodeposito WHERE nombretipodeposito ILIKE :nombre";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre])->fetch(PDO::FETCH_ASSOC);
 
         if($existe){
@@ -59,7 +59,7 @@ class DepositosController{
             exit();
         }
 
-        $sql = "INSERT INTO public.tbltipodeposito (codtipodeposito, nombredeposito, fechacreacion, estado)
+        $sql = "INSERT INTO public.tbltipodeposito (codtipodeposito, nombretipodeposito, estado)
                 VALUES (DEFAULT, :nombre, DEFAULT, DEFAULT)";
 
         $obj->insert($sql, [':nombre' => strtoupper(trim($nombre))]);
@@ -77,7 +77,8 @@ class DepositosController{
 
         $id = $_GET['id'];
 
-        $sql = "SELECT * FROM tbltipodeposito WHERE codtipodeposito = :id";
+        $sql = "SELECT codtipodeposito, nombretipodeposito AS nombredeposito, estado
+                FROM tbltipodeposito WHERE codtipodeposito = :id";
         $tipoDeposito = $obj->select($sql, [':id' => $id]);
 
         include_once __DIR__ . '/../../../view/Depositos/getUpdateDep.php';
@@ -105,7 +106,7 @@ class DepositosController{
         }
 
 // validando que no exista otro tipo de deposito diferente a este con el mismo nombre
-        $sqlValidar = "SELECT codtipodeposito FROM tbltipodeposito WHERE nombredeposito ILIKE :nombre AND codtipodeposito != :id";
+        $sqlValidar = "SELECT codtipodeposito FROM tbltipodeposito WHERE nombretipodeposito ILIKE :nombre AND codtipodeposito != :id";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre, ':id' => $id])->fetch(PDO::FETCH_ASSOC);
 
         if($existe){
@@ -113,8 +114,8 @@ class DepositosController{
             redirect(getUrl('Depositos','Depositos','getUpdate',['id'=>$id]));
             exit();
         }
-
-        $sql = "UPDATE tbltipodeposito SET nombredeposito = :nombre WHERE codtipodeposito = :id";
+        $sql = "UPDATE tbltipodeposito SET nombretipodeposito = :nombre WHERE codtipodeposito = :id";
+        
         $obj->update($sql, [':nombre' => strtoupper(trim($nombre)), ':id' => $id]);
 
         $_SESSION['exito'] = "El tipo de depósito se actualizó correctamente.";
@@ -159,10 +160,10 @@ class DepositosController{
 
         $buscar = $_GET['buscar'] ?? '';
 
-        $sql = "SELECT codtipodeposito AS id, nombredeposito, fechacreacion, estado
-                FROM tbltipodeposito
-                WHERE nombredeposito ILIKE :buscar
-                ORDER BY nombredeposito ASC";
+        $sql = "SELECT codtipodeposito AS id, nombretipodeposito AS nombredeposito, estado
+        FROM tbltipodeposito
+        WHERE nombretipodeposito ILIKE :buscar
+        ORDER BY nombretipodeposito ASC";
 
         $tiposDeposito = $this->consultarSeguro($obj, $sql, [':buscar' => "%$buscar%"]);
 
