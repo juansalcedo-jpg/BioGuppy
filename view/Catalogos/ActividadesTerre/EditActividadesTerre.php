@@ -1,0 +1,64 @@
+<?php
+$actTerre = $actividad->fetch(PDO::FETCH_ASSOC);
+?>
+<div id="actTerreFormEdicion">
+    <div class="container-fluid py-3">
+        <div class="row justify-content-center">
+            <div class="col-xl-8">
+
+                <div class="mb-4 text-center">
+                    <h4 class="fw-semibold mb-1">Editar actividad de terreno</h4>
+                    <p class="text-muted small mb-0">Actualiza el nombre de la actividad de terreno.</p>
+                </div>
+
+                <form action="<?php echo getUrl('Catalogos', 'ActividadesTerre', 'postUpdateActTerre') ?>" method="post" novalidate>
+                    <input type="hidden" name="codtipoactividad" value="<?php echo $actTerre['codtipoactividad']; ?>">
+
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <span class="fw-semibold">
+                                <i class="bi bi-map-fill me-2 text-primary"></i>Datos de la actividad de terreno
+                            </span>
+                        </div>
+                        <div class="card-body p-4">
+
+                            <div class="mb-3">
+                                <label for="nombreactividad" class="form-label fw-semibold">Nombre de la actividad</label>
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-text bg-light"><i class="bi bi-list-check"></i></span>
+                                    <input type="text" class="form-control" id="nombreactividad" name="nombreactividad"
+                                        value="<?php echo htmlspecialchars($actTerre['nombreactividad']); ?>">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mb-4">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-check-lg me-1"></i>Guardar cambios
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <?php
+    if (isset($_SESSION['error'])) {
+    ?>
+        <div class="row justify-content-center">
+            <div class="col-xl-8">
+                <div class="alert alert-danger d-flex align-items-center mt-3 mb-0" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <div><?php echo $_SESSION['error']; ?></div>
+                </div>
+            </div>
+        </div>
+    <?php
+        unset($_SESSION['error']);
+    }
+    ?>
+</div>

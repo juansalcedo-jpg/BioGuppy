@@ -1,6 +1,6 @@
 <?php
 $dashboardActivo  = in_array($funcion, ['listDashboard']);
-$catalogosActivo  = in_array($funcion, ['listTipoTanque', 'listTipoDeposito', 'listAccionesZoo', 'listTipoActTerreno']);
+$catalogosActivo  = in_array($funcion, ['listTipoTanq', 'listTipoDepo', 'listActZoo', 'listActTerre']);
 ?>
 
 <!-- Dashboard consolidado -->
@@ -23,27 +23,27 @@ $catalogosActivo  = in_array($funcion, ['listTipoTanque', 'listTipoDeposito', 'l
   <div class="collapse <?php echo $catalogosActivo ? 'show' : ''; ?>" id="submenuCatalogos">
     <ul class="list-unstyled ps-4">
       <li>
-        <a class="nav-link <?php echo ($funcion == 'listTipoTanque') ? 'active' : ''; ?>"
-          href="<?php echo getUrl('Catalogos', 'Catalogos', 'listTipoTanque') ?>">
+        <a class="nav-link <?php echo ($funcion == 'listTipoTanq') ? 'active' : ''; ?>"
+          href="<?php echo getUrl('Catalogos', 'TipoTanque', 'listTipoTanq') ?>">
           Tipo de Tanque
         </a>
       </li>
       <li>
-        <a class="nav-link <?php echo ($funcion == 'listTipoDeposito') ? 'active' : ''; ?>"
-          href="<?php echo getUrl('Catalogos', 'Catalogos', 'listTipoDeposito') ?>">
+        <a class="nav-link <?php echo ($funcion == 'listTipoDepo') ? 'active' : ''; ?>"
+          href="<?php echo getUrl('Catalogos', 'TipoDeposito', 'listTipoDepo') ?>">
           Tipo de Depósito
         </a>
       </li>
       <li>
-        <a class="nav-link <?php echo ($funcion == 'listAccionesZoo') ? 'active' : ''; ?>"
-          href="<?php echo getUrl('Catalogos', 'Catalogos', 'listAccionesZoo') ?>">
-          Acciones de Zoocriadero
+        <a class="nav-link <?php echo ($funcion == 'listActZoo') ? 'active' : ''; ?>"
+          href="<?php echo getUrl('Catalogos', 'ActividadesZoo', 'listActZoo') ?>">
+          Actividades Zoocriadero
         </a>
       </li>
       <li>
-        <a class="nav-link <?php echo ($funcion == 'listTipoActTerreno') ? 'active' : ''; ?>"
-          href="<?php echo getUrl('Catalogos', 'Catalogos', 'listTipoActTerreno') ?>">
-          Tipo de Act. de Terreno
+        <a class="nav-link <?php echo ($funcion == 'listActTerre') ? 'active' : ''; ?>"
+          href="<?php echo getUrl('Catalogos', 'ActividadesTerre', 'listActTerre') ?>">
+          Actividades Terreno
         </a>
       </li>
     </ul>

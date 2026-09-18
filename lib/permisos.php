@@ -19,7 +19,7 @@ $GLOBALS['PERMISOS_POR_ROL'] = [
     ],
 
     'Administrador' => [
-        'pares' => ['Dashboard:Dashboard', 'Catalogos:Catalogos'],
+        'pares' => ['Dashboard:Dashboard', 'Catalogos:Catalogos', 'Catalogos:TipoTanque', 'Catalogos:TipoDeposito', 'Catalogos:ActividadesZoo', 'Catalogos:ActividadesTerre'],
     ],
 
     'Coordinador Control Biologico' => [

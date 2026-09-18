@@ -59,13 +59,12 @@ class RolesController{
             exit();
         }
 
-        $sql = "INSERT INTO tblrol (nombrerol, descripcionrol)
-                VALUES (:nombre, :descripcion)
+        $sql = "INSERT INTO tblrol (nombrerol)
+                VALUES (:nombre)
                 RETURNING codrol";
 
         $stmt = $obj->insert($sql, [
-            ':nombre' => $nombreRol,
-            ':descripcion' => trim($descripcionRol) !== '' ? $descripcionRol : null,
+            ':nombre' => $nombreRol
         ]);
 
         $nuevo = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -89,12 +88,68 @@ class RolesController{
 
         $obj = new rolesModel();
 
-        $sql = "SELECT codrol, nombrerol, descripcionrol FROM tblrol ORDER BY codrol ASC";
+        $sql = "SELECT * FROM tblrol ORDER BY codrol ASC";
 
         $resultrol = $obj->select($sql);
 
         include_once __DIR__ . '/../../../view/Roles/listRol.php';
 
+    }
+
+    public function activacion()
+    {
+
+        $obj = new rolesModel();
+
+        $id = $_GET['id'];
+        $estado = $_GET['estado'];
+
+        $sql = "";
+        if ($estado === 'A') {
+            $sql = "UPDATE tblrol SET estado = 'I' WHERE codrol = :id";
+        } else {
+            $sql = "UPDATE tblrol SET estado = 'A' WHERE codrol = :id";
+        }
+
+        $execute = $obj->update($sql, [":id" => $id]);
+
+        if ($execute) {
+
+            $this->registrarBitacora(
+                $obj,
+                'UPDATE',
+                'Roles',
+                $id,
+                $estado === 'A' ? 'Activo' : 'Inactivo',
+                $estado === 'A' ? 'Inactivo' : 'Activo'
+            );
+
+            $_SESSION['exito'] = "Se cambio el estado del rol correctamente.";
+            redirect(getUrl('Roles', 'Roles', 'listRol'));
+            exit();
+        } else {
+            $_SESSION['error'] = "No se cambio el estado del rol correctamente.";
+            redirect(getUrl('Roles', 'Roles', 'listRol'));
+            exit();
+        }
+    }
+
+    public function filtro()
+    {
+
+        $obj = new rolesModel();
+
+        $buscar = $_GET['buscar'];
+
+        $sql = "SELECT nombrerol
+                FROM tblrol
+                WHERE nombreusuario ILIKE :buscar";
+
+        $Roles = $obj->select($sql, [
+            ':buscar' => "%$buscar%"
+        ]);
+
+        include_once __DIR__ . '/../../../view/Roles/filtro.php';
     }
 
 }
