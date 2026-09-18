@@ -57,7 +57,8 @@
                 <th>Usuario</th>
                 <th>Acción</th>
                 <th>Módulo afectado</th>
-                <th>Detalle</th>
+                <th>Antes</th>
+                <th>Después</th>
               </tr>
             </thead>
             <tbody>
@@ -71,14 +72,15 @@
                 <td><?php echo htmlspecialchars($log['usuario']); ?></td>
                 <td><?php echo htmlspecialchars($log['accion']); ?></td>
                 <td><span class="badge text-bg-info-subtle text-info-emphasis rounded-pill"><?php echo htmlspecialchars($log['modulo']); ?></span></td>
-                <td class="text-muted"><?php echo htmlspecialchars($log['detalle']); ?></td>
+                <td class="text-muted"><?php echo !empty($log['valoranterior']) ? htmlspecialchars($log['valoranterior']) : '<span class="text-muted">&mdash;</span>'; ?></td>
+                <td class="text-muted"><?php echo !empty($log['valornuevo']) ? htmlspecialchars($log['valornuevo']) : '<span class="text-muted">&mdash;</span>'; ?></td>
               </tr>
               <?php
                     endwhile;
                 else:
               ?>
               <tr>
-                <td colspan="5" class="text-center text-muted py-5">
+                <td colspan="6" class="text-center text-muted py-5">
                   <i class="bi bi-inbox fs-3 d-block mb-2"></i>
                   No se encontraron registros para los filtros aplicados
                 </td>

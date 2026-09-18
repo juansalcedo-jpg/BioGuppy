@@ -20,7 +20,8 @@ class AuditoriaController{
                     CONCAT(u.nombreusuario, ' ', u.apellidousuario) AS usuario,
                     b.accion,
                     b.tablaafectada AS modulo,
-                    COALESCE(b.valornuevo, b.valoranterior, '') AS detalle
+                    b.valoranterior,
+                    b.valornuevo
                 FROM tblbitacora b
                 INNER JOIN tblusuario u ON u.codusuario = b.codusuario
                 WHERE 1 = 1";

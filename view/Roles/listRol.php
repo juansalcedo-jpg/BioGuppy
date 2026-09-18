@@ -31,6 +31,7 @@
               <tr>
                 <th class="ps-4">Nombre del rol</th>
                 <th class="text-center">Estado</th>
+                <th class="text-center">Permisos</th>
                 <th class="text-center">Editar</th>
                 <th class="text-center">Eliminar</th>
               </tr>
@@ -51,10 +52,16 @@
                       <?php endif; ?>
                     </td>
                     <td class="text-center">
-                      <a href="<?php echo getUrl('Roles', 'Roles', 'editRol', ['id' => $rol['codrol']]) ?>"
-                        class="btn btn-outline-primary btn-icon rounded-circle" title="Editar">
-                        <i class="bi bi-pencil-fill"></i>
+                      <a href="<?php echo getUrl('Roles', 'Roles', 'permisos', ['id' => $rol['codrol']]) ?>"
+                        class="btn btn-outline-primary btn-icon rounded-circle" title="Permisos">
+                        <i class="bi bi-key-fill"></i>
                       </a>
+                    </td>
+                    <td class="text-center">
+                      <button type="button" class="btn btn-outline-primary btn-icon rounded-circle" title="Editar"
+                        onclick="cargarFormularioModal('<?php echo getUrl('Roles', 'Roles', 'editRol', ['id' => $rol['codrol']]) ?>', 'Editar rol', 'rolFormEdicion', '<?php echo getUrl('Roles', 'Roles', 'listRol') ?>', 'tablaRoles')">
+                        <i class="bi bi-pencil-fill"></i>
+                      </button>
                     </td>
                     <td class="text-center">
                       <?php if ($rol['estado'] === 'A'): ?>
@@ -76,7 +83,7 @@
               else:
                 ?>
                 <tr>
-                  <td colspan="4" class="text-center text-muted py-5">
+                  <td colspan="5" class="text-center text-muted py-5">
                     <i class="bi bi-inbox fs-3 d-block mb-2"></i>
                     No hay roles registrados todavía.
                   </td>
