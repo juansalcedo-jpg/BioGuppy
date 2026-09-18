@@ -61,22 +61,21 @@ $(document).ready(function () {
 // ======================================================
 
 const buscadorUsuarios =
-    document.getElementById('buscadorUsuarios');
+    document.getElementById("buscadorUsuarios");
 
 
 if (buscadorUsuarios) {
 
     buscadorUsuarios.addEventListener(
-        'keyup',
+        "keyup",
         function () {
 
-            var filtro =
+            let filtro =
                 this.value.toLowerCase();
-
 
             document
                 .querySelectorAll(
-                    '#tablaUsuarios tbody tr'
+                    "#tablaUsuarios tbody tr"
                 )
                 .forEach(function (fila) {
 
@@ -84,8 +83,8 @@ if (buscadorUsuarios) {
                         fila.textContent
                             .toLowerCase()
                             .includes(filtro)
-                            ? ''
-                            : 'none';
+                            ? ""
+                            : "none";
 
                 });
 
@@ -105,23 +104,22 @@ function enviarFormularioModalPorAjax(
     urlExito
 ) {
 
-    var alerta =
+    let alerta =
         document.getElementById(
-            'modalFormularioAjaxAlerta'
+            "modalFormularioAjaxAlerta"
         );
 
 
-    var datos =
+    let datos =
         new FormData(form);
 
 
-    var boton =
+    let boton =
         form.querySelector(
             'button[type="submit"]'
         );
 
 
-    // Desactivar botón mientras se guarda
     if (boton) {
 
         boton.disabled = true;
@@ -132,25 +130,24 @@ function enviarFormularioModalPorAjax(
     fetch(
         form.action,
         {
-            method: 'POST',
+            method: "POST",
             body: datos
         }
     )
 
-        .then(function (r) {
+        .then(function (respuesta) {
 
-            return r.text();
+            return respuesta.text();
 
         })
 
         .then(function (texto) {
 
-
             // ==================================================
-            // EXTRAER URL DEL REDIRECT DEVUELTO POR PHP
+            // EXTRAER URL DEL REDIRECT
             // ==================================================
 
-            var match =
+            let match =
                 texto.match(
                     /window\.location\.href\s*=\s*'([^']+)'/
                 );
@@ -162,9 +159,8 @@ function enviarFormularioModalPorAjax(
 
                     alerta.innerHTML =
                         '<div class="alert alert-warning mb-3">' +
-                        'No se pudo interpretar la respuesta ' +
-                        'del servidor.' +
-                        '</div>';
+                        "No se pudo interpretar la respuesta del servidor." +
+                        "</div>";
 
                 }
 
@@ -173,17 +169,18 @@ function enviarFormularioModalPorAjax(
             }
 
 
-            var destino = match[1];
+            let destino =
+                match[1];
 
 
             // ==================================================
-            // SI EL REGISTRO O EDICIÓN FUE CORRECTA
+            // REGISTRO CORRECTO
             // ==================================================
 
             if (
                 destino === urlExito ||
-                destino.includes('listUsu') ||
-                destino.includes('listZoo')
+                destino.includes("listUsu") ||
+                destino.includes("listZoo")
             ) {
 
                 window.location.href =
@@ -195,42 +192,40 @@ function enviarFormularioModalPorAjax(
 
 
             // ==================================================
-            // SI PHP DEVUELVE DE NUEVO EL FORMULARIO
-            // SIGNIFICA QUE HUBO ERROR DE VALIDACIÓN
+            // ERROR DE VALIDACIÓN
             // ==================================================
 
             fetch(destino)
 
-                .then(function (r) {
+                .then(function (respuesta) {
 
-                    return r.text();
+                    return respuesta.text();
 
                 })
 
                 .then(function (html) {
 
-                    var parser =
+                    let parser =
                         new DOMParser();
 
 
-                    var doc =
+                    let doc =
                         parser.parseFromString(
                             html,
-                            'text/html'
+                            "text/html"
                         );
 
 
-                    var seccion =
+                    let seccion =
                         doc.getElementById(
                             contenedorId
                         );
 
 
-                    var mensajeError =
+                    let mensajeError =
                         seccion
                             ? seccion.querySelector(
-                                '.alert-danger, ' +
-                                '.alert-warning'
+                                ".alert-danger, .alert-warning"
                             )
                             : null;
 
@@ -240,10 +235,9 @@ function enviarFormularioModalPorAjax(
                         alerta.innerHTML =
                             mensajeError
                                 ? mensajeError.outerHTML
-                                : '<div ' +
-                                'class="alert alert-danger mb-3">' +
-                                'Revisa los datos ingresados.' +
-                                '</div>';
+                                : '<div class="alert alert-danger mb-3">' +
+                                "Revisa los datos ingresados." +
+                                "</div>";
 
                     }
 
@@ -254,11 +248,9 @@ function enviarFormularioModalPorAjax(
                     if (alerta) {
 
                         alerta.innerHTML =
-                            '<div ' +
-                            'class="alert alert-danger mb-3">' +
-                            'Ocurrió un error al procesar ' +
-                            'la validación.' +
-                            '</div>';
+                            '<div class="alert alert-danger mb-3">' +
+                            "Ocurrió un error al procesar la validación." +
+                            "</div>";
 
                     }
 
@@ -271,10 +263,9 @@ function enviarFormularioModalPorAjax(
             if (alerta) {
 
                 alerta.innerHTML =
-                    '<div ' +
-                    'class="alert alert-danger mb-3">' +
-                    'No se pudo conectar con el servidor.' +
-                    '</div>';
+                    '<div class="alert alert-danger mb-3">' +
+                    "No se pudo conectar con el servidor." +
+                    "</div>";
 
             }
 
@@ -302,24 +293,20 @@ function enviarFormularioModalPorAjax(
 // - EDITAR ZOOCRIADERO
 // ======================================================
 
-
 function filtrarBarriosZoocriadero(
     selectComuna
 ) {
 
-    // Código de la comuna seleccionada
     const codComuna =
         String(selectComuna.value);
 
 
-    // Buscar el campo barrio
     const selectBarrio =
         document.getElementById(
             "codbarrio"
         );
 
 
-    // Si no existe el select de barrio
     if (!selectBarrio) {
 
         return;
@@ -327,19 +314,18 @@ function filtrarBarriosZoocriadero(
     }
 
 
-    // Obtener todos los barrios
     const barrios =
         selectBarrio.querySelectorAll(
             "option[data-comuna]"
         );
 
 
-    // Limpiar barrio seleccionado
+    // Limpiar barrio anterior
     selectBarrio.value = "";
 
 
     // ==================================================
-    // SI NO HAY COMUNA SELECCIONADA
+    // SI NO HAY COMUNA
     // ==================================================
 
     if (codComuna === "") {
@@ -362,7 +348,6 @@ function filtrarBarriosZoocriadero(
             function (barrio) {
 
                 barrio.hidden = true;
-
                 barrio.disabled = true;
 
             }
@@ -375,7 +360,7 @@ function filtrarBarriosZoocriadero(
 
 
     // ==================================================
-    // HABILITAR CAMPO BARRIO
+    // HABILITAR BARRIO
     // ==================================================
 
     selectBarrio.disabled = false;
@@ -393,7 +378,7 @@ function filtrarBarriosZoocriadero(
 
 
     // ==================================================
-    // MOSTRAR SOLO LOS BARRIOS DE LA COMUNA
+    // MOSTRAR SOLO BARRIOS DE LA COMUNA
     // ==================================================
 
     barrios.forEach(
@@ -408,18 +393,15 @@ function filtrarBarriosZoocriadero(
 
 
             if (
-                comunaBarrio ===
-                codComuna
+                comunaBarrio === codComuna
             ) {
 
                 barrio.hidden = false;
-
                 barrio.disabled = false;
 
             } else {
 
                 barrio.hidden = true;
-
                 barrio.disabled = true;
 
             }
@@ -432,9 +414,6 @@ function filtrarBarriosZoocriadero(
 
 // ======================================================
 // DETECTAR CAMBIO DE COMUNA
-//
-// SE USA document.addEventListener PORQUE LOS FORMULARIOS
-// DE NUEVO Y EDITAR SE CARGAN DINÁMICAMENTE EN EL MODAL.
 // ======================================================
 
 document.addEventListener(
@@ -442,8 +421,7 @@ document.addEventListener(
     function (event) {
 
         if (
-            event.target.id ===
-            "codcomuna"
+            event.target.id === "codcomuna"
         ) {
 
             filtrarBarriosZoocriadero(
@@ -451,6 +429,673 @@ document.addEventListener(
             );
 
         }
+
+    }
+);
+
+
+// ======================================================
+// REPORTES ZOOCRIADERO
+// ======================================================
+// ESTA FUNCIÓN ENVÍA EL FORMULARIO SIN RECARGAR
+// ======================================================
+
+function generarReporteZoo(
+    event,
+    formulario
+) {
+
+    if (event) {
+
+        event.preventDefault();
+
+    }
+
+
+    // Evita enviar dos veces si existe
+    // también un onsubmit en el HTML.
+    if (
+        formulario.dataset.enviandoReporte === "1"
+    ) {
+
+        return false;
+
+    }
+
+
+    formulario.dataset.enviandoReporte =
+        "1";
+
+
+    const boton =
+        formulario.querySelector(
+            'button[type="submit"]'
+        );
+
+
+    const resultado =
+        document.getElementById(
+            "resultadoReporte"
+        );
+
+
+    const alerta =
+        document.getElementById(
+            "alertaReporte"
+        );
+
+
+    if (alerta) {
+
+        alerta.innerHTML = "";
+
+    }
+
+
+    if (boton) {
+
+        boton.disabled = true;
+
+    }
+
+
+    // ==================================================
+    // AJAX
+    // ==================================================
+
+    $.ajax({
+
+        url: formulario.action,
+
+        type: "POST",
+
+        data: new FormData(formulario),
+
+        processData: false,
+
+        contentType: false,
+
+        dataType: "json",
+
+
+        // ==================================================
+        // RESPUESTA CORRECTA
+        // ==================================================
+
+        success: function (respuesta) {
+
+            // ==============================================
+            // ERROR DE VALIDACIÓN
+            // ==============================================
+
+            if (!respuesta.ok) {
+
+                if (alerta) {
+
+                    alerta.innerHTML =
+                        '<div class="alert alert-danger">' +
+                        respuesta.mensaje +
+                        "</div>";
+
+                }
+
+                return;
+
+            }
+
+
+            let html = "";
+
+
+            // ==================================================
+            // 1. SEGUIMIENTO DE ACTIVIDADES
+            // ==================================================
+
+            if (
+                respuesta.tipo === "seguimiento"
+            ) {
+
+                html +=
+                    '<div class="card border-0 shadow-sm">' +
+
+                    '<div class="card-header bg-white border-bottom py-3">' +
+
+                    '<div class="d-flex align-items-center">' +
+
+                    '<i class="bi bi-file-earmark-text text-primary me-2"></i>' +
+
+                    '<span class="fw-semibold">' +
+                    "Resultados: " +
+                    respuesta.titulo +
+                    "</span>" +
+
+                    "</div>" +
+
+                    "</div>" +
+
+
+                    '<div class="table-responsive">' +
+
+                    '<table class="table table-striped align-middle mb-0">' +
+
+                    '<thead class="table-dark">' +
+
+                    "<tr>" +
+
+                    '<th class="ps-4">Fecha</th>' +
+
+                    "<th>Tipo</th>" +
+
+                    "<th>Tanque</th>" +
+
+                    "<th>Responsable</th>" +
+
+                    "<th>Observaciones</th>" +
+
+                    '<th class="text-center">Estado</th>' +
+
+                    "</tr>" +
+
+                    "</thead>" +
+
+                    "<tbody>";
+
+
+                // ==========================================
+                // SIN REGISTROS
+                // ==========================================
+
+                if (
+                    respuesta.datos.length === 0
+                ) {
+
+                    html +=
+                        "<tr>" +
+
+                        '<td colspan="6" ' +
+                        'class="text-center text-muted py-5">' +
+
+                        '<i class="bi bi-inbox fs-3 d-block mb-2"></i>' +
+
+                        "No se encontraron registros para la consulta seleccionada." +
+
+                        "</td>" +
+
+                        "</tr>";
+
+                } else {
+
+
+                    // ======================================
+                    // MOSTRAR REGISTROS
+                    // ======================================
+
+                    respuesta.datos.forEach(
+                        function (fila) {
+
+                            let estado = "";
+
+
+                            if (
+                                fila.estado === "A"
+                            ) {
+
+                                estado =
+                                    '<span class="badge bg-success">' +
+                                    "Activo" +
+                                    "</span>";
+
+                            } else {
+
+                                estado =
+                                    '<span class="badge bg-danger">' +
+                                    "Inactivo" +
+                                    "</span>";
+
+                            }
+
+
+                            html +=
+                                "<tr>" +
+
+                                '<td class="ps-4">' +
+                                fila.fecha +
+                                "</td>" +
+
+                                "<td>" +
+                                fila.tipo +
+                                "</td>" +
+
+                                "<td>" +
+                                fila.tanque +
+                                "</td>" +
+
+                                "<td>" +
+                                fila.responsable +
+                                "</td>" +
+
+                                "<td>" +
+                                fila.observaciones +
+                                "</td>" +
+
+                                '<td class="text-center">' +
+                                estado +
+                                "</td>" +
+
+                                "</tr>";
+
+                        }
+                    );
+
+                }
+
+
+                html +=
+                    "</tbody>" +
+                    "</table>" +
+                    "</div>" +
+                    "</div>";
+
+            }
+
+
+            // ==================================================
+            // 2. NACIDOS Y MUERTOS POR TANQUE
+            // ==================================================
+
+            if (
+                respuesta.tipo === "mortalidad"
+            ) {
+
+                html +=
+                    '<div class="card border-0 shadow-sm">' +
+
+                    '<div class="card-header bg-white border-bottom py-3">' +
+
+                    '<div class="d-flex align-items-center">' +
+
+                    '<i class="bi bi-file-earmark-text text-primary me-2"></i>' +
+
+                    '<span class="fw-semibold">' +
+                    "Resultados: " +
+                    respuesta.titulo +
+                    "</span>" +
+
+                    "</div>" +
+
+                    "</div>" +
+
+
+                    '<div class="table-responsive">' +
+
+                    '<table class="table table-striped align-middle mb-0">' +
+
+                    '<thead class="table-dark">' +
+
+                    "<tr>" +
+
+                    '<th class="ps-4">Fecha</th>' +
+
+                    "<th>Zoocriadero</th>" +
+
+                    "<th>Tanque</th>" +
+
+                    "<th>Nacidos</th>" +
+
+                    "<th>Muertos</th>" +
+
+                    "<th>Responsable</th>" +
+
+                    '<th class="text-center">Estado</th>' +
+
+                    "</tr>" +
+
+                    "</thead>" +
+
+                    "<tbody>";
+
+
+                // ==========================================
+                // SIN REGISTROS
+                // ==========================================
+
+                if (
+                    respuesta.datos.length === 0
+                ) {
+
+                    html +=
+                        "<tr>" +
+
+                        '<td colspan="7" ' +
+                        'class="text-center text-muted py-5">' +
+
+                        '<i class="bi bi-inbox fs-3 d-block mb-2"></i>' +
+
+                        "No se encontraron registros para la consulta seleccionada." +
+
+                        "</td>" +
+
+                        "</tr>";
+
+                } else {
+
+
+                    // ======================================
+                    // MOSTRAR REGISTROS
+                    // ======================================
+
+                    respuesta.datos.forEach(
+                        function (fila) {
+
+                            let estado = "";
+
+
+                            if (
+                                fila.estado === "A"
+                            ) {
+
+                                estado =
+                                    '<span class="badge bg-success">' +
+                                    "Activo" +
+                                    "</span>";
+
+                            } else {
+
+                                estado =
+                                    '<span class="badge bg-danger">' +
+                                    "Inactivo" +
+                                    "</span>";
+
+                            }
+
+
+                            html +=
+                                "<tr>" +
+
+                                '<td class="ps-4">' +
+                                fila.fecha +
+                                "</td>" +
+
+                                "<td>" +
+                                fila.zoocriadero +
+                                "</td>" +
+
+                                "<td>" +
+                                fila.tanque +
+                                "</td>" +
+
+                                "<td>" +
+                                fila.nacidos +
+                                "</td>" +
+
+                                "<td>" +
+                                fila.muertos +
+                                "</td>" +
+
+                                "<td>" +
+                                fila.responsable +
+                                "</td>" +
+
+                                '<td class="text-center">' +
+                                estado +
+                                "</td>" +
+
+                                "</tr>";
+
+                        }
+                    );
+
+                }
+
+
+                html +=
+                    "</tbody>" +
+                    "</table>" +
+                    "</div>" +
+                    "</div>";
+
+            }
+
+
+            // ==================================================
+            // 3. TANQUES POR ZOOCRIADERO
+            // ==================================================
+
+            if (
+                respuesta.tipo === "tanques"
+            ) {
+
+                html +=
+                    '<div class="card border-0 shadow-sm">' +
+
+                    '<div class="card-header bg-white border-bottom py-3">' +
+
+                    '<div class="d-flex align-items-center">' +
+
+                    '<i class="bi bi-file-earmark-text text-primary me-2"></i>' +
+
+                    '<span class="fw-semibold">' +
+                    "Resultados: " +
+                    respuesta.titulo +
+                    "</span>" +
+
+                    "</div>" +
+
+                    "</div>" +
+
+
+                    '<div class="table-responsive">' +
+
+                    '<table class="table table-striped align-middle mb-0">' +
+
+                    '<thead class="table-dark">' +
+
+                    "<tr>" +
+
+                    '<th class="ps-4">Fecha</th>' +
+
+                    "<th>Zoocriadero</th>" +
+
+                    "<th>Tanque</th>" +
+
+                    "<th>Tipo</th>" +
+
+                    "<th>Capacidad</th>" +
+
+                    '<th class="text-center">Estado</th>' +
+
+                    "</tr>" +
+
+                    "</thead>" +
+
+                    "<tbody>";
+
+
+                // ==========================================
+                // SIN REGISTROS
+                // ==========================================
+
+                if (
+                    respuesta.datos.length === 0
+                ) {
+
+                    html +=
+                        "<tr>" +
+
+                        '<td colspan="6" ' +
+                        'class="text-center text-muted py-5">' +
+
+                        '<i class="bi bi-inbox fs-3 d-block mb-2"></i>' +
+
+                        "No se encontraron registros para la consulta seleccionada." +
+
+                        "</td>" +
+
+                        "</tr>";
+
+                } else {
+
+
+                    // ======================================
+                    // MOSTRAR REGISTROS
+                    // ======================================
+
+                    respuesta.datos.forEach(
+                        function (fila) {
+
+                            let estado = "";
+
+
+                            if (
+                                fila.estado === "A"
+                            ) {
+
+                                estado =
+                                    '<span class="badge bg-success">' +
+                                    "Activo" +
+                                    "</span>";
+
+                            } else {
+
+                                estado =
+                                    '<span class="badge bg-danger">' +
+                                    "Inactivo" +
+                                    "</span>";
+
+                            }
+
+
+                            html +=
+                                "<tr>" +
+
+                                '<td class="ps-4">' +
+                                fila.fecha +
+                                "</td>" +
+
+                                "<td>" +
+                                fila.zoocriadero +
+                                "</td>" +
+
+                                "<td>" +
+                                fila.tanque +
+                                "</td>" +
+
+                                "<td>" +
+                                fila.tipo +
+                                "</td>" +
+
+                                "<td>" +
+                                fila.capacidad +
+                                " L" +
+                                "</td>" +
+
+                                '<td class="text-center">' +
+                                estado +
+                                "</td>" +
+
+                                "</tr>";
+
+                        }
+                    );
+
+                }
+
+
+                html +=
+                    "</tbody>" +
+                    "</table>" +
+                    "</div>" +
+                    "</div>";
+
+            }
+
+
+            // ==================================================
+            // INSERTAR TABLA EN LA PÁGINA
+            // ==================================================
+
+            if (resultado) {
+
+                resultado.innerHTML =
+                    html;
+
+            }
+
+        },
+
+
+        // ==================================================
+        // ERROR
+        // ==================================================
+
+        error: function (
+            xhr,
+            status,
+            error
+        ) {
+
+            console.log(
+                xhr.responseText
+            );
+
+
+            if (alerta) {
+
+                alerta.innerHTML =
+                    '<div class="alert alert-danger">' +
+                    "Ocurrió un error al generar el reporte." +
+                    "</div>";
+
+            }
+
+        },
+
+
+        // ==================================================
+        // TERMINÓ LA PETICIÓN
+        // ==================================================
+
+        complete: function () {
+
+            formulario.dataset.enviandoReporte =
+                "0";
+
+
+            if (boton) {
+
+                boton.disabled = false;
+
+            }
+
+        }
+
+    });
+
+
+    return false;
+
+}
+
+
+// ======================================================
+// DETECTAR ENVÍO DEL FORMULARIO DE REPORTES
+// ======================================================
+// FUNCIONA AUNQUE EL FORMULARIO SE CARGUE DESPUÉS.
+// ======================================================
+
+$(document).on(
+    "submit",
+    "#formGenerarReporte",
+    function (event) {
+
+        event.preventDefault();
+
+        generarReporteZoo(
+            event,
+            this
+        );
+
+        return false;
 
     }
 );
