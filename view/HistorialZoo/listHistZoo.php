@@ -1,3 +1,4 @@
+
 <div class="container-fluid py-2">
   <div class="row justify-content-center">
     <div class="col-xl-11">
@@ -21,17 +22,25 @@
           </div>
 
           <!-- FORMULARIO DE FILTROS -->
-          <form id="formFiltroHistorial" action="<?php echo getUrl('HistorialZoo', 'HistorialZoo', 'filtro', false, 'ajax'); ?>" method="POST">
+          <!-- OJO: en un form method="GET" el navegador ignora el ?... del action
+               y arma la query solo con los campos del form. Por eso modulo/controlador/funcion
+               van como inputs ocultos y no como parte de la URL. -->
+          <form id="formFiltroHistorial" action="index.php" method="GET">
+            <input type="hidden" name="modulo" value="HistorialZoo">
+            <input type="hidden" name="controlador" value="HistorialZoo">
+            <input type="hidden" name="funcion" value="listHistZoo">
             <div class="row g-2 align-items-end">
 
               <div class="col-6 col-md-2">
                 <label for="fechaDesde" class="form-label small text-muted mb-1">Desde</label>
-                <input type="date" id="fechaDesde" name="fechaDesde" class="form-control form-control-sm">
+                <input type="date" id="fechaDesde" name="fechaDesde" class="form-control form-control-sm"
+                       value="<?php echo htmlspecialchars($_GET['fechaDesde'] ?? ''); ?>">
               </div>
 
               <div class="col-6 col-md-2">
                 <label for="fechaHasta" class="form-label small text-muted mb-1">Hasta</label>
-                <input type="date" id="fechaHasta" name="fechaHasta" class="form-control form-control-sm">
+                <input type="date" id="fechaHasta" name="fechaHasta" class="form-control form-control-sm"
+                       value="<?php echo htmlspecialchars($_GET['fechaHasta'] ?? ''); ?>">
               </div>
 
               <div class="col-12 col-md-3">
@@ -40,7 +49,10 @@
                   <option value="">Todos</option>
                   <?php if (isset($zoocriaderos) && $zoocriaderos): ?>
                     <?php while ($z = $zoocriaderos->fetch(PDO::FETCH_ASSOC)): ?>
-                      <option value="<?php echo $z['codzoocriadero']; ?>"><?php echo htmlspecialchars($z['nombrezoocriadero']); ?></option>
+                      <option value="<?php echo $z['codzoocriadero']; ?>"
+                        <?php echo (($_GET['codzoocriadero'] ?? '') == $z['codzoocriadero']) ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($z['nombrezoocriadero']); ?>
+                      </option>
                     <?php endwhile; ?>
                   <?php endif; ?>
                 </select>
@@ -52,7 +64,10 @@
                   <option value="">Todos</option>
                   <?php if (isset($tiposActividad) && $tiposActividad): ?>
                     <?php while ($tipo = $tiposActividad->fetch(PDO::FETCH_ASSOC)): ?>
-                      <option value="<?php echo $tipo['codtipoactividad']; ?>"><?php echo htmlspecialchars($tipo['nombreactividad']); ?></option>
+                      <option value="<?php echo $tipo['codtipoactividad']; ?>"
+                        <?php echo (($_GET['codtipoactividad'] ?? '') == $tipo['codtipoactividad']) ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($tipo['nombreactividad']); ?>
+                      </option>
                     <?php endwhile; ?>
                   <?php endif; ?>
                 </select>
