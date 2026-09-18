@@ -84,7 +84,7 @@
 
 
             <!-- ========================================== -->
-            <!-- COMUNA - BARRIO - ENCARGADO -->
+            <!-- COMUNA - BARRIO - AUXILIAR -->
             <!-- ========================================== -->
 
             <div class="row g-3 mt-2">
@@ -117,12 +117,13 @@
                         if (isset($comunas)) {
 
                             while (
-                                $comuna = $comunas->fetch(PDO::FETCH_ASSOC)
+                                $comuna =
+                                    $comunas->fetch(PDO::FETCH_ASSOC)
                             ) {
 
-                                $comunaSeleccionada =
-                                    $comuna['codcomuna'] ==
-                                    $zoocriadero['codcomuna'];
+                                $seleccionada =
+                                    $comuna['codcomuna']
+                                    == $zoocriadero['codcomuna'];
 
                         ?>
 
@@ -133,7 +134,7 @@
                                     );
                                 ?>"
                                 <?php
-                                    if ($comunaSeleccionada) {
+                                    if ($seleccionada) {
                                         echo 'selected';
                                     }
                                 ?>
@@ -187,16 +188,17 @@
                         if (isset($barrios)) {
 
                             while (
-                                $barrio = $barrios->fetch(PDO::FETCH_ASSOC)
+                                $barrio =
+                                    $barrios->fetch(PDO::FETCH_ASSOC)
                             ) {
 
                                 $barrioSeleccionado =
-                                    $barrio['codbarrio'] ==
-                                    $zoocriadero['codbarrio'];
+                                    $barrio['codbarrio']
+                                    == $zoocriadero['codbarrio'];
 
-                                $perteneceComuna =
-                                    $barrio['codcomuna'] ==
-                                    $zoocriadero['codcomuna'];
+                                $mismaComuna =
+                                    $barrio['codcomuna']
+                                    == $zoocriadero['codcomuna'];
 
                         ?>
 
@@ -214,15 +216,19 @@
                                 ?>"
 
                                 <?php
-                                    if ($barrioSeleccionado) {
-                                        echo 'selected';
-                                    }
+
+                                if ($barrioSeleccionado) {
+                                    echo 'selected';
+                                }
+
                                 ?>
 
                                 <?php
-                                    if (!$perteneceComuna) {
-                                        echo 'hidden disabled';
-                                    }
+
+                                if (!$mismaComuna) {
+                                    echo 'hidden disabled';
+                                }
+
                                 ?>
                             >
 
@@ -247,29 +253,80 @@
                 </div>
 
 
-                <!-- ENCARGADO -->
+                <!-- AUXILIAR ENCARGADO -->
                 <div class="col-md-4">
 
                     <label
                         for="encargado"
                         class="form-label fw-semibold"
                     >
-                        Encargado *
+                        Auxiliar Encargado *
                     </label>
 
-                    <input
-                        type="text"
-                        class="form-control"
+                    <select
+                        class="form-select"
                         id="encargado"
                         name="encargado"
-                        value="<?php
-                            echo htmlspecialchars(
-                                $zoocriadero['auxencargado'] ?? ''
-                            );
-                        ?>"
-                        placeholder="Nombre del encargado"
                         required
                     >
+
+                        <option value="">
+                            Seleccione un auxiliar...
+                        </option>
+
+
+                        <?php
+
+                        if (isset($auxiliares)) {
+
+                            while (
+                                $auxiliar =
+                                    $auxiliares->fetch(PDO::FETCH_ASSOC)
+                            ) {
+
+                                $nombreCompleto =
+                                    $auxiliar['nombreusuario']
+                                    . ' '
+                                    . $auxiliar['apellidousuario'];
+
+                                $auxiliarSeleccionado =
+                                    $auxiliar['codusuario']
+                                    == $zoocriadero['codusuario'];
+
+                        ?>
+
+                            <option
+                                value="<?php
+                                    echo htmlspecialchars(
+                                        $auxiliar['codusuario']
+                                    );
+                                ?>"
+                                <?php
+
+                                if ($auxiliarSeleccionado) {
+                                    echo 'selected';
+                                }
+
+                                ?>
+                            >
+
+                                <?php
+                                    echo htmlspecialchars(
+                                        $nombreCompleto
+                                    );
+                                ?>
+
+                            </option>
+
+                        <?php
+
+                            }
+
+                        }
+
+                        ?>
+
+                    </select>
 
                 </div>
 
