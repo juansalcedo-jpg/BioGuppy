@@ -42,7 +42,6 @@ class RolesController{
 
         $nombreRol = $_POST['nombreRol'] ?? '';
         $descripcionRol = $_POST['descripcionRol'] ?? '';
-        // $_POST['permisos'] llega del formulario pero no se guarda: no hay tabla de permisos.
 
         if(empty(trim($nombreRol))){
             $_SESSION['error'] = "El nombre del rol es obligatorio.";
