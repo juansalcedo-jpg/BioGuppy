@@ -40,7 +40,8 @@
                 <div class="d-flex align-items-center gap-2">
                   <div class="input-group input-group-sm" style="width: 220px;">
                     <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
-                    <input type="text" id="buscadorComunas" class="form-control" placeholder="Buscar comuna...">
+                    <input type="text" id="buscadorComunas" class="form-control" placeholder="Buscar comuna..."
+                           data-url="<?php echo getUrl('Parametros','Parametros','filtroComuna', false, 'ajax'); ?>">
                   </div>
                   <button type="button" class="btn btn-primary btn-sm"
                           onclick="cargarFormularioModal('<?php echo getUrl('Parametros','Parametros','createComuna') ?>',
@@ -55,6 +56,7 @@
                     <tr>
                       <th class="ps-4">Nombre</th>
                       <th class="text-center">Estado</th>
+                      <th class="text-center">Editar</th>
                       <th class="text-center">Inhabilitar</th>
                     </tr>
                   </thead>
@@ -72,6 +74,12 @@
                         <?php else: ?>
                           <span class="badge bg-secondary-subtle text-secondary-emphasis">Inactivo</span>
                         <?php endif; ?>
+                      </td>
+                      <td class="text-center">
+                        <button type="button" class="btn btn-outline-primary btn-icon rounded-circle" title="Editar"
+                                onclick="cargarFormularioModal('<?php echo getUrl('Parametros','Parametros','getUpdateComuna',array('id'=>$comuna['id'])) ?>', 'Editar comuna', 'comunaFormEdicion', '<?php echo getUrl('Parametros','Parametros','listParametros') ?>', 'tablaComunas')">
+                          <i class="bi bi-pencil-fill"></i>
+                        </button>
                       </td>
                       <td class="text-center">
                         <?php if ($comuna['estado'] === 'A'): ?>
@@ -93,7 +101,7 @@
                       else:
                     ?>
                     <tr>
-                      <td colspan="3" class="text-center text-muted py-5">
+                      <td colspan="4" class="text-center text-muted py-5">
                         <i class="bi bi-inbox fs-3 d-block mb-2"></i>
                         No hay comunas registradas todavía.
                       </td>
@@ -113,7 +121,8 @@
                 <div class="d-flex align-items-center gap-2">
                   <div class="input-group input-group-sm" style="width: 220px;">
                     <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
-                    <input type="text" id="buscadorBarrios" class="form-control" placeholder="Buscar barrio...">
+                    <input type="text" id="buscadorBarrios" class="form-control" placeholder="Buscar barrio..."
+                           data-url="<?php echo getUrl('Parametros','Parametros','filtroBarrio', false, 'ajax'); ?>">
                   </div>
                   <button type="button" class="btn btn-primary btn-sm"
                           onclick="cargarFormularioModal('<?php echo getUrl('Parametros','Parametros','createBarrio') ?>',
@@ -129,6 +138,7 @@
                       <th class="ps-4">Nombre</th>
                       <th>Comuna</th>
                       <th class="text-center">Estado</th>
+                      <th class="text-center">Editar</th>
                       <th class="text-center">Inhabilitar</th>
                     </tr>
                   </thead>
@@ -147,6 +157,12 @@
                         <?php else: ?>
                           <span class="badge bg-secondary-subtle text-secondary-emphasis">Inactivo</span>
                         <?php endif; ?>
+                      </td>
+                      <td class="text-center">
+                        <button type="button" class="btn btn-outline-primary btn-icon rounded-circle" title="Editar"
+                                onclick="cargarFormularioModal('<?php echo getUrl('Parametros','Parametros','getUpdateBarrio',array('id'=>$barrio['id'])) ?>', 'Editar barrio', 'barrioFormEdicion', '<?php echo getUrl('Parametros','Parametros','listParametros') ?>', 'tablaBarrios')">
+                          <i class="bi bi-pencil-fill"></i>
+                        </button>
                       </td>
                       <td class="text-center">
                         <?php if ($barrio['estado'] === 'A'): ?>
@@ -168,7 +184,7 @@
                       else:
                     ?>
                     <tr>
-                      <td colspan="4" class="text-center text-muted py-5">
+                      <td colspan="5" class="text-center text-muted py-5">
                         <i class="bi bi-inbox fs-3 d-block mb-2"></i>
                         No hay barrios registrados todavía.
                       </td>

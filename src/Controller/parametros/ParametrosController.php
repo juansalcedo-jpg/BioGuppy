@@ -108,6 +108,95 @@ class ParametrosController{
 
     }
 
+    // formulario de edicion de comuna
+    public function getUpdateComuna(){
+
+        $obj = new ParametrosModel();
+
+        $id = $_GET['id'] ?? null;
+
+        if(empty($id)){
+            $_SESSION['error'] = "Comuna no válida.";
+            redirect(getUrl('Parametros','Parametros','listParametros'));
+            exit();
+        }
+
+        $comuna = $obj->select("SELECT codcomuna, nombrecomuna, estado FROM tblcomuna WHERE codcomuna = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
+
+        if($comuna){
+            $comuna['numero'] = preg_replace('/[^0-9]/', '', $comuna['nombrecomuna']);
+        }
+
+        if(!$comuna){
+            $_SESSION['error'] = "Comuna no válida.";
+            redirect(getUrl('Parametros','Parametros','listParametros'));
+            exit();
+        }
+
+        include_once __DIR__ . '/../../../view/parametrosSistema/editComuna.php';
+
+    }
+
+    // guardar edicion de comuna
+    public function postUpdateComuna(){
+
+        $obj = new ParametrosModel();
+
+        $id = $_POST['codcomuna'] ?? null;
+        $numero = trim($_POST['numero_comuna'] ?? '');
+
+        if(empty($id)){
+            $_SESSION['error'] = "Comuna no válida.";
+            redirect(getUrl('Parametros','Parametros','listParametros'));
+            exit();
+        }
+
+        if(empty($numero) || !ctype_digit($numero) || (int)$numero <= 0){
+            $_SESSION['error'] = "Ingresa un número de comuna válido.";
+            redirect(getUrl('Parametros','Parametros','getUpdateComuna',['id'=>$id]));
+            exit();
+        }
+
+        $nombre = "Comuna " . (int)$numero;
+
+        $sqlValidar = "SELECT codcomuna FROM tblcomuna WHERE nombrecomuna ILIKE :nombre AND codcomuna != :id";
+        $existe = $obj->select($sqlValidar, [':nombre' => $nombre, ':id' => $id])->fetch(PDO::FETCH_ASSOC);
+
+        if($existe){
+            $_SESSION['error'] = "Ya existe otra comuna con ese número.";
+            redirect(getUrl('Parametros','Parametros','getUpdateComuna',['id'=>$id]));
+            exit();
+        }
+
+        $obj->update("UPDATE tblcomuna SET nombrecomuna = :nombre WHERE codcomuna = :id", [
+            ':nombre' => $nombre,
+            ':id' => $id,
+        ]);
+
+        $_SESSION['exito'] = "La comuna se actualizó correctamente.";
+        redirect(getUrl('Parametros','Parametros','listParametros'));
+        exit();
+
+    }
+
+    // buscador de comunas
+    public function filtroComuna(){
+
+        $obj = new ParametrosModel();
+
+        $buscar = $_GET['buscar'] ?? '';
+
+        $sql = "SELECT codcomuna AS id, nombrecomuna, estado
+                FROM tblcomuna
+                WHERE nombrecomuna ILIKE :buscar
+                ORDER BY nombrecomuna ASC";
+
+        $resultComunas = $this->consultarSeguro($obj, $sql, [':buscar' => "%$buscar%"]);
+
+        include_once __DIR__ . '/../../../view/parametrosSistema/filtroComuna.php';
+
+    }
+
     // ---------------------------------------------------------------
     // BARRIOS
     // ---------------------------------------------------------------
@@ -183,6 +272,98 @@ class ParametrosController{
         $_SESSION['exito'] = "El estado del barrio se actualizó correctamente.";
         redirect(getUrl('Parametros','Parametros','listParametros'));
         exit();
+
+    }
+
+    // formulario de edicion de barrio
+    public function getUpdateBarrio(){
+
+        $obj = new ParametrosModel();
+
+        $id = $_GET['id'] ?? null;
+
+        if(empty($id)){
+            $_SESSION['error'] = "Barrio no válido.";
+            redirect(getUrl('Parametros','Parametros','listParametros'));
+            exit();
+        }
+
+        $barrio = $obj->select("SELECT codbarrio, codcomuna, nombrebarrio, estado FROM tblbarrio WHERE codbarrio = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
+
+        if(!$barrio){
+            $_SESSION['error'] = "Barrio no válido.";
+            redirect(getUrl('Parametros','Parametros','listParametros'));
+            exit();
+        }
+
+        $sqlComunas = "SELECT codcomuna, nombrecomuna FROM tblcomuna WHERE estado = 'A' ORDER BY nombrecomuna ASC";
+        $resultComunas = $this->consultarSeguro($obj, $sqlComunas);
+
+        include_once __DIR__ . '/../../../view/parametrosSistema/editBarrio.php';
+
+    }
+
+    // guardar edicion de barrio
+    public function postUpdateBarrio(){
+
+        $obj = new ParametrosModel();
+
+        $id = $_POST['codbarrio'] ?? null;
+        $codcomuna = $_POST['codcomuna'] ?? null;
+        $nombre = $_POST['nombre_barrio'] ?? '';
+
+        if(empty($id)){
+            $_SESSION['error'] = "Barrio no válido.";
+            redirect(getUrl('Parametros','Parametros','listParametros'));
+            exit();
+        }
+
+        if(empty(trim($codcomuna)) || empty(trim($nombre))){
+            $_SESSION['error'] = "La comuna y el nombre del barrio son obligatorios.";
+            redirect(getUrl('Parametros','Parametros','getUpdateBarrio',['id'=>$id]));
+            exit();
+        }
+
+        $sqlValidar = "SELECT codbarrio FROM tblbarrio WHERE nombrebarrio ILIKE :nombre AND codcomuna = :codcomuna AND codbarrio != :id";
+        $existe = $obj->select($sqlValidar, [':nombre' => $nombre, ':codcomuna' => $codcomuna, ':id' => $id])->fetch(PDO::FETCH_ASSOC);
+
+        if($existe){
+            $_SESSION['error'] = "Ya existe otro barrio con ese nombre en esa comuna.";
+            redirect(getUrl('Parametros','Parametros','getUpdateBarrio',['id'=>$id]));
+            exit();
+        }
+
+        $sql = "UPDATE tblbarrio SET codcomuna = :codcomuna, nombrebarrio = :nombre WHERE codbarrio = :id";
+
+        $obj->update($sql, [
+            ':codcomuna' => $codcomuna,
+            ':nombre' => strtoupper(trim($nombre)),
+            ':id' => $id,
+        ]);
+
+        $_SESSION['exito'] = "El barrio se actualizó correctamente.";
+        redirect(getUrl('Parametros','Parametros','listParametros'));
+        exit();
+
+    }
+
+    // buscador de barrios
+    public function filtroBarrio(){
+
+        $obj = new ParametrosModel();
+
+        $buscar = $_GET['buscar'] ?? '';
+
+        $sql = "SELECT b.codbarrio AS id, b.nombrebarrio, b.estado,
+                       c.codcomuna, c.nombrecomuna
+                FROM tblbarrio b
+                INNER JOIN tblcomuna c ON c.codcomuna = b.codcomuna
+                WHERE b.nombrebarrio ILIKE :buscar OR c.nombrecomuna ILIKE :buscar
+                ORDER BY b.nombrebarrio ASC";
+
+        $resultBarrios = $this->consultarSeguro($obj, $sql, [':buscar' => "%$buscar%"]);
+
+        include_once __DIR__ . '/../../../view/parametrosSistema/filtroBarrio.php';
 
     }
 

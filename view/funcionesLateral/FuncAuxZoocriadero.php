@@ -2,7 +2,6 @@
 $ActividadAbierto = (
   $funcion == 'Alimentacion' ||
   $funcion == 'NacidosMuertos' ||
-  $funcion == 'Parametros' ||
   $funcion == 'Limpieza' ||
   $funcion == 'AjusteNivel' ||
   $funcion == 'Lavado'
@@ -40,12 +39,6 @@ $ActividadesListZoo = ($funcion == 'ActividadesListZoo');
         <a class="nav-link <?php echo ($funcion == 'NacidosMuertos') ? 'active' : ''; ?>"
           href="<?php echo getUrl('ActividadesZoo', 'NacidosMuertos', 'NacidosMuertos') ?>">
           <i class="bi bi-heart-pulse me-2"></i> Nacidos / Muertos
-        </a>
-      </li>
-      <li>
-        <a class="nav-link <?php echo ($funcion == 'Parametros') ? 'active' : ''; ?>"
-          href="<?php echo getUrl('ActividadesZoo', 'Parametros', 'Parametros') ?>">
-          <i class="bi bi-thermometer-half me-2"></i> Parámetros fisicoquímicos
         </a>
       </li>
       <li>

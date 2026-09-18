@@ -86,7 +86,7 @@ class ZoocriaderoController
                           INNER JOIN tblrol r
                               ON r.codrol = u.codrol
 
-                          WHERE r.codrol = 4
+                          WHERE r.nombrerol = 'Auxiliar Zoocriadero'
                           AND u.estado = 'A'
                           AND r.estado = 'A'
 
@@ -235,7 +235,7 @@ class ZoocriaderoController
                             ON r.codrol = u.codrol
 
                         WHERE u.codusuario = :codusuario
-                        AND r.codrol = 4
+                        AND r.nombrerol = 'Auxiliar Zoocriadero'
                         AND u.estado = 'A'
                         AND r.estado = 'A'";
 
@@ -429,7 +429,7 @@ class ZoocriaderoController
                           INNER JOIN tblrol r
                               ON r.codrol = u.codrol
 
-                          WHERE r.codrol = 4
+                          WHERE r.nombrerol = 'Auxiliar Zoocriadero'
                           AND u.estado = 'A'
                           AND r.estado = 'A'
 
@@ -512,7 +512,7 @@ class ZoocriaderoController
                             ON r.codrol = u.codrol
 
                         WHERE u.codusuario = :codusuario
-                        AND r.codrol = 4
+                        AND r.nombrerol = 'Auxiliar Zoocriadero'
                         AND u.estado = 'A'
                         AND r.estado = 'A'";
 

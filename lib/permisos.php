@@ -42,7 +42,6 @@ $GLOBALS['PERMISOS_POR_ROL'] = [
             'ActividadesListZoo:ActividadesListZoo',
             'ActividadesZoo:Alimentacion',
             'ActividadesZoo:NacidosMuertos',
-            'ActividadesZoo:Parametros',
             'ActividadesZoo:Limpieza',
             'ActividadesZoo:AjusteNivel',
             'ActividadesZoo:Lavado',

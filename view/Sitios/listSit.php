@@ -23,7 +23,8 @@
           </span>
           <div class="input-group input-group-sm w-50">
             <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
-            <input type="text" id="buscadorSitios" class="form-control" placeholder="Buscar sitio...">
+            <input type="text" id="buscadorSitios" class="form-control" placeholder="Buscar sitio..."
+                  data-url="<?php echo getUrl('Sitios','Sitios','filtro', false, 'ajax'); ?>">
           </div>
         </div>
 
