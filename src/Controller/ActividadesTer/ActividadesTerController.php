@@ -6,7 +6,6 @@ use BioGuppy\Model\ActividadesTer\ActividadesTerModel;
 use PDO;
 
 class ActividadesTerController{
-// funcion nueva base de datos y view, revisar despues mas a fondo.
 
     private function consultarSeguro($obj, $sql, $params = []){
         try{

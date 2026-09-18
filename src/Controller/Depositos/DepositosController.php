@@ -6,12 +6,12 @@ use BioGuppy\Model\Depositos\DepositosModel;
 use PDO;
 class DepositosController{
 
-//lo mismo de actividadesterrenocontroller para la vista y la base de datos, verificar 
-    private function consultarSeguro($obj, $sql, $params = []){
+        private function consultarSeguro($obj, $sql, $params = []){
         try{
             return $obj->select($sql, $params);
         }catch(\Throwable $error){
             error_log("Consulta fallida en DepositosController: " . $error->getMessage());
+            $_SESSION['error'] = "DEBUG: " . $error->getMessage();
             return false;
         }
     }
@@ -21,7 +21,7 @@ class DepositosController{
 
         $obj = new DepositosModel();
 
-        $sql = "SELECT codtipodeposito AS id, nombretipodeposito, fechacreacion, estado
+        $sql = "SELECT codtipodeposito AS id, nombretipodeposito, estado
                 FROM tbltipodeposito
                 ORDER BY nombretipodeposito ASC";
 
@@ -36,7 +36,7 @@ class DepositosController{
         include_once __DIR__ . '/../../../view/Depositos/createDep.php';
     }
 
-    //  valida y crea un nuevo tipo de deposito.
+    // valida y crea un nuevo tipo de deposito
     public function postCreateDep(){
 
         $obj = new DepositosModel();
@@ -60,7 +60,7 @@ class DepositosController{
         }
 
         $sql = "INSERT INTO public.tbltipodeposito (codtipodeposito, nombretipodeposito, estado)
-                VALUES (DEFAULT, :nombre, DEFAULT, DEFAULT)";
+                VALUES (DEFAULT, :nombre, DEFAULT)";
 
         $obj->insert($sql, [':nombre' => strtoupper(trim($nombre))]);
 
@@ -105,7 +105,8 @@ class DepositosController{
             exit();
         }
 
-// validando que no exista otro tipo de deposito diferente a este con el mismo nombre
+    // valida que no exista otro tipo de deposito diferente a este con el mismo nombre
+
         $sqlValidar = "SELECT codtipodeposito FROM tbltipodeposito WHERE nombretipodeposito ILIKE :nombre AND codtipodeposito != :id";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre, ':id' => $id])->fetch(PDO::FETCH_ASSOC);
 
@@ -151,9 +152,6 @@ class DepositosController{
 
     }
 
-    // ---------------------------------------------------------------
-    // BUSCADOR (ajax)
-    // ---------------------------------------------------------------
     public function filtro(){
 
         $obj = new DepositosModel();
