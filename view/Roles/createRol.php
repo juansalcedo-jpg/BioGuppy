@@ -1,31 +1,3 @@
-<style>
-  .table-permisos thead th {
-    background-color: #10254a;
-    color: #fff;
-    font-weight: 600;
-    vertical-align: middle;
-    white-space: nowrap;
-  }
-  .table-permisos tbody th {
-    background-color: #f4f7fb;
-    font-weight: 600;
-    vertical-align: middle;
-    white-space: nowrap;
-  }
-  .table-permisos td {
-    text-align: center;
-    vertical-align: middle;
-  }
-  .form-check-input.check-permiso {
-    width: 1.2em;
-    height: 1.2em;
-    cursor: pointer;
-  }
-  .form-check-input.check-permiso:checked {
-    background-color: #22c1a4;
-    border-color: #22c1a4;
-  }
-</style>
 <div id="rolFormRegistro">
 <div class="container-fluid py-2">
   <div class="row justify-content-center">
@@ -66,78 +38,9 @@
           </div>
         </div>
 
-        <!-- Matriz de permisos -->
-        <div class="card border-0 shadow-sm mb-4">
-          <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
-            <span class="fw-semibold">
-              <i class="bi bi-shield-lock-fill me-2 text-primary"></i>Permisos por módulo
-            </span>
-            <span class="text-muted small">Marca las acciones permitidas para cada módulo</span>
-          </div>
-
-          <div class="table-responsive">
-            <table class="table table-permisos mb-0">
-              <thead>
-                <tr>
-                  <th class="text-start ps-4">Módulo</th>
-                  <th>
-                    Registrar<br>
-                    <input type="checkbox" class="form-check-input check-permiso check-columna" data-columna="registrar">
-                  </th>
-                  <th>
-                    Consultar<br>
-                    <input type="checkbox" class="form-check-input check-permiso check-columna" data-columna="consultar">
-                  </th>
-                  <th>
-                    Editar<br>
-                    <input type="checkbox" class="form-check-input check-permiso check-columna" data-columna="editar">
-                  </th>
-                  <th>
-                    Eliminar<br>
-                    <input type="checkbox" class="form-check-input check-permiso check-columna" data-columna="eliminar">
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php
-                  $modulos = [
-                      'Usuarios'           => 'bi-people-fill',
-                      'Roles'              => 'bi-shield-lock-fill',
-                      'Zoocriadero'        => 'bi-water',
-                      'Trabajo de Terreno' => 'bi-geo-alt-fill',
-                  ];
-                  foreach ($modulos as $modulo => $icono) {
-                      $slug = strtolower(str_replace(' ', '_', $modulo));
-                ?>
-                <tr>
-                  <th class="text-start ps-4">
-                    <i class="bi <?php echo $icono; ?> me-2 text-muted"></i><?php echo $modulo; ?>
-                  </th>
-                  <td>
-                    <input type="checkbox" class="form-check-input check-permiso check-fila-<?php echo $slug; ?>"
-                           data-fila="<?php echo $slug; ?>"
-                           name="permisos[<?php echo $slug; ?>][registrar]" value="1">
-                  </td>
-                  <td>
-                    <input type="checkbox" class="form-check-input check-permiso check-fila-<?php echo $slug; ?>"
-                           data-fila="<?php echo $slug; ?>"
-                           name="permisos[<?php echo $slug; ?>][consultar]" value="1">
-                  </td>
-                  <td>
-                    <input type="checkbox" class="form-check-input check-permiso check-fila-<?php echo $slug; ?>"
-                           data-fila="<?php echo $slug; ?>"
-                           name="permisos[<?php echo $slug; ?>][editar]" value="1">
-                  </td>
-                  <td>
-                    <input type="checkbox" class="form-check-input check-permiso check-fila-<?php echo $slug; ?>"
-                           data-fila="<?php echo $slug; ?>"
-                           name="permisos[<?php echo $slug; ?>][eliminar]" value="1">
-                  </td>
-                </tr>
-                <?php } ?>
-              </tbody>
-            </table>
-          </div>
+        <div class="alert alert-info d-flex align-items-center mb-4">
+          <i class="bi bi-info-circle-fill me-2"></i>
+          <div>Después de registrar el rol, podrás asignarle sus permisos por módulo desde el botón <strong>"Permisos"</strong> en el listado.</div>
         </div>
 
         <div class="d-flex justify-content-end gap-2 mb-4">
@@ -171,14 +74,3 @@
   }
 ?>
 </div>
-<script>
-  // Marcar/desmarcar toda una columna (acción) para todos los módulos
-  document.querySelectorAll('.check-columna').forEach(function (checkColumna) {
-      checkColumna.addEventListener('change', function () {
-          var columna = this.dataset.columna;
-          document.querySelectorAll('input[name$="[' + columna + ']"]').forEach(function (input) {
-              input.checked = checkColumna.checked;
-          });
-      });
-  });
-</script>

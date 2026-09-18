@@ -51,19 +51,21 @@ class ParametrosController{
 
         $obj = new ParametrosModel();
 
-        $nombre = $_POST['nombre_comuna'] ?? '';
+        $numero = trim($_POST['numero_comuna'] ?? '');
 
-        if(empty(trim($nombre))){
-            $_SESSION['error'] = "El nombre de la comuna es obligatorio.";
+        if(empty($numero) || !ctype_digit($numero) || (int)$numero <= 0){
+            $_SESSION['error'] = "Ingresa un número de comuna válido.";
             redirect(getUrl('Parametros','Parametros','createComuna'));
             exit();
         }
+
+        $nombre = "Comuna " . (int)$numero;
 
         $sqlValidar = "SELECT codcomuna FROM tblcomuna WHERE nombrecomuna ILIKE :nombre";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre])->fetch(PDO::FETCH_ASSOC);
 
         if($existe){
-            $_SESSION['error'] = "Ya existe una comuna con ese nombre.";
+            $_SESSION['error'] = "Ya existe esa comuna registrada.";
             redirect(getUrl('Parametros','Parametros','createComuna'));
             exit();
         }
@@ -71,7 +73,7 @@ class ParametrosController{
         $sql = "INSERT INTO public.tblcomuna (codcomuna, nombrecomuna, estado)
                 VALUES (DEFAULT, :nombre, DEFAULT)";
 
-        $obj->insert($sql, [':nombre' => strtoupper(trim($nombre))]);
+        $obj->insert($sql, [':nombre' => $nombre]);
 
         $_SESSION['exito'] = "La comuna se registró exitosamente.";
         redirect(getUrl('Parametros','Parametros','listParametros'));
