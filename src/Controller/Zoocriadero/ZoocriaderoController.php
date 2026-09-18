@@ -58,7 +58,7 @@ class ZoocriaderoController
                             nombrecomuna
                        FROM tblcomuna
                        WHERE estado = 'A'
-                       ORDER BY nombrecomuna ASC";
+                       ORDER BY codcomuna ASC";
 
         $comunas = $obj->select($sqlComunas);
 

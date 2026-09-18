@@ -1,11 +1,12 @@
 <?php
 $zooActivo      = ($funcion == 'listZoo');
 $tanquesActivo  = ($funcion == 'listTan');
+$depositosActivo = ($funcion == 'listDep');
 $histZooActivo  = ($funcion == 'listHistZoo');
 $repZooActivo   = ($funcion == 'listRepoZoo');
 $sitiosActivo   = ($funcion == 'createSit' || $funcion == 'listSit' || $funcion == 'editSit');
 $histTerActivo  = ($funcion == 'listActTer');
-$repTerActivo   = ($funcion == 'repSitios' || $funcion == 'repActividadTer' || $funcion == 'repAuxiliar' || $funcion == 'repTipoDeposito');
+$repTerActivo   = ($funcion == 'listRepoTer');
 ?>
 
 <!-- Zoocriaderos -->
@@ -67,39 +68,8 @@ $repTerActivo   = ($funcion == 'repSitios' || $funcion == 'repActividadTer' || $
 
 <!-- Reportes Terreno -->
 <li class="nav-item">
-  <a class="nav-link fw-semibold d-flex align-items-center <?php echo $repTerActivo ? '' : 'collapsed'; ?>"
-    data-bs-toggle="collapse" href="#submenuRepTer" role="button"
-    aria-expanded="<?php echo $repTerActivo ? 'true' : 'false'; ?>"
-    aria-controls="submenuRepTer">
+  <a class="nav-link fw-semibold d-flex align-items-center <?php echo $repTerActivo ? 'active' : ''; ?>"
+    href="<?php echo getUrl('ReportesTer', 'ReportesTer', 'listRepoTer') ?>">
     <i class="bi bi-graph-up-arrow me-2"></i> Reportes Terreno
-    <i class="bi bi-caret-down-fill ms-auto"></i>
   </a>
-  <div class="collapse <?php echo $repTerActivo ? 'show' : ''; ?>" id="submenuRepTer">
-    <ul class="list-unstyled ps-4">
-      <li>
-        <a class="nav-link <?php echo ($funcion == 'repSitios') ? 'active' : ''; ?>"
-          href="<?php echo getUrl('ReportesTer', 'ReportesTer', 'repSitios') ?>">
-          <i class="bi bi-file-earmark-text me-1"></i> Reporte de sitios
-        </a>
-      </li>
-      <li>
-        <a class="nav-link <?php echo ($funcion == 'repActividadTer') ? 'active' : ''; ?>"
-          href="<?php echo getUrl('ReportesTer', 'ReportesTer', 'repActividadTer') ?>">
-          <i class="bi bi-card-checklist me-1"></i> Por tipo de actividad
-        </a>
-      </li>
-      <li>
-        <a class="nav-link <?php echo ($funcion == 'repAuxiliar') ? 'active' : ''; ?>"
-          href="<?php echo getUrl('ReportesTer', 'ReportesTer', 'repAuxiliar') ?>">
-          <i class="bi bi-person-badge me-1"></i> Por auxiliar
-        </a>
-      </li>
-      <li>
-        <a class="nav-link <?php echo ($funcion == 'repTipoDeposito') ? 'active' : ''; ?>"
-          href="<?php echo getUrl('ReportesTer', 'ReportesTer', 'repTipoDeposito') ?>">
-          <i class="bi bi-funnel me-1"></i> Por tipo de depósito
-        </a>
-      </li>
-    </ul>
-  </div>
 </li>
