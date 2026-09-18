@@ -43,7 +43,6 @@
                   <option value="">Todos</option>
                   <option value="ALIMENTACIÓN">Alimentación</option>
                   <option value="RECOLECCIÓN">Nacidos / Muertos</option>
-                  <option value="PARAMETROS FISICOQUIMICOS">Parámetros fisicoquímicos</option>
                   <option value="LIMPIEZA">Limpieza</option>
                   <option value="AJUSTE DE NIVEL">Ajuste de nivel</option>
                   <option value="LAVADO">Lavado</option>

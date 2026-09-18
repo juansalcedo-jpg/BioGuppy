@@ -30,11 +30,17 @@
                         </div>
 
                         <h5 class="fw-bold mb-4 text-dark">Ajuste de Nivel</h5>
+                        <p class="text-muted small mt-n3 mb-4">Completa el nivel del tanque hasta la mitad y mide los parámetros fisicoquímicos (pH y temperatura). Realizar una vez a la semana.</p>
 
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label for="cantidad_agua" class="form-label fw-semibold">Cantidad de agua adicionada (litros) *</label>
-                                <input type="number" step="0.01" min="0" class="form-control form-control-lg fs-6" id="cantidad_agua" name="cantidad_agua" required>
+                                <label for="ph" class="form-label fw-semibold">pH *</label>
+                                <input type="number" step="0.1" class="form-control form-control-lg fs-6" id="ph" name="ph" placeholder="Ej. 7.2" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="temperatura" class="form-label fw-semibold">Temperatura (°C) *</label>
+                                <input type="number" step="0.1" class="form-control form-control-lg fs-6" id="temperatura" name="temperatura" placeholder="Ej. 24" required>
                             </div>
                         </div>
 

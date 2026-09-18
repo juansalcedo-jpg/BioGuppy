@@ -288,6 +288,33 @@ public function delete(){
     exit();
 
 }
+
+        // buscador
+        public function filtro(){
+
+            $obj = new TanquesModel();
+
+            $buscar = $_GET['buscar'] ?? '';
+
+            $sql = "SELECT t.codtanque AS id,
+                           t.numerotanque AS numero,
+                           tt.nombretipotanque AS tipo,
+                           t.capacidad,
+                           z.nombrezoocriadero AS zoocriadero,
+                           CASE WHEN t.estado = 'A' THEN 'Activo' ELSE 'Inactivo' END AS estado
+                    FROM tblzootanque t
+                    JOIN tbltipotanque tt ON tt.codtipotanque = t.codtipotanque
+                    JOIN tblzoocriadero z ON z.codzoocriadero = t.codzoocriadero
+                    WHERE CAST(t.numerotanque AS TEXT) ILIKE :buscar
+                       OR tt.nombretipotanque ILIKE :buscar
+                       OR z.nombrezoocriadero ILIKE :buscar
+                    ORDER BY z.nombrezoocriadero ASC, t.numerotanque ASC";
+
+            $tanques = $this->consultarSeguro($obj, $sql, [':buscar' => "%$buscar%"]);
+
+            include_once __DIR__ . '/../../../view/Tanques/filtroTan.php';
+
+        }
     }
 
 ?>

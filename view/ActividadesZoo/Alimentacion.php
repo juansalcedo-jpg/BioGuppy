@@ -32,21 +32,28 @@
                         <h5 class="fw-bold mb-4 text-dark">Registrar Alimentación</h5>
 
                         <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <label for="tipo_alimentacion" class="form-label fw-semibold">Tipo de alimentación</label>
-                                <select class="form-select form-select-lg fs-6" id="tipo_alimentacion" name="tipo_alimentacion">
-                                    <option value="Mojarra molida" selected>Mojarra molida</option>
-                                    <option value="Concentrado comercial">Concentrado comercial</option>
-                                    <option value="Artemia">Artemia</option>
+                            <div class="col-md-4">
+                                <label for="tipo_pez" class="form-label fw-semibold">Tipo de pez *</label>
+                                <select class="form-select form-select-lg fs-6" id="tipo_pez" name="tipo_pez" required>
+                                    <option value="" selected disabled>Selecciona...</option>
+                                    <option value="REPRODUCTOR">Reproductores y adultos</option>
+                                    <option value="ALEVIN">Alevines</option>
                                 </select>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <label for="tipo_alimentacion" class="form-label fw-semibold">Tipo de alimentación</label>
+                                <select class="form-select form-select-lg fs-6" id="tipo_alimentacion" name="tipo_alimentacion">
+                                    <option value="Mojarra molida" selected>Mojarra molida</option>
+                                    <option value="Tabillas">Tabillas</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
                                 <label for="horario" class="form-label fw-semibold">Horario</label>
                                 <select class="form-select form-select-lg fs-6" id="horario" name="horario">
-                                    <option value="07:00:00" selected>7:00 am</option>
-                                    <option value="12:00:00">12:00 pm</option>
-                                    <option value="16:00:00">4:00 pm</option>
+                                    <option value="MAÑANA" selected>Mañana</option>
+                                    <option value="TARDE">Tarde</option>
                                 </select>
                             </div>
                         </div>

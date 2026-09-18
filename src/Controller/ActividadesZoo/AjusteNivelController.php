@@ -21,10 +21,11 @@ class AjusteNivelController{
 
         $tanqueId        = $_POST['tanque_id'] ?? null;
         $fecha           = $_POST['fecha_actividad'] ?? null;
-        $cantidadAgua    = $_POST['cantidad_agua'] !== '' ? $_POST['cantidad_agua'] : null;
+        $ph              = $_POST['ph'] !== '' ? $_POST['ph'] : null;
+        $temperatura     = $_POST['temperatura'] !== '' ? $_POST['temperatura'] : null;
 
-        if(empty($tanqueId) || empty($fecha) || $cantidadAgua === null){
-            $_SESSION['error'] = "El tanque, la fecha y la cantidad de agua son obligatorios.";
+        if(empty($tanqueId) || empty($fecha) || $ph === null || $temperatura === null){
+            $_SESSION['error'] = "El tanque, la fecha, el pH y la temperatura son obligatorios.";
             redirect(getUrl('ActividadesZoo','AjusteNivel','AjusteNivel'));
             exit();
         }
@@ -32,16 +33,17 @@ class AjusteNivelController{
         $codTipo = $this->obtenerCodTipoActividadZoo($obj, 'AJUSTE DE NIVEL');
 
         $sql = "INSERT INTO public.tblactividadzoo
-                    (codactividad, codtipoactividad, codtanque, codusuario, fecha, cantidadaguaadicionada, fechacreacion, estado)
+                    (codactividad, codtipoactividad, codtanque, codusuario, fecha, ph, temperatura, fechacreacion, estado)
                 VALUES
-                    (DEFAULT, :codtipoactividad, :codtanque, :codusuario, :fecha, :cantidadagua, DEFAULT, DEFAULT)";
+                    (DEFAULT, :codtipoactividad, :codtanque, :codusuario, :fecha, :ph, :temperatura, DEFAULT, DEFAULT)";
 
         $obj->insert($sql, [
             ':codtipoactividad' => $codTipo,
             ':codtanque'        => $tanqueId,
             ':codusuario'       => $_SESSION['usu_id'],
             ':fecha'            => $fecha,
-            ':cantidadagua'     => $cantidadAgua,
+            ':ph'               => $ph,
+            ':temperatura'      => $temperatura,
         ]);
 
         $_SESSION['exito'] = "La actividad de ajuste de nivel se registró exitosamente.";

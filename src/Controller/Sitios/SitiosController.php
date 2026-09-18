@@ -203,4 +203,31 @@ class SitiosController{
 
     }
 
+    public function filtro(){
+
+        $obj = new SitiosModel();
+
+        $buscar = $_GET['buscar'] ?? '';
+
+        $sql = "SELECT s.codsitio AS id, s.nombresitio, c.nombrecomuna AS comuna,
+                       b.nombrebarrio AS barrio, td.nombretipodeposito AS tipodeposito,
+                       s.direccion, s.estado
+                FROM tblsitio s
+                INNER JOIN tblcomuna c ON c.codcomuna = s.codcomuna
+                INNER JOIN tblbarrio b ON b.codbarrio = s.codbarrio
+                INNER JOIN tbltipodeposito td ON td.codtipodeposito = s.codtipodeposito
+                WHERE s.nombresitio ILIKE :buscar
+                   OR s.direccion ILIKE :buscar
+                   OR c.nombrecomuna ILIKE :buscar
+                   OR b.nombrebarrio ILIKE :buscar
+                   OR td.nombretipodeposito ILIKE :buscar
+                ORDER BY s.nombresitio ASC";
+
+        $resultado = $this->consultarSeguro($obj, $sql, [':buscar' => "%$buscar%"]);
+        $sitios = $resultado ? $resultado->fetchAll(PDO::FETCH_ASSOC) : [];
+
+        include_once __DIR__ . '/../../../view/Sitios/filtroSit.php';
+
+    }
+
 }

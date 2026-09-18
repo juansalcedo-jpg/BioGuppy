@@ -21,11 +21,12 @@ class AlimentacionController{
 
         $tanqueId       = $_POST['tanque_id'] ?? null;
         $fecha          = $_POST['fecha_actividad'] ?? null;
+        $tipoPez        = $_POST['tipo_pez'] ?: null;
         $horario        = $_POST['horario'] ?: null;
         $tipoAlimento   = $_POST['tipo_alimentacion'] ?: null;
 
-        if(empty($tanqueId) || empty($fecha)){
-            $_SESSION['error'] = "El tanque y la fecha son obligatorios.";
+        if(empty($tanqueId) || empty($fecha) || empty($tipoPez)){
+            $_SESSION['error'] = "El tanque, la fecha y el tipo de pez son obligatorios.";
             redirect(getUrl('ActividadesZoo','Alimentacion','Alimentacion'));
             exit();
         }
@@ -33,9 +34,9 @@ class AlimentacionController{
         $codTipo = $this->obtenerCodTipoActividadZoo($obj, 'ALIMENTACIÓN');
 
         $sql = "INSERT INTO public.tblactividadzoo
-                    (codactividad, codtipoactividad, codtanque, codusuario, fecha, horadia, tipoalimento, fechacreacion, estado)
+                    (codactividad, codtipoactividad, codtanque, codusuario, fecha, horadia, tipopez, tipoalimento, fechacreacion, estado)
                 VALUES
-                    (DEFAULT, :codtipoactividad, :codtanque, :codusuario, :fecha, :horadia, :tipoalimento, DEFAULT, DEFAULT)";
+                    (DEFAULT, :codtipoactividad, :codtanque, :codusuario, :fecha, :horadia, :tipopez, :tipoalimento, DEFAULT, DEFAULT)";
 
         $obj->insert($sql, [
             ':codtipoactividad' => $codTipo,
@@ -43,6 +44,7 @@ class AlimentacionController{
             ':codusuario'       => $_SESSION['usu_id'],
             ':fecha'            => $fecha,
             ':horadia'          => $horario,
+            ':tipopez'          => $tipoPez,
             ':tipoalimento'     => $tipoAlimento,
         ]);
 

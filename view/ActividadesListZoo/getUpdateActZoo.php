@@ -2,7 +2,6 @@
 $tipo = strtoupper($actividad['nombreactividad']);
 $esAlimentacion = (strpos($tipo, 'ALIMENTA') !== false);
 $esRecoleccion  = (strpos($tipo, 'RECOLEC') !== false);
-$esParametros   = (strpos($tipo, 'PARAMETRO') !== false);
 $esLimpieza     = (strpos($tipo, 'LIMPIEZA') !== false);
 $esAjusteNivel  = (strpos($tipo, 'AJUSTE') !== false);
 $esLavado       = (strpos($tipo, 'LAVADO') !== false);
@@ -41,22 +40,28 @@ $marcarSuccionador = ($metodo === 'SUCCIONADOR' || $metodo === 'AMBOS');
 
             <?php if ($esAlimentacion): ?>
             <div class="row g-3 mb-3">
-              <div class="col-md-6">
+              <div class="col-md-4">
+                <label for="tipo_pez" class="form-label fw-semibold">Tipo de pez *</label>
+                <select class="form-select" id="tipo_pez" name="tipo_pez" required>
+                  <?php $tipoPez = strtoupper($actividad['tipopez'] ?? ''); ?>
+                  <option value="REPRODUCTOR" <?php echo ($tipoPez == 'REPRODUCTOR') ? 'selected' : ''; ?>>Reproductores y adultos</option>
+                  <option value="ALEVIN" <?php echo ($tipoPez == 'ALEVIN') ? 'selected' : ''; ?>>Alevines</option>
+                </select>
+              </div>
+              <div class="col-md-4">
                 <label for="tipo_alimentacion" class="form-label fw-semibold">Tipo de alimentación</label>
                 <select class="form-select" id="tipo_alimentacion" name="tipo_alimentacion">
                   <?php $tipoAlim = $actividad['tipoalimento'] ?? 'Mojarra molida'; ?>
                   <option value="Mojarra molida" <?php echo ($tipoAlim == 'Mojarra molida') ? 'selected' : ''; ?>>Mojarra molida</option>
-                  <option value="Concentrado comercial" <?php echo ($tipoAlim == 'Concentrado comercial') ? 'selected' : ''; ?>>Concentrado comercial</option>
-                  <option value="Artemia" <?php echo ($tipoAlim == 'Artemia') ? 'selected' : ''; ?>>Artemia</option>
+                  <option value="Tabillas" <?php echo ($tipoAlim == 'Tabillas') ? 'selected' : ''; ?>>Tabillas</option>
                 </select>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <label for="horario" class="form-label fw-semibold">Horario</label>
                 <select class="form-select" id="horario" name="horario">
-                  <?php $horario = $actividad['horadia'] ?? '07:00:00'; ?>
-                  <option value="07:00:00" <?php echo ($horario == '07:00:00') ? 'selected' : ''; ?>>7:00 am</option>
-                  <option value="12:00:00" <?php echo ($horario == '12:00:00') ? 'selected' : ''; ?>>12:00 pm</option>
-                  <option value="16:00:00" <?php echo ($horario == '16:00:00') ? 'selected' : ''; ?>>4:00 pm</option>
+                  <?php $horario = strtoupper($actividad['horadia'] ?? 'MAÑANA'); ?>
+                  <option value="MAÑANA" <?php echo ($horario == 'MAÑANA') ? 'selected' : ''; ?>>Mañana</option>
+                  <option value="TARDE" <?php echo ($horario == 'TARDE') ? 'selected' : ''; ?>>Tarde</option>
                 </select>
               </div>
             </div>
@@ -71,19 +76,6 @@ $marcarSuccionador = ($metodo === 'SUCCIONADOR' || $metodo === 'AMBOS');
               <div class="col-md-6">
                 <label for="peces_muertos" class="form-label fw-semibold">Peces muertos</label>
                 <input type="number" min="0" step="1" class="form-control" id="peces_muertos" name="peces_muertos" value="<?php echo htmlspecialchars($actividad['pecesmuertos'] ?? 0); ?>">
-              </div>
-            </div>
-            <?php endif; ?>
-
-            <?php if ($esParametros): ?>
-            <div class="row g-3 mb-3">
-              <div class="col-md-6">
-                <label for="ph" class="form-label fw-semibold">pH *</label>
-                <input type="number" step="0.1" class="form-control" id="ph" name="ph" value="<?php echo htmlspecialchars($actividad['ph'] ?? ''); ?>" required>
-              </div>
-              <div class="col-md-6">
-                <label for="temperatura" class="form-label fw-semibold">Temperatura (°C) *</label>
-                <input type="number" step="0.1" class="form-control" id="temperatura" name="temperatura" value="<?php echo htmlspecialchars($actividad['temperatura'] ?? ''); ?>" required>
               </div>
             </div>
             <?php endif; ?>
@@ -111,8 +103,12 @@ $marcarSuccionador = ($metodo === 'SUCCIONADOR' || $metodo === 'AMBOS');
             <?php if ($esAjusteNivel): ?>
             <div class="row g-3 mb-3">
               <div class="col-md-6">
-                <label for="cantidad_agua" class="form-label fw-semibold">Cantidad de agua adicionada (litros) *</label>
-                <input type="number" step="0.01" min="0" class="form-control" id="cantidad_agua" name="cantidad_agua" value="<?php echo htmlspecialchars($actividad['cantidadaguaadicionada'] ?? ''); ?>" required>
+                <label for="ph" class="form-label fw-semibold">pH *</label>
+                <input type="number" step="0.1" class="form-control" id="ph" name="ph" value="<?php echo htmlspecialchars($actividad['ph'] ?? ''); ?>" required>
+              </div>
+              <div class="col-md-6">
+                <label for="temperatura" class="form-label fw-semibold">Temperatura (°C) *</label>
+                <input type="number" step="0.1" class="form-control" id="temperatura" name="temperatura" value="<?php echo htmlspecialchars($actividad['temperatura'] ?? ''); ?>" required>
               </div>
             </div>
             <?php endif; ?>
