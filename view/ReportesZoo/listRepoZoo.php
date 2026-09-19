@@ -42,7 +42,7 @@
                 <div class="card-body py-3">
 
                     <form
-                        id="formGenerarReporte"
+                        id="formGenerarReporteZoo"
                         action="<?php
                             echo getUrl(
                                 'ReportesZoo',
@@ -179,7 +179,7 @@
 
     const formulario =
         document.getElementById(
-            "formGenerarReporte"
+            "formGenerarReporteZoo"
         );
 
     const resultado =
@@ -350,7 +350,8 @@
     function mostrarSeguimiento(respuesta) {
 
         let html = encabezado(
-            respuesta.titulo
+            respuesta.titulo,
+            respuesta.tipo
         );
 
 
@@ -465,7 +466,8 @@
     function mostrarMortalidad(respuesta) {
 
         let html = encabezado(
-            respuesta.titulo
+            respuesta.titulo,
+            respuesta.tipo
         );
 
 
@@ -588,7 +590,8 @@
     function mostrarTanques(respuesta) {
 
         let html = encabezado(
-            respuesta.titulo
+            respuesta.titulo,
+            respuesta.tipo
         );
 
 
@@ -700,13 +703,32 @@
     // ENCABEZADO DE RESULTADOS
     // ======================================================
 
-    function encabezado(titulo) {
+    function urlExportarPdf(tipo) {
+
+        const fechaDesde =
+            document.getElementById(
+                "fechaDesde"
+            ).value;
+
+        const fechaHasta =
+            document.getElementById(
+                "fechaHasta"
+            ).value;
+
+        return "<?php echo getUrl('ReportesZoo', 'ReportesZoo', 'exportarPdf', false, 'ajax'); ?>" +
+            "&tipoReporte=" + encodeURIComponent(tipo) +
+            "&fechaDesde=" + encodeURIComponent(fechaDesde) +
+            "&fechaHasta=" + encodeURIComponent(fechaHasta);
+    }
+
+
+    function encabezado(titulo, tipo) {
 
         return `
 
             <div class="card border-0 shadow-sm">
 
-                <div class="card-header bg-white border-bottom py-3">
+                <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
 
                     <div class="d-flex align-items-center">
 
@@ -723,6 +745,14 @@
                         </span>
 
                     </div>
+
+                    <a
+                        href="${urlExportarPdf(tipo)}"
+                        class="btn btn-outline-danger btn-sm"
+                    >
+                        <i class="bi bi-file-earmark-pdf me-1"></i>
+                        Exportar PDF
+                    </a>
 
                 </div>
         `;
