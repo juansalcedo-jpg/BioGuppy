@@ -498,7 +498,7 @@ class ReportesTerController
         $dompdf->setPaper('letter', 'landscape');
         $dompdf->render();
 
-        $nombreArchivo = 'reporte_terreno_' . $tipoReporte . '_' . date('Ymd_His') . '.pdf';
+        $nombreArchivo = 'reporte_terreno_' . $tipoReporte . '_' . date('Ymd') . '.pdf';
 
         $dompdf->stream($nombreArchivo, ['Attachment' => true]);
         exit();
