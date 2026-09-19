@@ -4,8 +4,11 @@ namespace BioGuppy\Controller\ActividadesListZoo;
 
 use BioGuppy\Model\ActividadesListZoo\ActividadesListZooModel;
 use PDO;
+use BioGuppy\Controller\Traits\BitacoraTrait;
 
 class ActividadesListZooController{
+
+    use BitacoraTrait;
 
     private function consultarSeguro($obj, $sql, $params = []){
         try{
@@ -172,6 +175,8 @@ class ActividadesListZooController{
             ':codactividad'            => $codactividad,
         ]);
 
+        $this->registrarBitacora($obj, 'UPDATE', 'ActividadesZoo', $codactividad, null, $fecha);
+
         $_SESSION['exito'] = "El registro se actualizó correctamente.";
         redirect(getUrl('ActividadesListZoo','ActividadesListZoo','ActividadesListZoo'));
         exit();
@@ -204,6 +209,8 @@ class ActividadesListZooController{
             ':estado' => $nuevoEstado,
             ':id' => $id,
         ]);
+
+        $this->registrarBitacora($obj, 'UPDATE', 'ActividadesZoo', $id, $actual['estado'] ?? null, $nuevoEstado);
 
         $_SESSION['exito'] = "El estado del registro se actualizó correctamente.";
         redirect(getUrl('ActividadesListZoo','ActividadesListZoo','ActividadesListZoo'));

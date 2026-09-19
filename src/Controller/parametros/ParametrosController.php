@@ -4,8 +4,11 @@ namespace BioGuppy\Controller\parametros;
 
 use BioGuppy\Model\parametros\ParametrosModel;
 use PDO;
+use BioGuppy\Controller\Traits\BitacoraTrait;
 
 class ParametrosController{
+
+    use BitacoraTrait;
 
     private function consultarSeguro($obj, $sql, $params = []){
         try{
@@ -75,6 +78,9 @@ class ParametrosController{
 
         $obj->insert($sql, [':nombre' => $nombre]);
 
+        $nuevoId = $obj->select("SELECT MAX(codcomuna) AS id FROM tblcomuna")->fetch(PDO::FETCH_ASSOC);
+        $this->registrarBitacora($obj, 'INSERT', 'Parametros-Comuna', $nuevoId['id'] ?? null, null, $nombre);
+
         $_SESSION['exito'] = "La comuna se registró exitosamente.";
         redirect(getUrl('Parametros','Parametros','listParametros'));
         exit();
@@ -101,6 +107,8 @@ class ParametrosController{
             ':estado' => $nuevoEstado,
             ':id' => $id,
         ]);
+
+        $this->registrarBitacora($obj, 'UPDATE', 'Parametros-Comuna', $id, $actual['estado'] ?? null, $nuevoEstado);
 
         $_SESSION['exito'] = "El estado de la comuna se actualizó correctamente.";
         redirect(getUrl('Parametros','Parametros','listParametros'));
@@ -173,6 +181,8 @@ class ParametrosController{
             ':id' => $id,
         ]);
 
+        $this->registrarBitacora($obj, 'UPDATE', 'Parametros-Comuna', $id, null, $nombre);
+
         $_SESSION['exito'] = "La comuna se actualizó correctamente.";
         redirect(getUrl('Parametros','Parametros','listParametros'));
         exit();
@@ -242,6 +252,9 @@ class ParametrosController{
             ':nombre' => strtoupper(trim($nombre)),
         ]);
 
+        $nuevoId = $obj->select("SELECT MAX(codbarrio) AS id FROM tblbarrio")->fetch(PDO::FETCH_ASSOC);
+        $this->registrarBitacora($obj, 'INSERT', 'Parametros-Barrio', $nuevoId['id'] ?? null, null, strtoupper(trim($nombre)));
+
         $_SESSION['exito'] = "El barrio se registró exitosamente.";
         redirect(getUrl('Parametros','Parametros','listParametros'));
         exit();
@@ -268,6 +281,8 @@ class ParametrosController{
             ':estado' => $nuevoEstado,
             ':id' => $id,
         ]);
+
+        $this->registrarBitacora($obj, 'UPDATE', 'Parametros-Barrio', $id, $actual['estado'] ?? null, $nuevoEstado);
 
         $_SESSION['exito'] = "El estado del barrio se actualizó correctamente.";
         redirect(getUrl('Parametros','Parametros','listParametros'));
@@ -340,6 +355,8 @@ class ParametrosController{
             ':nombre' => strtoupper(trim($nombre)),
             ':id' => $id,
         ]);
+
+        $this->registrarBitacora($obj, 'UPDATE', 'Parametros-Barrio', $id, null, strtoupper(trim($nombre)));
 
         $_SESSION['exito'] = "El barrio se actualizó correctamente.";
         redirect(getUrl('Parametros','Parametros','listParametros'));

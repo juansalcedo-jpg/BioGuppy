@@ -4,7 +4,10 @@ namespace BioGuppy\Controller\Depositos;
 
 use BioGuppy\Model\Depositos\DepositosModel;
 use PDO;
+use BioGuppy\Controller\Traits\BitacoraTrait;
 class DepositosController{
+
+    use BitacoraTrait;
 
         private function consultarSeguro($obj, $sql, $params = []){
         try{
@@ -64,6 +67,9 @@ class DepositosController{
 
         $obj->insert($sql, [':nombre' => strtoupper(trim($nombre))]);
 
+        $nuevoId = $obj->select("SELECT MAX(codtipodeposito) AS id FROM tbltipodeposito")->fetch(PDO::FETCH_ASSOC);
+        $this->registrarBitacora($obj, 'INSERT', 'Depositos', $nuevoId['id'] ?? null, null, strtoupper(trim($nombre)));
+
         $_SESSION['exito'] = "El tipo de depósito se registró exitosamente.";
         redirect(getUrl('Depositos','Depositos','listDep'));
         exit();
@@ -115,9 +121,13 @@ class DepositosController{
             redirect(getUrl('Depositos','Depositos','getUpdate',['id'=>$id]));
             exit();
         }
+        $anterior = $obj->select("SELECT nombretipodeposito FROM tbltipodeposito WHERE codtipodeposito = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
+
         $sql = "UPDATE tbltipodeposito SET nombretipodeposito = :nombre WHERE codtipodeposito = :id";
         
         $obj->update($sql, [':nombre' => strtoupper(trim($nombre)), ':id' => $id]);
+
+        $this->registrarBitacora($obj, 'UPDATE', 'Depositos', $id, $anterior['nombretipodeposito'] ?? null, strtoupper(trim($nombre)));
 
         $_SESSION['exito'] = "El tipo de depósito se actualizó correctamente.";
         redirect(getUrl('Depositos','Depositos','listDep'));
@@ -145,6 +155,8 @@ class DepositosController{
             ':estado' => $nuevoEstado,
             ':id' => $id,
         ]);
+
+        $this->registrarBitacora($obj, 'UPDATE', 'Depositos', $id, $actual['estado'] ?? null, $nuevoEstado);
 
         $_SESSION['exito'] = "El estado del tipo de depósito se actualizó correctamente.";
         redirect(getUrl('Depositos','Depositos','listDep'));

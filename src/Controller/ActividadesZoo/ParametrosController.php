@@ -4,10 +4,12 @@ namespace BioGuppy\Controller\ActividadesZoo;
 
 use BioGuppy\Model\ActividadesZoo\ParametrosModel;
 use PDO;
+use BioGuppy\Controller\Traits\BitacoraTrait;
 
 class ParametrosController{
 
     use ActividadZooHelpersTrait;
+    use BitacoraTrait;
 
     public function Parametros(){
         $obj = new ParametrosModel();
@@ -45,6 +47,9 @@ class ParametrosController{
             ':ph'               => $ph,
             ':temperatura'      => $temperatura,
         ]);
+
+        $nuevoId = $obj->select("SELECT MAX(codactividad) AS id FROM tblactividadzoo")->fetch(PDO::FETCH_ASSOC);
+        $this->registrarBitacora($obj, 'INSERT', 'ActividadesZoo', $nuevoId['id'] ?? null, null, 'PARAMETROS FISICOQUIMICOS');
 
         $_SESSION['exito'] = "Los parámetros fisicoquímicos se registraron exitosamente.";
         redirect(getUrl('ActividadesListZoo','ActividadesListZoo','ActividadesListZoo'));

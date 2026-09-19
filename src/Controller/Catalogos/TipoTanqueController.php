@@ -4,168 +4,146 @@ namespace BioGuppy\Controller\Catalogos;
 
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
-use BioGuppy\Model\Catalogos\TipoTanqueModel;
+use BioGuppy\Model\Catalogos\TipoDepositoModel;
 use PDO;
+use BioGuppy\Controller\Traits\BitacoraTrait;
 
-class TipoTanqueController
+class TipoDepositoController
 {
 
-    private function registrarBitacora($obj, $accion, $modulo, $idregistro = null, $valoranterior = null, $valornuevo = null){
+    use BitacoraTrait;
 
-        $codusuario = $_SESSION['usu_id'] ?? null;
+    public function listTipoDepo(){
 
-        if(empty($codusuario)){
-            return; // si no hay sesión activa, no se registra nada
-        }
+        $obj = new TipoDepositoModel();
 
-        $sql = "CALL sp_registrar_bitacora(:codusuario, :accion, :modulo, :idregistro, :valoranterior, :valornuevo)";
+        $sql = "SELECT * FROM tbltipodeposito ORDER BY codtipodeposito ASC";
+        $depositos = $obj->select($sql);
 
-        try{
-            $obj->insert($sql, [
-                ':codusuario'    => $codusuario,
-                ':accion'        => $accion,
-                ':modulo'        => $modulo,
-                ':idregistro'    => $idregistro,
-                ':valoranterior' => $valoranterior,
-                ':valornuevo'    => $valornuevo,
-            ]);
-        }catch(\Throwable $error){
-            error_log("No se pudo registrar en bitácora: " . $error->getMessage());
-        }
-
-    }
-
-    public function listTipoTanq(){
-
-        $obj = new TipoTanqueModel();
-
-        $sql = "SELECT * FROM tbltipotanque ORDER BY codtipotanque ASC";
-        $tanques = $obj->select($sql);
-
-        include_once __DIR__ . '/../../../view/Catalogos/TipoTanque/ListTipoTanque.php';
+        include_once __DIR__ . '/../../../view/Catalogos/TipoDeposito/ListTipoDeposito.php';
 
     }
 
     // formulario de registro
-    public function createTipoTanque(){
+    public function createTipoDeposito(){
 
-        include_once __DIR__ . '/../../../view/Catalogos/TipoTanque/CreateTipoTanque.php';
+        include_once __DIR__ . '/../../../view/Catalogos/TipoDeposito/CreateTipoDeposito.php';
 
     }
 
-    // valida y crea un nuevo tipo de tanque
-    public function postCreateTipoTanque(){
+    // valida y crea un nuevo tipo de deposito
+    public function postCreateTipoDeposito(){
 
-        $obj = new TipoTanqueModel();
+        $obj = new TipoDepositoModel();
 
-        $nombre = $_POST['nombretanque'] ?? '';
+        $nombre = $_POST['nombretipodeposito'] ?? '';
 
         if (empty(trim($nombre))) {
-            $_SESSION['error'] = "El nombre del tipo de tanque es obligatorio.";
-            redirect(getUrl('Catalogos', 'TipoTanque', 'createTipoTanque'));
+            $_SESSION['error'] = "El nombre del tipo de depósito es obligatorio.";
+            redirect(getUrl('Catalogos', 'TipoDeposito', 'createTipoDeposito'));
             exit();
         }
 
-        // valida que no exista ya un tipo de tanque con ese nombre
-        $sqlValidar = "SELECT codtipotanque FROM tbltipotanque WHERE nombretipotanque ILIKE :nombre";
+        // valida que no exista ya un tipo de deposito con ese nombre
+        $sqlValidar = "SELECT codtipodeposito FROM tbltipodeposito WHERE nombretipodeposito ILIKE :nombre";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre])->fetch(PDO::FETCH_ASSOC);
 
         if ($existe) {
-            $_SESSION['error'] = "Ya existe un tipo de tanque con ese nombre.";
-            redirect(getUrl('Catalogos', 'TipoTanque', 'createTipoTanque'));
+            $_SESSION['error'] = "Ya existe un tipo de depósito con ese nombre.";
+            redirect(getUrl('Catalogos', 'TipoDeposito', 'createTipoDeposito'));
             exit();
         }
 
         $nombreGuardado = strtoupper(trim($nombre));
 
-        $sql = "INSERT INTO public.tbltipotanque (codtipotanque, nombretipotanque, estado)
+        $sql = "INSERT INTO public.tbltipodeposito (codtipodeposito, nombretipodeposito, estado)
                 VALUES (DEFAULT, :nombre, DEFAULT)";
 
         $obj->insert($sql, [':nombre' => $nombreGuardado]);
 
         // AUDITORÍA: buscamos el id recién creado (el nombre es único gracias a la validación de arriba)
-        $nuevo = $obj->select("SELECT codtipotanque FROM tbltipotanque WHERE nombretipotanque = :nombre", [':nombre' => $nombreGuardado])
+        $nuevo = $obj->select("SELECT codtipodeposito FROM tbltipodeposito WHERE nombretipodeposito = :nombre", [':nombre' => $nombreGuardado])
                       ->fetch(PDO::FETCH_ASSOC);
 
         $this->registrarBitacora(
             $obj,
             'INSERT',
-            'TipoTanque',
-            $nuevo['codtipotanque'] ?? null,
+            'TipoDeposito',
+            $nuevo['codtipodeposito'] ?? null,
             null,
             $nombreGuardado
         );
 
-        $_SESSION['exito'] = "El tipo de tanque se registró exitosamente.";
-        redirect(getUrl('Catalogos', 'TipoTanque', 'listTipoTanq'));
+        $_SESSION['exito'] = "El tipo de depósito se registró exitosamente.";
+        redirect(getUrl('Catalogos', 'TipoDeposito', 'listTipoDepo'));
         exit();
 
     }
 
     // formulario de edicion
-    public function getUpdateTipoTanque(){
+    public function getUpdateTipoDeposito(){
 
-        $obj = new TipoTanqueModel();
+        $obj = new TipoDepositoModel();
 
         $id = $_GET['id'] ?? null;
 
-        $sql = "SELECT * FROM tbltipotanque WHERE codtipotanque = :id";
-        $tipoTanque = $obj->select($sql, [':id' => $id]);
+        $sql = "SELECT * FROM tbltipodeposito WHERE codtipodeposito = :id";
+        $tipoDeposito = $obj->select($sql, [':id' => $id]);
 
-        include_once __DIR__ . '/../../../view/Catalogos/TipoTanque/EditTipoTanque.php';
+        include_once __DIR__ . '/../../../view/Catalogos/TipoDeposito/EditTipoDeposito.php';
 
     }
 
     // guardar edicion
-    public function postUpdateTipoTanque(){
+    public function postUpdateTipoDeposito(){
 
-        $obj = new TipoTanqueModel();
+        $obj = new TipoDepositoModel();
 
-        $id = $_POST['codtipotanque'] ?? null;
-        $nombre = $_POST['nombretanque'] ?? '';
+        $id = $_POST['codtipodeposito'] ?? null;
+        $nombre = $_POST['nombretipodeposito'] ?? '';
 
         if (empty($id)) {
-            $_SESSION['error'] = "Tipo de tanque no válido.";
-            redirect(getUrl('Catalogos', 'TipoTanque', 'listTipoTanq'));
+            $_SESSION['error'] = "Tipo de depósito no válido.";
+            redirect(getUrl('Catalogos', 'TipoDeposito', 'listTipoDepo'));
             exit();
         }
 
         if (empty(trim($nombre))) {
-            $_SESSION['error'] = "El nombre del tipo de tanque es obligatorio.";
-            redirect(getUrl('Catalogos', 'TipoTanque', 'getUpdateTipoTanque', ['id' => $id]));
+            $_SESSION['error'] = "El nombre del tipo de depósito es obligatorio.";
+            redirect(getUrl('Catalogos', 'TipoDeposito', 'getUpdateTipoDeposito', ['id' => $id]));
             exit();
         }
 
-        // valida que no exista otro tipo de tanque distinto a este con el mismo nombre
-        $sqlValidar = "SELECT codtipotanque FROM tbltipotanque WHERE nombretipotanque ILIKE :nombre AND codtipotanque != :id";
+        // valida que no exista otro tipo de deposito distinto a este con el mismo nombre
+        $sqlValidar = "SELECT codtipodeposito FROM tbltipodeposito WHERE nombretipodeposito ILIKE :nombre AND codtipodeposito != :id";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre, ':id' => $id])->fetch(PDO::FETCH_ASSOC);
 
         if ($existe) {
-            $_SESSION['error'] = "Ya existe otro tipo de tanque con ese nombre.";
-            redirect(getUrl('Catalogos', 'TipoTanque', 'getUpdateTipoTanque', ['id' => $id]));
+            $_SESSION['error'] = "Ya existe otro tipo de depósito con ese nombre.";
+            redirect(getUrl('Catalogos', 'TipoDeposito', 'getUpdateTipoDeposito', ['id' => $id]));
             exit();
         }
 
         // AUDITORÍA: capturamos el valor anterior antes de sobreescribirlo
-        $anterior = $obj->select("SELECT nombretipotanque FROM tbltipotanque WHERE codtipotanque = :id", [':id' => $id])
+        $anterior = $obj->select("SELECT nombretipodeposito FROM tbltipodeposito WHERE codtipodeposito = :id", [':id' => $id])
                          ->fetch(PDO::FETCH_ASSOC);
 
         $nombreGuardado = strtoupper(trim($nombre));
 
-        $sql = "UPDATE tbltipotanque SET nombretipotanque = :nombre WHERE codtipotanque = :id";
+        $sql = "UPDATE tbltipodeposito SET nombretipodeposito = :nombre WHERE codtipodeposito = :id";
         $obj->update($sql, [':nombre' => $nombreGuardado, ':id' => $id]);
 
         $this->registrarBitacora(
             $obj,
             'UPDATE',
-            'TipoTanque',
+            'TipoDeposito',
             $id,
-            $anterior['nombretipotanque'] ?? null,
+            $anterior['nombretipodeposito'] ?? null,
             $nombreGuardado
         );
 
-        $_SESSION['exito'] = "El tipo de tanque se actualizó correctamente.";
-        redirect(getUrl('Catalogos', 'TipoTanque', 'listTipoTanq'));
+        $_SESSION['exito'] = "El tipo de depósito se actualizó correctamente.";
+        redirect(getUrl('Catalogos', 'TipoDeposito', 'listTipoDepo'));
         exit();
 
     }
@@ -173,22 +151,22 @@ class TipoTanqueController
     // habilitar / inhabilitar
     public function activacion(){
 
-        $obj = new TipoTanqueModel();
+        $obj = new TipoDepositoModel();
 
         $id = $_GET['id'] ?? null;
 
         if (empty($id)) {
-            $_SESSION['error'] = "Tipo de tanque no válido.";
-            redirect(getUrl('Catalogos', 'TipoTanque', 'listTipoTanq'));
+            $_SESSION['error'] = "Tipo de depósito no válido.";
+            redirect(getUrl('Catalogos', 'TipoDeposito', 'listTipoDepo'));
             exit();
         }
 
         // AUDITORÍA: se consulta el estado real en BD (no se confía en lo que llegue por la URL)
-        $actual = $obj->select("SELECT estado FROM tbltipotanque WHERE codtipotanque = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
+        $actual = $obj->select("SELECT estado FROM tbltipodeposito WHERE codtipodeposito = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
         $estadoAnterior = $actual['estado'] ?? null;
         $nuevoEstado = ($estadoAnterior === 'A') ? 'I' : 'A';
 
-        $execute = $obj->update("UPDATE tbltipotanque SET estado = :estado WHERE codtipotanque = :id", [
+        $execute = $obj->update("UPDATE tbltipodeposito SET estado = :estado WHERE codtipodeposito = :id", [
             ':estado' => $nuevoEstado,
             ':id' => $id,
         ]);
@@ -198,18 +176,18 @@ class TipoTanqueController
             $this->registrarBitacora(
                 $obj,
                 'UPDATE',
-                'TipoTanque',
+                'TipoDeposito',
                 $id,
                 $estadoAnterior === 'A' ? 'Activo' : 'Inactivo',
                 $nuevoEstado === 'A' ? 'Activo' : 'Inactivo'
             );
 
-            $_SESSION['exito'] = "El estado del tipo de tanque se actualizó correctamente.";
-            redirect(getUrl('Catalogos', 'TipoTanque', 'listTipoTanq'));
+            $_SESSION['exito'] = "El estado del tipo de depósito se actualizó correctamente.";
+            redirect(getUrl('Catalogos', 'TipoDeposito', 'listTipoDepo'));
             exit();
         } else {
-            $_SESSION['error'] = "No se pudo actualizar el estado del tipo de tanque.";
-            redirect(getUrl('Catalogos', 'TipoTanque', 'listTipoTanq'));
+            $_SESSION['error'] = "No se pudo actualizar el estado del tipo de depósito.";
+            redirect(getUrl('Catalogos', 'TipoDeposito', 'listTipoDepo'));
             exit();
         }
 
@@ -218,17 +196,17 @@ class TipoTanqueController
     // buscador (ajax)
     public function filtro(){
 
-        $obj = new TipoTanqueModel();
+        $obj = new TipoDepositoModel();
 
         $buscar = $_GET['buscar'] ?? '';
 
-        $sql = "SELECT * FROM tbltipotanque
-                WHERE nombretipotanque ILIKE :buscar
-                ORDER BY nombretipotanque ASC";
+        $sql = "SELECT * FROM tbltipodeposito
+                WHERE nombretipodeposito ILIKE :buscar
+                ORDER BY nombretipodeposito ASC";
 
-        $tanques = $obj->select($sql, [':buscar' => "%$buscar%"]);
+        $depositos = $obj->select($sql, [':buscar' => "%$buscar%"]);
 
-        include_once __DIR__ . '/../../../view/Catalogos/TipoTanque/filtroTipoTanque.php';
+        include_once __DIR__ . '/../../../view/Catalogos/TipoDeposito/filtroTipoDeposito.php';
 
     }
 

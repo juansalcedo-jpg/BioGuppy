@@ -4,7 +4,10 @@ namespace BioGuppy\Controller\Sitios;
 
 use BioGuppy\Model\Sitios\SitiosModel;
 use PDO;
+use BioGuppy\Controller\Traits\BitacoraTrait;
 class SitiosController{
+
+    use BitacoraTrait;
 
         private function consultarSeguro($obj, $sql, $params = []){
         try{
@@ -94,6 +97,9 @@ class SitiosController{
             ':direccion'       => trim($direccion),
         ]);
 
+        $nuevoId = $obj->select("SELECT MAX(codsitio) AS id FROM tblsitio")->fetch(PDO::FETCH_ASSOC);
+        $this->registrarBitacora($obj, 'INSERT', 'Sitios', $nuevoId['id'] ?? null, null, trim($nombresitio));
+
         $_SESSION['exito'] = "El sitio se registró exitosamente.";
         redirect(getUrl('Sitios','Sitios','listSit'));
         exit();
@@ -163,6 +169,8 @@ class SitiosController{
                     nombresitio = :nombresitio, direccion = :direccion
                 WHERE codsitio = :id";
 
+        $anterior = $obj->select("SELECT nombresitio FROM tblsitio WHERE codsitio = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
+
         $obj->update($sql, [
             ':codcomuna'       => $codcomuna,
             ':codbarrio'       => $codbarrio,
@@ -171,6 +179,8 @@ class SitiosController{
             ':direccion'       => trim($direccion),
             ':id'              => $id,
         ]);
+
+        $this->registrarBitacora($obj, 'UPDATE', 'Sitios', $id, $anterior['nombresitio'] ?? null, trim($nombresitio));
 
         $_SESSION['exito'] = "El sitio se actualizó correctamente.";
         redirect(getUrl('Sitios','Sitios','listSit'));
@@ -196,6 +206,8 @@ class SitiosController{
             ':estado' => $nuevoEstado,
             ':id' => $id,
         ]);
+
+        $this->registrarBitacora($obj, 'UPDATE', 'Sitios', $id, $actual['estado'] ?? null, $nuevoEstado);
 
         $_SESSION['exito'] = "El estado del sitio se actualizó correctamente.";
         redirect(getUrl('Sitios','Sitios','listSit'));
