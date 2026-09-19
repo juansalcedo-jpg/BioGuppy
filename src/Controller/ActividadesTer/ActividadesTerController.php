@@ -271,6 +271,70 @@ class ActividadesTerController{
 
     }
 
+// Historial de actividades de terreno (vista del Coordinador, muestra TODAS las actividades de TODOS los usuarios)
+    public function listActTer(){
+
+        $obj = new ActividadesTerModel();
+
+        $fechaDesde       = $_GET['fechaDesde'] ?? '';
+        $fechaHasta       = $_GET['fechaHasta'] ?? '';
+        $codSitio         = $_GET['codsitio'] ?? '';
+        $codTipoActividad = $_GET['codtipoactividad'] ?? '';
+
+        $condiciones = [];
+        $parametros  = [];
+
+        if(!empty($fechaDesde)){
+            $condiciones[] = "a.fecha >= :fechaDesde";
+            $parametros[':fechaDesde'] = $fechaDesde;
+        }
+        if(!empty($fechaHasta)){
+            $condiciones[] = "a.fecha <= :fechaHasta";
+            $parametros[':fechaHasta'] = $fechaHasta;
+        }
+        if(!empty($codSitio)){
+            $condiciones[] = "s.codsitio = :codsitio";
+            $parametros[':codsitio'] = $codSitio;
+        }
+        if(!empty($codTipoActividad)){
+            $condiciones[] = "a.codtipoactividad = :codtipoactividad";
+            $parametros[':codtipoactividad'] = $codTipoActividad;
+        }
+
+        $where = count($condiciones) > 0 ? "WHERE " . implode(" AND ", $condiciones) : "";
+
+        $sql = "SELECT a.codactividad,
+                       a.fecha,
+                       t.nombreactividad AS tipo_actividad,
+                       s.nombresitio AS sitio,
+                       (u.nombreusuario || ' ' || u.apellidousuario) AS responsable,
+                       a.observaciones,
+                       a.estado
+                FROM tblactividadterreno a
+                JOIN tbltipoactividadterreno t ON t.codtipoactividad = a.codtipoactividad
+                JOIN tblsitio s ON s.codsitio = a.codsitio
+                JOIN tblusuario u ON u.codusuario = a.codusuario
+                $where
+                ORDER BY a.fecha DESC, a.codactividad DESC";
+
+        $actividades = $this->consultarSeguro($obj, $sql, $parametros);
+
+        $sitios = $this->consultarSeguro($obj,
+            "SELECT codsitio, nombresitio
+             FROM tblsitio
+             WHERE estado = 'A'
+             ORDER BY nombresitio ASC");
+
+        $tiposActividad = $this->consultarSeguro($obj,
+            "SELECT codtipoactividad, nombreactividad
+             FROM tbltipoactividadterreno
+             WHERE estado = 'A'
+             ORDER BY nombreactividad ASC");
+
+        include_once __DIR__ . '/../../../view/ActividadesTer/listActTer.php';
+
+    }
+
     public function filtro(){
 
         $obj = new ActividadesTerModel();
@@ -412,19 +476,27 @@ class ActividadesTerController{
 
         $obj = new ActividadesTerModel();
 
-        $id = $_GET['id'] ?? null;
+        $id  = $_GET['id'] ?? null;
+        $rol = $_SESSION['nombre_rol'] ?? '';
+
+        // El Coordinador ve/gestiona el historial completo (listActTer);
+        // el Auxiliar solo ve y gestiona sus propias actividades (listMisActividades)
+        $funcionRetorno = ($rol === 'Coordinador Control Biologico') ? 'listActTer' : 'listMisActividades';
 
         if(empty($id)){
             $_SESSION['error'] = "Registro no válido.";
-            redirect(getUrl('ActividadesTer','ActividadesTer','listMisActividades'));
+            redirect(getUrl('ActividadesTer','ActividadesTer',$funcionRetorno));
             exit();
         }
 
         $actual = $obj->select("SELECT estado, codusuario FROM tblactividadterreno WHERE codactividad = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
 
-        if(!$actual || $actual['codusuario'] != $_SESSION['usu_id']){
+        $esPropietario = $actual && $actual['codusuario'] == $_SESSION['usu_id'];
+        $esCoordinador = ($rol === 'Coordinador Control Biologico');
+
+        if(!$actual || (!$esPropietario && !$esCoordinador)){
             $_SESSION['error'] = "No tiene permisos para modificar este registro.";
-            redirect(getUrl('ActividadesTer','ActividadesTer','listMisActividades'));
+            redirect(getUrl('ActividadesTer','ActividadesTer',$funcionRetorno));
             exit();
         }
 
@@ -436,7 +508,7 @@ class ActividadesTerController{
         ]);
 
         $_SESSION['exito'] = "El estado del registro se actualizó correctamente.";
-        redirect(getUrl('ActividadesTer','ActividadesTer','listMisActividades'));
+        redirect(getUrl('ActividadesTer','ActividadesTer',$funcionRetorno));
         exit();
 
     }

@@ -567,4 +567,4 @@ class ReportesZooController
         $dompdf->stream($nombreArchivo, ['Attachment' => true]);
         exit();
     }
-}
+}   
