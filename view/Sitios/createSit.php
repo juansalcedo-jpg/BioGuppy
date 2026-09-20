@@ -90,7 +90,7 @@
       comboBarrio.value = '';
 
       opcionesBarrio.forEach(function (opcion) {
-        if (!opcion.value) return; // deja siempre visible "Seleccione..."
+        if (!opcion.value) return;
         var coincide = opcion.dataset.comuna === comunaSeleccionada;
         opcion.hidden = !coincide;
       });
