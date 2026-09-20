@@ -68,7 +68,10 @@
             $codTipoTanque = $_POST['codtipotanque'] ?? '';
             $capacidad     = $_POST['capacidad'] ?? '';
             $codZoocriadero = $_POST['codzoocriadero'] ?? '';
-            $estado        = isset($_POST['estado_tanque']) ? 'A' : 'I';
+            // El estado ya no se pide en el formulario: todo tanque nuevo
+            // se crea Activo; el estado se maneja únicamente con el botón
+            // Inhabilitar de la lista.
+            $estado        = 'A';
 
             if(empty($numero) || empty($codTipoTanque) || empty($capacidad) || empty($codZoocriadero)){
                 $_SESSION['error'] = "Número de tanque, tipo, capacidad y zoocriadero son obligatorios.";
@@ -181,7 +184,9 @@
             $codTipoTanque  = $_POST['codtipotanque'] ?? '';
             $capacidad      = $_POST['capacidad'] ?? '';
             $codZoocriadero = $_POST['codzoocriadero'] ?? '';
-            $estado         = isset($_POST['estado_tanque']) ? 'A' : 'I';
+            // El estado ya no se edita desde este formulario: se maneja
+            // únicamente con el botón Inhabilitar de la lista, así que
+            // la edición nunca lo modifica.
 
             if(empty($id)){
                 $_SESSION['error'] = "Tanque no válido.";
@@ -229,8 +234,7 @@
                         SET codzoocriadero = :codzoocriadero,
                             codtipotanque  = :codtipotanque,
                             numerotanque   = :numero,
-                            capacidad      = :capacidad,
-                            estado         = :estado
+                            capacidad      = :capacidad
                         WHERE codtanque = :id";
 
                 $obj->update($sql, [
@@ -238,7 +242,6 @@
                     ':codtipotanque'  => $codTipoTanque,
                     ':numero'         => $numero,
                     ':capacidad'      => $capacidad,
-                    ':estado'         => $estado,
                     ':id'             => $id,
                 ]);
 

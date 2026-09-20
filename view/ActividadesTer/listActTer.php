@@ -1,3 +1,4 @@
+
 <div class="container-fluid py-2">
   <div class="row justify-content-center">
     <div class="col-xl-11">
@@ -116,11 +117,18 @@
                       <?php endif; ?>
                     </td>
                     <td class="text-center">
-                      <a href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'delete', array('id' => $act['codactividad'])) ?>"
-                        class="btn btn-danger btn-sm btn-icon rounded-circle" title="Inhabilitar"
-                        onclick="return confirm('¿Seguro que deseas inhabilitar esta actividad?')">
-                        <i class="bi bi-trash-fill"></i>
-                      </a>
+                      <?php if ($act['estado'] === 'A'): ?>
+                        <a href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'delete', array('id' => $act['codactividad'])) ?>"
+                          class="btn btn-outline-danger btn-icon rounded-circle" title="Inhabilitar"
+                          onclick="return confirm('¿Seguro que deseas inhabilitar esta actividad?')">
+                          <i class="bi bi-slash-circle"></i>
+                        </a>
+                      <?php else: ?>
+                        <a href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'delete', array('id' => $act['codactividad'])) ?>"
+                          class="btn btn-outline-success btn-icon rounded-circle" title="Activar">
+                          <i class="bi bi-check-lg"></i>
+                        </a>
+                      <?php endif; ?>
                     </td>
                   </tr>
                 <?php

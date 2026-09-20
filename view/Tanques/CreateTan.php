@@ -73,15 +73,6 @@
 
         </div>
 
-        <div class="mb-4">
-          <label class="form-label fw-semibold d-block">Estado</label>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch"
-                   id="estado_tanque" name="estado_tanque" checked>
-            <label class="form-check-label" for="estado_tanque">Activo</label>
-          </div>
-        </div>
-
         <div class="d-flex justify-content-end gap-2">
           <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
             Cancelar

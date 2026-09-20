@@ -126,8 +126,10 @@ class ZoocriaderoController
         $codusuarioAuxiliar =
             $_POST['encargado'] ?? '';
 
-        $estado =
-            isset($_POST['estado']) ? 'A' : 'I';
+        // El estado ya no se pide en el formulario: todo registro nuevo
+        // se crea Activo. El estado se maneja únicamente con el botón
+        // Habilitar/Inhabilitar de la lista.
+        $estado = 'A';
 
 
         // -----------------------------------------------------------
@@ -471,9 +473,9 @@ class ZoocriaderoController
         $codusuarioAuxiliar =
             $_POST['encargado'] ?? '';
 
-        $estado =
-            isset($_POST['estado']) ? 'A' : 'I';
-
+        // El estado ya no se edita desde este formulario: se maneja
+        // únicamente con el botón Habilitar/Inhabilitar de la lista,
+        // así que la edición nunca lo modifica.
 
         if (
             empty($id) ||
@@ -551,8 +553,7 @@ class ZoocriaderoController
                     codusuario = :codusuario,
                     codbarrio = :codbarrio,
                     nombrezoocriadero = :nombre,
-                    direccion = :direccion,
-                    estado = :estado
+                    direccion = :direccion
 
                 WHERE codzoocriadero = :id";
 
@@ -564,7 +565,6 @@ class ZoocriaderoController
                 ':codbarrio' => $codbarrio,
                 ':nombre' => $nombre,
                 ':direccion' => $direccion,
-                ':estado' => $estado,
                 ':id' => $id
             ]
         );

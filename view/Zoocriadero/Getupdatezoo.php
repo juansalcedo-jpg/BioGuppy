@@ -333,56 +333,6 @@
             </div>
 
 
-            <!-- ========================================== -->
-            <!-- ESTADO -->
-            <!-- ========================================== -->
-
-            <div class="row mt-4">
-
-                <div class="col-md-4">
-
-                    <label
-                        class="form-label fw-semibold d-block"
-                    >
-                        Estado
-                    </label>
-
-                    <div class="form-check form-switch">
-
-                        <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="estado"
-                            name="estado"
-                            value="A"
-
-                            <?php
-
-                            if (
-                                isset($zoocriadero['estado']) &&
-                                $zoocriadero['estado'] === 'A'
-                            ) {
-
-                                echo 'checked';
-
-                            }
-
-                            ?>
-                        >
-
-                        <label
-                            class="form-check-label"
-                            for="estado"
-                        >
-                            Activo
-                        </label>
-
-                    </div>
-
-                </div>
-
-            </div>
-
 
             <hr class="mt-4">
 

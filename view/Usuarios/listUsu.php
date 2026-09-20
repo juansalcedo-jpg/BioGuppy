@@ -53,9 +53,9 @@
                     <td class="text-muted"><?php echo htmlspecialchars($usu['nombredocumento']); ?> — <?php echo htmlspecialchars($usu['numerodocumento']); ?></td>
                     <td class="text-center">
                       <?php if ($usu['estado'] === 'A'): ?>
-                        <span class="badge bg-success-subtle text-success-emphasis">Activo</span>
+                        <span class="badge bg-success">Activo</span>
                       <?php else: ?>
-                        <span class="badge bg-secondary-subtle text-secondary-emphasis">Inactivo</span>
+                        <span class="badge bg-danger">Inactivo</span>
                       <?php endif; ?>
                     </td>
                     <td class="text-center">
