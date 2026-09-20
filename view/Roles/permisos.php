@@ -126,7 +126,6 @@
 </div>
 
 <script>
-  // Marcar/desmarcar toda una columna (permiso) para todos los módulos
   document.querySelectorAll('.check-columna').forEach(function (checkColumna) {
       checkColumna.addEventListener('change', function () {
           var columna = this.dataset.columna;

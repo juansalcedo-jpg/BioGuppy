@@ -3,7 +3,6 @@ $dashboardActivo  = in_array($funcion, ['listDashboard']);
 $catalogosActivo  = in_array($funcion, ['listTipoTanq', 'listTipoDepo', 'listActZoo', 'listActTerre']);
 ?>
 
-<!-- Dashboard consolidado -->
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $dashboardActivo ? 'active' : ''; ?>"
     href="<?php echo getUrl('Dashboard', 'Dashboard', 'listDashboard') ?>">
@@ -11,7 +10,6 @@ $catalogosActivo  = in_array($funcion, ['listTipoTanq', 'listTipoDepo', 'listAct
   </a>
 </li>
 
-<!-- Catálogos de configuración (con submódulos) -->
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $catalogosActivo ? '' : 'collapsed'; ?>"
     data-bs-toggle="collapse" href="#submenuCatalogos" role="button"

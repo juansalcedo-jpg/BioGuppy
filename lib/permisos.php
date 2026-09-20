@@ -1,59 +1,49 @@
 <?php
 
-/**
- * Mapa de permisos por rol.
- *
- * 'pares': lista de "Modulo:Controlador" que ese rol puede usar COMPLETO
- *          (todas las funciones actuales y futuras de ese controlador:
- *          listar, crear, editar, activar/inhabilitar, etc.).
- *
- * 'funciones_por_par': para los pares que se COMPARTEN entre roles con
- *          funciones distintas (ej: ActividadesTer lo usa el Coordinador
- *          para ver el historial, y el Auxiliar Terreno para registrar),
- *          aquí se restringe a la lista exacta de funciones permitidas.
- */
 $GLOBALS['PERMISOS_POR_ROL'] = [
 
     'Super Admin' => [
-        'pares' => ['Usuarios:Usuarios', 'Roles:Roles', 'Auditoria:Auditoria', 'Parametros:Parametros'],
-    ],
+    'pares' => ['Usuarios:Usuarios', 'Roles:Roles', 'Auditoria:Auditoria', 'Parametros:Parametros', 'SobreNosotros:SobreNosotros'],
+],
 
-    'Administrador' => [
-        'pares' => ['Dashboard:Dashboard', 'Catalogos:Catalogos', 'Catalogos:TipoTanque', 'Catalogos:TipoDeposito', 'Catalogos:ActividadesZoo', 'Catalogos:ActividadesTerre'],
-    ],
+'Administrador' => [
+    'pares' => ['Dashboard:Dashboard', 'Catalogos:Catalogos', 'Catalogos:TipoTanque', 'Catalogos:TipoDeposito', 'Catalogos:ActividadesZoo', 'Catalogos:ActividadesTerre', 'SobreNosotros:SobreNosotros'],
+],
 
-    'Coordinador Control Biologico' => [
-        'pares' => [
-            'Zoocriadero:Zoocriadero',
-            'Tanques:Tanques',
-            'Sitios:Sitios',
-            'Depositos:Depositos',
-            'HistorialZoo:HistorialZoo',
-            'ReportesZoo:ReportesZoo',
-            'ReportesTer:ReportesTer',
-        ],
-        'funciones_por_par' => [
-            'ActividadesTer:ActividadesTer' => ['listActTer'],
-        ],
+'Coordinador Control Biologico' => [
+    'pares' => [
+        'Zoocriadero:Zoocriadero',
+        'Tanques:Tanques',
+        'Sitios:Sitios',
+        'Depositos:Depositos',
+        'HistorialZoo:HistorialZoo',
+        'ReportesZoo:ReportesZoo',
+        'ReportesTer:ReportesTer',
+        'SobreNosotros:SobreNosotros',
     ],
+    'funciones_por_par' => [
+        'ActividadesTer:ActividadesTer' => ['listActTer'],
+    ],
+],
 
-    'Auxiliar Zoocriadero' => [
-        'pares' => [
-            'ActividadesListZoo:ActividadesListZoo',
-            'ActividadesZoo:Alimentacion',
-            'ActividadesZoo:NacidosMuertos',
-            'ActividadesZoo:Limpieza',
-            'ActividadesZoo:AjusteNivel',
-            'ActividadesZoo:Lavado',
-        ],
+'Auxiliar Zoocriadero' => [
+    'pares' => [
+        'ActividadesListZoo:ActividadesListZoo',
+        'ActividadesZoo:Alimentacion',
+        'ActividadesZoo:NacidosMuertos',
+        'ActividadesZoo:Limpieza',
+        'ActividadesZoo:AjusteNivel',
+        'ActividadesZoo:Lavado',
+        'SobreNosotros:SobreNosotros',
     ],
+],
 
-    'Auxiliar Terreno' => [
-        'pares' => [],
-        'funciones_por_par' => [
-            'ActividadesTer:ActividadesTer' => ['listMisActividades', 'Inspeccion', 'Siembra', 'Seguimiento', 'Resiembra'],
-        ],
+'Auxiliar Terreno' => [
+    'pares' => ['SobreNosotros:SobreNosotros'],
+    'funciones_por_par' => [
+        'ActividadesTer:ActividadesTer' => ['listMisActividades', 'Inspeccion', 'Siembra', 'Seguimiento', 'Resiembra'],
     ],
+],
 
 ];
 

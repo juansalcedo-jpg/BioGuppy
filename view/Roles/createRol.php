@@ -10,7 +10,6 @@
 
       <form action="<?php echo getUrl('Roles','Roles','postcreateRol')?>" method="post" novalidate>
 
-        <!-- Información básica del rol -->
         <div class="card border-0 shadow-sm mb-4">
           <div class="card-header bg-white border-bottom py-3">
             <span class="fw-semibold">

@@ -89,9 +89,10 @@ if (isset($_SESSION['ErrorLogin'])) {
           <i data-lucide="arrow-right" class="boton-acceso__icono" aria-hidden="true"></i>
         </button>
 
-        <p class="nota-formulario">
-          Acceso exclusivo para personal autorizado de la Secretaría de Salud Pública de Cali.
-        </p>
+        <p class="nota-formulario d-flex align-items-center gap-2">
+        <img src="../../img/logo-secretariaC.png" alt="Secretaría de Salud Pública de Cali" style="height:30px;width:auto;flex-shrink:0;">
+        <span>Acceso para personal autorizado de la Secretaría de Salud Pública de Cali.</span>
+</p>
       </form>
     </section>
 

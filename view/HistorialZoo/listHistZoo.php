@@ -3,7 +3,6 @@
   <div class="row justify-content-center">
     <div class="col-xl-11">
 
-      <!-- ENCABEZADO DE LA VISTA -->
       <div class="d-flex flex-wrap align-items-end justify-content-between mb-4 gap-2">
         <div>
           <h4 class="fw-semibold mb-1">Historial de Actividades — Zoocriadero</h4>
@@ -11,27 +10,19 @@
         </div>
       </div>
 
-      <!-- MENSAJES -->
       <div id="alertaFiltroHistorial">
         <?php if (!empty($errorFechas)): ?>
           <div class="alert alert-danger"><?php echo htmlspecialchars($errorFechas); ?></div>
         <?php endif; ?>
       </div>
 
-      <!-- TARJETA CONTENEDORA -->
       <div class="card border-0 shadow-sm">
-
-        <!-- ENCABEZADO DE TARJETA CON FILTROS -->
         <div class="card-header bg-white border-bottom py-3">
           <div class="d-flex align-items-center mb-3">
             <i class="bi bi-file-earmark-text text-primary me-2 fs-5"></i>
             <span class="fw-semibold">Actividades registradas</span>
           </div>
 
-          <!-- FORMULARIO DE FILTROS -->
-          <!-- OJO: en un form method="GET" el navegador ignora el ?... del action
-               y arma la query solo con los campos del form. Por eso modulo/controlador/funcion
-               van como inputs ocultos y no como parte de la URL. -->
           <form id="formFiltroHistorial" action="index.php" method="GET">
             <input type="hidden" name="modulo" value="HistorialZoo">
             <input type="hidden" name="controlador" value="HistorialZoo">
@@ -92,7 +83,6 @@
           </form>
         </div>
 
-        <!-- TABLA DE RESULTADOS -->
         <div class="table-responsive">
           <table class="table table-striped align-middle mb-0" id="tablaHistorialZoo">
             <thead class="table-dark">

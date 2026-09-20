@@ -9,7 +9,6 @@ $histTerActivo  = ($funcion == 'listActTer');
 $repTerActivo   = ($funcion == 'listRepoTer');
 ?>
 
-<!-- Zoocriaderos -->
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $zooActivo ? 'active' : ''; ?>"
     href="<?php echo getUrl('Zoocriadero', 'Zoocriadero', 'listZoo') ?>">
@@ -17,7 +16,6 @@ $repTerActivo   = ($funcion == 'listRepoTer');
   </a>
 </li>
 
-<!-- Tanques -->
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $tanquesActivo ? 'active' : ''; ?>"
     href="<?php echo getUrl('Tanques', 'Tanques', 'listTan') ?>">
@@ -25,8 +23,6 @@ $repTerActivo   = ($funcion == 'listRepoTer');
   </a>
 </li>
 
-<!-- Depositos: una sola interfaz (lista + boton "Nuevo" que abre modal),
-     igual que Usuarios -->
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $depositosActivo ? 'active' : ''; ?>"
     href="<?php echo getUrl('Depositos', 'Depositos', 'listDep') ?>">
@@ -34,7 +30,6 @@ $repTerActivo   = ($funcion == 'listRepoTer');
   </a>
 </li>
 
-<!-- Sitios de Terreno -->
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $sitiosActivo ? 'active' : ''; ?>"
     href="<?php echo getUrl('Sitios', 'Sitios', 'listSit') ?>">
@@ -42,7 +37,6 @@ $repTerActivo   = ($funcion == 'listRepoTer');
   </a>
 </li>
 
-<!-- Historial de Actividades Zoocriadero -->
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $histZooActivo ? 'active' : ''; ?>"
     href="<?php echo getUrl('HistorialZoo', 'HistorialZoo', 'listHistZoo') ?>">
@@ -50,7 +44,6 @@ $repTerActivo   = ($funcion == 'listRepoTer');
   </a>
 </li>
 
-<!-- Historial de Actividades Terreno -->
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $histTerActivo ? 'active' : ''; ?>"
     href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'listActTer') ?>">
@@ -58,7 +51,6 @@ $repTerActivo   = ($funcion == 'listRepoTer');
   </a>
 </li>
 
-<!-- Reportes Zoocriadero -->
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $repZooActivo ? 'active' : ''; ?>"
     href="<?php echo getUrl('ReportesZoo', 'ReportesZoo', 'listRepoZoo') ?>">
@@ -66,7 +58,6 @@ $repTerActivo   = ($funcion == 'listRepoTer');
   </a>
 </li>
 
-<!-- Reportes Terreno -->
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $repTerActivo ? 'active' : ''; ?>"
     href="<?php echo getUrl('ReportesTer', 'ReportesTer', 'listRepoTer') ?>">

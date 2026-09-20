@@ -60,7 +60,6 @@
                   </button>
                 </td>
                 <td class="text-center">
-                  <!-- El icono cambia segun el estado -->
                   <?php if ($tipo['estado'] === 'A'): ?>
                     <a href="<?php echo getUrl('Depositos','Depositos','delete',array('id'=>$tipo['id'])) ?>"
                        class="btn btn-outline-danger btn-icon rounded-circle" title="Inhabilitar">

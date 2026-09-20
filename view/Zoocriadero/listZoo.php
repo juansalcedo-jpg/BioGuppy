@@ -101,8 +101,6 @@
     </div>
   </div>
 </div>
-
-<!-- filtra las filas ya cargadas en la tabla sin recargar la pagina -->
 <script>
   var buscadorZoo = document.getElementById('buscadorZoocriaderos');
   if (buscadorZoo) {
