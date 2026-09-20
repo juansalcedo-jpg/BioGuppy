@@ -9,6 +9,7 @@
                 'postUpdateZoo'
             ); ?>"
             method="post"
+            novalidate
         >
 
             <!-- ID DEL ZOOCRIADERO -->
@@ -44,6 +45,9 @@
                         class="form-control"
                         id="nombre"
                         name="nombre"
+                        maxlength="80"
+                        pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+"
+                        title="Solo letras y espacios (sin números ni símbolos)"
                         value="<?php
                             echo htmlspecialchars(
                                 $zoocriadero['nombrezoocriadero']
@@ -70,6 +74,8 @@
                         class="form-control"
                         id="direccion"
                         name="direccion"
+                        pattern="^(Calle|Carrera|Avenida)\b.*"
+                        title="Debe iniciar con Calle, Carrera o Avenida"
                         value="<?php
                             echo htmlspecialchars(
                                 $zoocriadero['direccion']
@@ -379,17 +385,21 @@
         ?>
 
             <div
-                class="alert alert-danger mt-3"
+                class="alert alert-danger d-flex align-items-center mt-3"
                 role="alert"
             >
 
-                <?php
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
 
-                    echo htmlspecialchars(
-                        $_SESSION['error']
-                    );
+                <div>
+                    <?php
 
-                ?>
+                        echo htmlspecialchars(
+                            $_SESSION['error']
+                        );
+
+                    ?>
+                </div>
 
             </div>
 

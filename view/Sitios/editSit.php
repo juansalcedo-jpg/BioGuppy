@@ -26,7 +26,10 @@
                 <label for="nombresitio" class="form-label fw-semibold">Nombre del sitio</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light"><i class="bi bi-signpost"></i></span>
-                  <input type="text" class="form-control" id="nombresitio" name="nombresitio" value="<?php echo htmlspecialchars($sitio['nombresitio']); ?>">
+                  <input type="text" class="form-control" id="nombresitio" name="nombresitio"
+                         maxlength="80" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+"
+                         title="Solo letras y espacios (sin números ni símbolos)"
+                         value="<?php echo htmlspecialchars($sitio['nombresitio']); ?>">
                 </div>
               </div>
 
@@ -43,12 +46,16 @@
               <div class="col-md-6">
                 <label for="codbarrio" class="form-label fw-semibold">Barrio</label>
                 <select class="form-select" id="codbarrio" name="codbarrio">
-                  <option value="" disabled>Seleccione...</option>
+                  <option value="" disabled>Seleccione un barrio...</option>
                   <?php foreach ($barrios as $barrio): ?>
+                    <?php
+                      $barrioSeleccionado = $barrio['id'] == $sitio['codbarrio'];
+                      $mismaComuna = $barrio['codcomuna'] == $sitio['codcomuna'];
+                    ?>
                     <option value="<?php echo $barrio['id']; ?>"
                             data-comuna="<?php echo $barrio['codcomuna']; ?>"
-                            <?php echo ($barrio['id'] == $sitio['codbarrio']) ? 'selected' : ''; ?>
-                            <?php echo ($barrio['codcomuna'] != $sitio['codcomuna']) ? 'hidden' : ''; ?>>
+                            <?php echo $barrioSeleccionado ? 'selected' : ''; ?>
+                            <?php echo !$mismaComuna ? 'hidden disabled' : ''; ?>>
                       <?php echo htmlspecialchars($barrio['nombrebarrio']); ?>
                     </option>
                   <?php endforeach; ?>
@@ -69,7 +76,10 @@
                 <label for="direccion" class="form-label fw-semibold">Dirección</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light"><i class="bi bi-geo-alt"></i></span>
-                  <input type="text" class="form-control" id="direccion" name="direccion" value="<?php echo htmlspecialchars($sitio['direccion']); ?>">
+                  <input type="text" class="form-control" id="direccion" name="direccion"
+                         pattern="^(Calle|Carrera|Avenida)\b.*"
+                         title="Debe iniciar con Calle, Carrera o Avenida"
+                         value="<?php echo htmlspecialchars($sitio['direccion']); ?>">
                 </div>
               </div>
             </div>
@@ -88,26 +98,6 @@
     </div>
   </div>
 </div>
-
-<script>
-  (function () {
-    var comboComuna = document.getElementById('codcomuna');
-    var comboBarrio = document.getElementById('codbarrio');
-    if (!comboComuna || !comboBarrio) return;
-
-    var opcionesBarrio = Array.prototype.slice.call(comboBarrio.options);
-
-    comboComuna.addEventListener('change', function () {
-      var comunaSeleccionada = this.value;
-      comboBarrio.value = '';
-
-      opcionesBarrio.forEach(function (opcion) {
-        if (!opcion.value) return;
-        opcion.hidden = opcion.dataset.comuna !== comunaSeleccionada;
-      });
-    });
-  })();
-</script>
 
 <?php
   if(isset($_SESSION['error'])){

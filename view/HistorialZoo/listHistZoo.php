@@ -11,6 +11,13 @@
         </div>
       </div>
 
+      <!-- MENSAJES -->
+      <div id="alertaFiltroHistorial">
+        <?php if (!empty($errorFechas)): ?>
+          <div class="alert alert-danger"><?php echo htmlspecialchars($errorFechas); ?></div>
+        <?php endif; ?>
+      </div>
+
       <!-- TARJETA CONTENEDORA -->
       <div class="card border-0 shadow-sm">
 
@@ -34,13 +41,15 @@
               <div class="col-6 col-md-2">
                 <label for="fechaDesde" class="form-label small text-muted mb-1">Desde</label>
                 <input type="date" id="fechaDesde" name="fechaDesde" class="form-control form-control-sm"
-                       value="<?php echo htmlspecialchars($_GET['fechaDesde'] ?? ''); ?>">
+                       min="2026-09-10" max="<?php echo date('Y-m-d'); ?>"
+                       value="<?php echo htmlspecialchars($_GET['fechaDesde'] ?? ''); ?>" required>
               </div>
 
               <div class="col-6 col-md-2">
                 <label for="fechaHasta" class="form-label small text-muted mb-1">Hasta</label>
                 <input type="date" id="fechaHasta" name="fechaHasta" class="form-control form-control-sm"
-                       value="<?php echo htmlspecialchars($_GET['fechaHasta'] ?? ''); ?>">
+                       min="2026-09-10" max="<?php echo date('Y-m-d'); ?>"
+                       value="<?php echo htmlspecialchars($_GET['fechaHasta'] ?? ''); ?>" required>
               </div>
 
               <div class="col-12 col-md-3">
@@ -154,3 +163,34 @@
     </div>
   </div>
 </div>
+
+<script>
+(function () {
+
+    var formulario = document.getElementById("formFiltroHistorial");
+    var alerta = document.getElementById("alertaFiltroHistorial");
+
+    if (!formulario) {
+        return;
+    }
+
+    formulario.addEventListener("submit", function (event) {
+
+        var fechaDesde = document.getElementById("fechaDesde").value;
+        var fechaHasta = document.getElementById("fechaHasta").value;
+
+        if (fechaDesde && fechaHasta && fechaDesde > fechaHasta) {
+
+            event.preventDefault();
+
+            alerta.innerHTML =
+                '<div class="alert alert-danger">' +
+                'La fecha desde no puede ser mayor que la fecha hasta.' +
+                '</div>';
+
+        }
+
+    });
+
+})();
+</script>

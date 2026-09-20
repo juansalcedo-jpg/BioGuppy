@@ -9,6 +9,7 @@
                 'postCreateZoo'
             ); ?>"
             method="post"
+            novalidate
         >
 
             <!-- ========================================== -->
@@ -32,6 +33,10 @@
                         class="form-control"
                         id="nombre"
                         name="nombre"
+                        maxlength="80"
+                        pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+"
+                        title="Solo letras y espacios (sin números ni símbolos)"
+                        placeholder="Ej: Zoocriadero Terrón Colorado"
                         required
                     >
 
@@ -53,6 +58,9 @@
                         class="form-control"
                         id="direccion"
                         name="direccion"
+                        pattern="^(Calle|Carrera|Avenida)\b.*"
+                        title="Debe iniciar con Calle, Carrera o Avenida"
+                        placeholder="Ej: Carrera 8 # 3-15"
                         required
                     >
 
@@ -311,15 +319,19 @@
         ?>
 
             <div
-                class="alert alert-danger mt-3"
+                class="alert alert-danger d-flex align-items-center mt-3"
                 role="alert"
             >
 
-                <?php
-                    echo htmlspecialchars(
-                        $_SESSION['error']
-                    );
-                ?>
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+                <div>
+                    <?php
+                        echo htmlspecialchars(
+                            $_SESSION['error']
+                        );
+                    ?>
+                </div>
 
             </div>
 

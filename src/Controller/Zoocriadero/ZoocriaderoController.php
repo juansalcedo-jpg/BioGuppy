@@ -4,12 +4,9 @@ namespace BioGuppy\Controller\Zoocriadero;
 
 use BioGuppy\Model\ZoocriaderoCor\Zoocriaderocor;
 use PDO;
-use BioGuppy\Controller\Traits\BitacoraTrait;
 
 class ZoocriaderoController
 {
-    use BitacoraTrait;
-
 
     // ---------------------------------------------------------------
     // LISTADO PRINCIPAL
@@ -73,7 +70,7 @@ class ZoocriaderoController
                             nombrebarrio
                        FROM tblbarrio
                        WHERE estado = 'A'
-                       ORDER BY codbarrio ASC";
+                       ORDER BY nombrebarrio ASC";
 
         $barrios = $obj->select($sqlBarrios);
 
@@ -148,6 +145,66 @@ class ZoocriaderoController
 
             $_SESSION['error'] =
                 "Todos los campos son obligatorios.";
+
+            redirect(
+                getUrl(
+                    'Zoocriadero',
+                    'Zoocriadero',
+                    'create'
+                )
+            );
+
+            exit();
+        }
+
+
+        // -----------------------------------------------------------
+        // VALIDAR FORMATO DE NOMBRE
+        // Solo letras y espacios (sin números, símbolos ni puntuación),
+        // máximo 80 caracteres.
+        // -----------------------------------------------------------
+        if (mb_strlen($nombre) > 80) {
+
+            $_SESSION['error'] =
+                "El nombre no puede tener más de 80 caracteres.";
+
+            redirect(
+                getUrl(
+                    'Zoocriadero',
+                    'Zoocriadero',
+                    'create'
+                )
+            );
+
+            exit();
+        }
+
+        if (!preg_match('/^[\p{L} ]+$/u', $nombre)) {
+
+            $_SESSION['error'] =
+                "El nombre solo puede contener letras y espacios (sin números, símbolos ni puntuación).";
+
+            redirect(
+                getUrl(
+                    'Zoocriadero',
+                    'Zoocriadero',
+                    'create'
+                )
+            );
+
+            exit();
+        }
+
+
+        // -----------------------------------------------------------
+        // VALIDAR FORMATO DE DIRECCIÓN
+        // Debe iniciar con la nomenclatura vial usada en Cali:
+        // Calle, Carrera o Avenida.
+        // -----------------------------------------------------------
+        if (!preg_match('/^(Calle|Carrera|Avenida)\b/iu', $direccion)) {
+
+            $_SESSION['error'] =
+                "La dirección debe iniciar con Calle, Carrera o Avenida.";
 
             redirect(
                 getUrl(
@@ -333,9 +390,6 @@ class ZoocriaderoController
             ]
         );
 
-        $nuevoId = $obj->select("SELECT MAX(codzoocriadero) AS id FROM tblzoocriadero")->fetch(PDO::FETCH_ASSOC);
-        $this->registrarBitacora($obj, 'INSERT', 'Zoocriadero', $nuevoId['id'] ?? null, null, $nombre);
-
 
         $_SESSION['exito'] =
             "El zoocriadero se registró correctamente.";
@@ -510,6 +564,67 @@ class ZoocriaderoController
         }
 
 
+        // -----------------------------------------------------------
+        // VALIDAR FORMATO DE NOMBRE Y DIRECCIÓN (igual que al crear)
+        // -----------------------------------------------------------
+        if (mb_strlen($nombre) > 80) {
+
+            $_SESSION['error'] =
+                "El nombre no puede tener más de 80 caracteres.";
+
+            redirect(
+                getUrl(
+                    'Zoocriadero',
+                    'Zoocriadero',
+                    'getUpdate',
+                    [
+                        'id' => $id
+                    ]
+                )
+            );
+
+            exit();
+        }
+
+        if (!preg_match('/^[\p{L} ]+$/u', $nombre)) {
+
+            $_SESSION['error'] =
+                "El nombre solo puede contener letras y espacios (sin números, símbolos ni puntuación).";
+
+            redirect(
+                getUrl(
+                    'Zoocriadero',
+                    'Zoocriadero',
+                    'getUpdate',
+                    [
+                        'id' => $id
+                    ]
+                )
+            );
+
+            exit();
+        }
+
+        if (!preg_match('/^(Calle|Carrera|Avenida)\b/iu', $direccion)) {
+
+            $_SESSION['error'] =
+                "La dirección debe iniciar con Calle, Carrera o Avenida.";
+
+            redirect(
+                getUrl(
+                    'Zoocriadero',
+                    'Zoocriadero',
+                    'getUpdate',
+                    [
+                        'id' => $id
+                    ]
+                )
+            );
+
+            exit();
+        }
+
+
         // VALIDAR AUXILIAR
         $sqlAuxiliar = "SELECT
                             u.codusuario
@@ -575,8 +690,6 @@ class ZoocriaderoController
             ]
         );
 
-        $this->registrarBitacora($obj, 'UPDATE', 'Zoocriadero', $id, null, $nombre);
-
 
         $_SESSION['exito'] =
             "El zoocriadero se actualizó correctamente.";
@@ -636,8 +749,6 @@ class ZoocriaderoController
                 ':id' => $id
             ]
         );
-
-        $this->registrarBitacora($obj, 'UPDATE', 'Zoocriadero', $id, $actual['estado'] ?? null, $nuevoEstado);
 
 
         redirect(

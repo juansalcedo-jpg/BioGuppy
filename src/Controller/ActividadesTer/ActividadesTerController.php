@@ -4,11 +4,8 @@ namespace BioGuppy\Controller\ActividadesTer;
 
 use BioGuppy\Model\ActividadesTer\ActividadesTerModel;
 use PDO;
-use BioGuppy\Controller\Traits\BitacoraTrait;
 
 class ActividadesTerController{
-
-    use BitacoraTrait;
 
     private function consultarSeguro($obj, $sql, $params = []){
         try{
@@ -90,9 +87,6 @@ class ActividadesTerController{
             ':observaciones'    => $observaciones,
         ]);
 
-        $nuevoId = $obj->select("SELECT MAX(codactividad) AS id FROM tblactividadterreno")->fetch(PDO::FETCH_ASSOC);
-        $this->registrarBitacora($obj, 'INSERT', 'ActividadesTer', $nuevoId['id'] ?? null, null, $codTipo);
-
         $_SESSION['exito'] = "La actividad de inspección se registró exitosamente.";
         redirect(getUrl('ActividadesTer','ActividadesTer','listMisActividades'));
         exit();
@@ -145,9 +139,6 @@ class ActividadesTerController{
             ':observaciones'      => $observaciones,
         ]);
 
-        $nuevoId = $obj->select("SELECT MAX(codactividad) AS id FROM tblactividadterreno")->fetch(PDO::FETCH_ASSOC);
-        $this->registrarBitacora($obj, 'INSERT', 'ActividadesTer', $nuevoId['id'] ?? null, null, $codTipo);
-
         $_SESSION['exito'] = "La actividad de siembra se registró exitosamente.";
         redirect(getUrl('ActividadesTer','ActividadesTer','listMisActividades'));
         exit();
@@ -194,9 +185,6 @@ class ActividadesTerController{
             ':larvas'           => $larvas,
             ':observaciones'    => $observaciones,
         ]);
-
-        $nuevoId = $obj->select("SELECT MAX(codactividad) AS id FROM tblactividadterreno")->fetch(PDO::FETCH_ASSOC);
-        $this->registrarBitacora($obj, 'INSERT', 'ActividadesTer', $nuevoId['id'] ?? null, null, $codTipo);
 
         $_SESSION['exito'] = "La actividad de seguimiento se registró exitosamente.";
         redirect(getUrl('ActividadesTer','ActividadesTer','listMisActividades'));
@@ -249,9 +237,6 @@ class ActividadesTerController{
             ':observaciones'      => $observaciones,
         ]);
 
-        $nuevoId = $obj->select("SELECT MAX(codactividad) AS id FROM tblactividadterreno")->fetch(PDO::FETCH_ASSOC);
-        $this->registrarBitacora($obj, 'INSERT', 'ActividadesTer', $nuevoId['id'] ?? null, null, $codTipo);
-
         $_SESSION['exito'] = "La actividad de resiembra se registró exitosamente.";
         redirect(getUrl('ActividadesTer','ActividadesTer','listMisActividades'));
         exit();
@@ -296,14 +281,20 @@ class ActividadesTerController{
         $codSitio         = $_GET['codsitio'] ?? '';
         $codTipoActividad = $_GET['codtipoactividad'] ?? '';
 
+        $errorFechas = null;
+
+        if(!empty($fechaDesde) && !empty($fechaHasta) && $fechaDesde > $fechaHasta){
+            $errorFechas = "La fecha desde no puede ser mayor que la fecha hasta.";
+        }
+
         $condiciones = [];
         $parametros  = [];
 
-        if(!empty($fechaDesde)){
+        if(!empty($fechaDesde) && !$errorFechas){
             $condiciones[] = "a.fecha >= :fechaDesde";
             $parametros[':fechaDesde'] = $fechaDesde;
         }
-        if(!empty($fechaHasta)){
+        if(!empty($fechaHasta) && !$errorFechas){
             $condiciones[] = "a.fecha <= :fechaHasta";
             $parametros[':fechaHasta'] = $fechaHasta;
         }
@@ -482,8 +473,6 @@ class ActividadesTerController{
             ':codactividad'      => $codactividad,
         ]);
 
-        $this->registrarBitacora($obj, 'UPDATE', 'ActividadesTer', $codactividad, null, $fecha);
-
         $_SESSION['exito'] = "El registro se actualizó correctamente.";
         redirect(getUrl('ActividadesTer','ActividadesTer','listMisActividades'));
         exit();
@@ -523,8 +512,6 @@ class ActividadesTerController{
             ':estado' => $nuevoEstado,
             ':id' => $id,
         ]);
-
-        $this->registrarBitacora($obj, 'UPDATE', 'ActividadesTer', $id, $actual['estado'] ?? null, $nuevoEstado);
 
         $_SESSION['exito'] = "El estado del registro se actualizó correctamente.";
         redirect(getUrl('ActividadesTer','ActividadesTer',$funcionRetorno));

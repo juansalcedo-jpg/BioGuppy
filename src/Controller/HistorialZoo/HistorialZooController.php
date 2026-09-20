@@ -25,14 +25,20 @@
             $codZoocriadero   = $_GET['codzoocriadero'] ?? '';
             $codTipoActividad = $_GET['codtipoactividad'] ?? '';
 
+            $errorFechas = null;
+
+            if(!empty($fechaDesde) && !empty($fechaHasta) && $fechaDesde > $fechaHasta){
+                $errorFechas = "La fecha desde no puede ser mayor que la fecha hasta.";
+            }
+
             $condiciones = [];
             $parametros  = [];
 
-            if(!empty($fechaDesde)){
+            if(!empty($fechaDesde) && !$errorFechas){
                 $condiciones[] = "az.fecha >= :fechaDesde";
                 $parametros[':fechaDesde'] = $fechaDesde;
             }
-            if(!empty($fechaHasta)){
+            if(!empty($fechaHasta) && !$errorFechas){
                 $condiciones[] = "az.fecha <= :fechaHasta";
                 $parametros[':fechaHasta'] = $fechaHasta;
             }

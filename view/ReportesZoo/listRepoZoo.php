@@ -107,6 +107,8 @@
                                     id="fechaDesde"
                                     name="fechaDesde"
                                     class="form-control form-control-sm"
+                                    min="2026-09-10"
+                                    max="<?php echo date('Y-m-d'); ?>"
                                     required
                                 >
 
@@ -128,6 +130,8 @@
                                     id="fechaHasta"
                                     name="fechaHasta"
                                     class="form-control form-control-sm"
+                                    min="2026-09-10"
+                                    max="<?php echo date('Y-m-d'); ?>"
                                     required
                                 >
 
