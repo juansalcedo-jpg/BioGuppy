@@ -4,146 +4,146 @@ namespace BioGuppy\Controller\Catalogos;
 
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
-use BioGuppy\Model\Catalogos\ActividadesTerreModel;
+use BioGuppy\Model\Catalogos\ActividadesZooModel;
 use PDO;
 use BioGuppy\Controller\Traits\BitacoraTrait;
 
-class ActividadesTerreController
+class ActividadesZooController
 {
 
     use BitacoraTrait;
 
-    public function listActTerre(){
+    public function listActZoo(){
 
-        $obj = new ActividadesTerreModel();
+        $obj = new ActividadesZooModel();
 
-        $sql = "SELECT * FROM tbltipoactividadterreno ORDER BY codtipoactividad ASC";
+        $sql = "SELECT * FROM tbltipoactividadzoo ORDER BY codtipoactividad ASC";
         $actividades = $obj->select($sql);
 
-        include_once __DIR__ . '/../../../view/Catalogos/ActividadesTerre/ListActividadesTerre.php';
+        include_once __DIR__ . '/../../../view/Catalogos/ActividadesZoo/ListActividadesZoo.php';
 
     }
 
     // formulario de registro
-    public function createActTerre(){
+    public function createActZoo(){
 
-        include_once __DIR__ . '/../../../view/Catalogos/ActividadesTerre/CreateActividadesTerre.php';
+        include_once __DIR__ . '/../../../view/Catalogos/ActividadesZoo/CreateActividadesZoo.php';
 
     }
 
-    // valida y crea un nuevo tipo de actividad de terreno
-    public function postCreateActTerre(){
+    // valida y crea un nuevo tipo de actividad de zoocriadero
+    public function postCreateActZoo(){
 
-        $obj = new ActividadesTerreModel();
+        $obj = new ActividadesZooModel();
 
         $nombre = $_POST['nombreactividad'] ?? '';
 
         if (empty(trim($nombre))) {
-            $_SESSION['error'] = "El nombre de la actividad de terreno es obligatorio.";
-            redirect(getUrl('Catalogos', 'ActividadesTerre', 'createActTerre'));
+            $_SESSION['error'] = "El nombre de la actividad de zoocriadero es obligatorio.";
+            redirect(getUrl('Catalogos', 'ActividadesZoo', 'createActZoo'));
             exit();
         }
 
-        // valida que no exista ya una actividad de terreno con ese nombre
-        $sqlValidar = "SELECT codtipoactividad FROM tbltipoactividadterreno WHERE nombreactividad ILIKE :nombre";
+        // valida que no exista ya una actividad de zoocriadero con ese nombre
+        $sqlValidar = "SELECT codtipoactividad FROM tbltipoactividadzoo WHERE nombreactividad ILIKE :nombre";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre])->fetch(PDO::FETCH_ASSOC);
 
         if ($existe) {
-            $_SESSION['error'] = "Ya existe una actividad de terreno con ese nombre.";
-            redirect(getUrl('Catalogos', 'ActividadesTerre', 'createActTerre'));
+            $_SESSION['error'] = "Ya existe una actividad de zoocriadero con ese nombre.";
+            redirect(getUrl('Catalogos', 'ActividadesZoo', 'createActZoo'));
             exit();
         }
 
         $nombreGuardado = strtoupper(trim($nombre));
 
-        $sql = "INSERT INTO public.tbltipoactividadterreno (codtipoactividad, nombreactividad, estado)
+        $sql = "INSERT INTO public.tbltipoactividadzoo (codtipoactividad, nombreactividad, estado)
                 VALUES (DEFAULT, :nombre, DEFAULT)";
 
         $obj->insert($sql, [':nombre' => $nombreGuardado]);
 
         // AUDITORÍA: buscamos el id recién creado (el nombre es único gracias a la validación de arriba)
-        $nuevo = $obj->select("SELECT codtipoactividad FROM tbltipoactividadterreno WHERE nombreactividad = :nombre", [':nombre' => $nombreGuardado])
+        $nuevo = $obj->select("SELECT codtipoactividad FROM tbltipoactividadzoo WHERE nombreactividad = :nombre", [':nombre' => $nombreGuardado])
                       ->fetch(PDO::FETCH_ASSOC);
 
         $this->registrarBitacora(
             $obj,
             'INSERT',
-            'ActividadesTerre',
+            'ActividadesZoo',
             $nuevo['codtipoactividad'] ?? null,
             null,
             $nombreGuardado
         );
 
-        $_SESSION['exito'] = "La actividad de terreno se registró exitosamente.";
-        redirect(getUrl('Catalogos', 'ActividadesTerre', 'listActTerre'));
+        $_SESSION['exito'] = "La actividad de zoocriadero se registró exitosamente.";
+        redirect(getUrl('Catalogos', 'ActividadesZoo', 'listActZoo'));
         exit();
 
     }
 
     // formulario de edicion
-    public function getUpdateActTerre(){
+    public function getUpdateActZoo(){
 
-        $obj = new ActividadesTerreModel();
+        $obj = new ActividadesZooModel();
 
         $id = $_GET['id'] ?? null;
 
-        $sql = "SELECT * FROM tbltipoactividadterreno WHERE codtipoactividad = :id";
+        $sql = "SELECT * FROM tbltipoactividadzoo WHERE codtipoactividad = :id";
         $actividad = $obj->select($sql, [':id' => $id]);
 
-        include_once __DIR__ . '/../../../view/Catalogos/ActividadesTerre/EditActividadesTerre.php';
+        include_once __DIR__ . '/../../../view/Catalogos/ActividadesZoo/EditActividadesZoo.php';
 
     }
 
     // guardar edicion
-    public function postUpdateActTerre(){
+    public function postUpdateActZoo(){
 
-        $obj = new ActividadesTerreModel();
+        $obj = new ActividadesZooModel();
 
         $id = $_POST['codtipoactividad'] ?? null;
         $nombre = $_POST['nombreactividad'] ?? '';
 
         if (empty($id)) {
-            $_SESSION['error'] = "Actividad de terreno no válida.";
-            redirect(getUrl('Catalogos', 'ActividadesTerre', 'listActTerre'));
+            $_SESSION['error'] = "Actividad de zoocriadero no válida.";
+            redirect(getUrl('Catalogos', 'ActividadesZoo', 'listActZoo'));
             exit();
         }
 
         if (empty(trim($nombre))) {
-            $_SESSION['error'] = "El nombre de la actividad de terreno es obligatorio.";
-            redirect(getUrl('Catalogos', 'ActividadesTerre', 'getUpdateActTerre', ['id' => $id]));
+            $_SESSION['error'] = "El nombre de la actividad de zoocriadero es obligatorio.";
+            redirect(getUrl('Catalogos', 'ActividadesZoo', 'getUpdateActZoo', ['id' => $id]));
             exit();
         }
 
-        // valida que no exista otra actividad de terreno distinta a esta con el mismo nombre
-        $sqlValidar = "SELECT codtipoactividad FROM tbltipoactividadterreno WHERE nombreactividad ILIKE :nombre AND codtipoactividad != :id";
+        // valida que no exista otra actividad de zoocriadero distinta a esta con el mismo nombre
+        $sqlValidar = "SELECT codtipoactividad FROM tbltipoactividadzoo WHERE nombreactividad ILIKE :nombre AND codtipoactividad != :id";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre, ':id' => $id])->fetch(PDO::FETCH_ASSOC);
 
         if ($existe) {
-            $_SESSION['error'] = "Ya existe otra actividad de terreno con ese nombre.";
-            redirect(getUrl('Catalogos', 'ActividadesTerre', 'getUpdateActTerre', ['id' => $id]));
+            $_SESSION['error'] = "Ya existe otra actividad de zoocriadero con ese nombre.";
+            redirect(getUrl('Catalogos', 'ActividadesZoo', 'getUpdateActZoo', ['id' => $id]));
             exit();
         }
 
         // AUDITORÍA: capturamos el valor anterior antes de sobreescribirlo
-        $anterior = $obj->select("SELECT nombreactividad FROM tbltipoactividadterreno WHERE codtipoactividad = :id", [':id' => $id])
+        $anterior = $obj->select("SELECT nombreactividad FROM tbltipoactividadzoo WHERE codtipoactividad = :id", [':id' => $id])
                          ->fetch(PDO::FETCH_ASSOC);
 
         $nombreGuardado = strtoupper(trim($nombre));
 
-        $sql = "UPDATE tbltipoactividadterreno SET nombreactividad = :nombre WHERE codtipoactividad = :id";
+        $sql = "UPDATE tbltipoactividadzoo SET nombreactividad = :nombre WHERE codtipoactividad = :id";
         $obj->update($sql, [':nombre' => $nombreGuardado, ':id' => $id]);
 
         $this->registrarBitacora(
             $obj,
             'UPDATE',
-            'ActividadesTerre',
+            'ActividadesZoo',
             $id,
             $anterior['nombreactividad'] ?? null,
             $nombreGuardado
         );
 
-        $_SESSION['exito'] = "La actividad de terreno se actualizó correctamente.";
-        redirect(getUrl('Catalogos', 'ActividadesTerre', 'listActTerre'));
+        $_SESSION['exito'] = "La actividad de zoocriadero se actualizó correctamente.";
+        redirect(getUrl('Catalogos', 'ActividadesZoo', 'listActZoo'));
         exit();
 
     }
@@ -151,22 +151,22 @@ class ActividadesTerreController
     // habilitar / inhabilitar
     public function activacion(){
 
-        $obj = new ActividadesTerreModel();
+        $obj = new ActividadesZooModel();
 
         $id = $_GET['id'] ?? null;
 
         if (empty($id)) {
-            $_SESSION['error'] = "Actividad de terreno no válida.";
-            redirect(getUrl('Catalogos', 'ActividadesTerre', 'listActTerre'));
+            $_SESSION['error'] = "Actividad de zoocriadero no válida.";
+            redirect(getUrl('Catalogos', 'ActividadesZoo', 'listActZoo'));
             exit();
         }
 
         // AUDITORÍA: se consulta el estado real en BD (no se confía en lo que llegue por la URL)
-        $actual = $obj->select("SELECT estado FROM tbltipoactividadterreno WHERE codtipoactividad = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
+        $actual = $obj->select("SELECT estado FROM tbltipoactividadzoo WHERE codtipoactividad = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
         $estadoAnterior = $actual['estado'] ?? null;
         $nuevoEstado = ($estadoAnterior === 'A') ? 'I' : 'A';
 
-        $execute = $obj->update("UPDATE tbltipoactividadterreno SET estado = :estado WHERE codtipoactividad = :id", [
+        $execute = $obj->update("UPDATE tbltipoactividadzoo SET estado = :estado WHERE codtipoactividad = :id", [
             ':estado' => $nuevoEstado,
             ':id' => $id,
         ]);
@@ -176,18 +176,18 @@ class ActividadesTerreController
             $this->registrarBitacora(
                 $obj,
                 'UPDATE',
-                'ActividadesTerre',
+                'ActividadesZoo',
                 $id,
                 $estadoAnterior === 'A' ? 'Activo' : 'Inactivo',
                 $nuevoEstado === 'A' ? 'Activo' : 'Inactivo'
             );
 
-            $_SESSION['exito'] = "El estado de la actividad de terreno se actualizó correctamente.";
-            redirect(getUrl('Catalogos', 'ActividadesTerre', 'listActTerre'));
+            $_SESSION['exito'] = "El estado de la actividad de zoocriadero se actualizó correctamente.";
+            redirect(getUrl('Catalogos', 'ActividadesZoo', 'listActZoo'));
             exit();
         } else {
-            $_SESSION['error'] = "No se pudo actualizar el estado de la actividad de terreno.";
-            redirect(getUrl('Catalogos', 'ActividadesTerre', 'listActTerre'));
+            $_SESSION['error'] = "No se pudo actualizar el estado de la actividad de zoocriadero.";
+            redirect(getUrl('Catalogos', 'ActividadesZoo', 'listActZoo'));
             exit();
         }
 
@@ -196,17 +196,17 @@ class ActividadesTerreController
     // buscador (ajax)
     public function filtro(){
 
-        $obj = new ActividadesTerreModel();
+        $obj = new ActividadesZooModel();
 
         $buscar = $_GET['buscar'] ?? '';
 
-        $sql = "SELECT * FROM tbltipoactividadterreno
+        $sql = "SELECT * FROM tbltipoactividadzoo
                 WHERE nombreactividad ILIKE :buscar
                 ORDER BY nombreactividad ASC";
 
         $actividades = $obj->select($sql, [':buscar' => "%$buscar%"]);
 
-        include_once __DIR__ . '/../../../view/Catalogos/ActividadesTerre/filtroActividadesTerre.php';
+        include_once __DIR__ . '/../../../view/Catalogos/ActividadesZoo/filtroActividadesZoo.php';
 
     }
 
