@@ -25,14 +25,17 @@
                 <label for="nombresitio" class="form-label fw-semibold">Nombre del sitio</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light"><i class="bi bi-signpost"></i></span>
-                  <input type="text" class="form-control" id="nombresitio" name="nombresitio" placeholder="Ej: Fuente Santa Mónica">
+                  <input type="text" class="form-control" id="nombresitio" name="nombresitio"
+                         maxlength="80" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+"
+                         title="Solo letras y espacios (sin números ni símbolos)"
+                         placeholder="Ej: Fuente Santa Mónica">
                 </div>
               </div>
 
               <div class="col-md-6">
                 <label for="codcomuna" class="form-label fw-semibold">Comuna</label>
                 <select class="form-select" id="codcomuna" name="codcomuna">
-                  <option value="" selected disabled>Seleccione...</option>
+                  <option value="" selected disabled>Seleccione una comuna...</option>
                   <?php foreach ($comunas as $comuna): ?>
                     <option value="<?php echo $comuna['id']; ?>"><?php echo htmlspecialchars($comuna['nombrecomuna']); ?></option>
                   <?php endforeach; ?>
@@ -41,10 +44,10 @@
 
                 <div class="col-md-6">
                 <label for="codbarrio" class="form-label fw-semibold">Barrio</label>
-                <select class="form-select" id="codbarrio" name="codbarrio">
-                  <option value="" selected disabled>Seleccione...</option>
+                <select class="form-select" id="codbarrio" name="codbarrio" disabled>
+                  <option value="" selected disabled>Primero seleccione una comuna...</option>
                   <?php foreach ($barrios as $barrio): ?>
-                    <option value="<?php echo $barrio['id']; ?>" data-comuna="<?php echo $barrio['codcomuna']; ?>"><?php echo htmlspecialchars($barrio['nombrebarrio']); ?></option>
+                    <option value="<?php echo $barrio['id']; ?>" data-comuna="<?php echo $barrio['codcomuna']; ?>" hidden disabled><?php echo htmlspecialchars($barrio['nombrebarrio']); ?></option>
                   <?php endforeach; ?>
                 </select>
               </div>
@@ -63,7 +66,10 @@
                 <label for="direccion" class="form-label fw-semibold">Dirección</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light"><i class="bi bi-geo-alt"></i></span>
-                  <input type="text" class="form-control" id="direccion" name="direccion" placeholder="Ej: Calle 30 #36-5">
+                  <input type="text" class="form-control" id="direccion" name="direccion"
+                         pattern="^(Calle|Carrera|Avenida)\b.*"
+                         title="Debe iniciar con Calle, Carrera o Avenida"
+                         placeholder="Ej: Calle 30 #36-5">
                 </div>
               </div>
             </div>

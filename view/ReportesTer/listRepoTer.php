@@ -111,6 +111,8 @@
                                     id="fechaDesde"
                                     name="fechaDesde"
                                     class="form-control form-control-sm"
+                                    min="2026-09-10"
+                                    max="<?php echo date('Y-m-d'); ?>"
                                     required
                                 >
 
@@ -132,6 +134,8 @@
                                     id="fechaHasta"
                                     name="fechaHasta"
                                     class="form-control form-control-sm"
+                                    min="2026-09-10"
+                                    max="<?php echo date('Y-m-d'); ?>"
                                     required
                                 >
 
@@ -288,7 +292,7 @@
                 if (!respuesta.ok) {
 
                     alerta.innerHTML =
-                        '<div class="alert alert-warning">' +
+                        '<div class="alert alert-danger">' +
                         respuesta.mensaje +
                         '</div>';
 

@@ -12,9 +12,9 @@
   <td><?php echo htmlspecialchars($tanque['zoocriadero']); ?></td>
   <td class="text-center">
     <?php if ($tanque['estado'] === 'Activo'): ?>
-      <span class="badge bg-success-subtle text-success-emphasis">Activo</span>
+      <span class="badge bg-success">Activo</span>
     <?php else: ?>
-      <span class="badge bg-secondary-subtle text-secondary-emphasis">Inactivo</span>
+      <span class="badge bg-danger">Inactivo</span>
     <?php endif; ?>
   </td>
   <td class="text-center">
@@ -24,11 +24,18 @@
     </button>
   </td>
   <td class="text-center">
-    <a href="<?php echo getUrl('Tanques','Tanques','delete',array('id'=>$tanque['id'])) ?>"
-       class="btn btn-outline-danger btn-icon rounded-circle" title="Inhabilitar"
-       onclick="return confirm('¿Seguro que deseas inhabilitar el tanque <?php echo $tanque['numero']; ?>?')">
-      <i class="bi bi-eye-slash"></i>
-    </a>
+    <?php if ($tanque['estado'] === 'Activo'): ?>
+      <a href="<?php echo getUrl('Tanques','Tanques','delete',array('id'=>$tanque['id'])) ?>"
+         class="btn btn-outline-danger btn-icon rounded-circle" title="Inhabilitar"
+         onclick="return confirm('¿Seguro que deseas inhabilitar el tanque <?php echo $tanque['numero']; ?>?')">
+        <i class="bi bi-slash-circle"></i>
+      </a>
+    <?php else: ?>
+      <a href="<?php echo getUrl('Tanques','Tanques','delete',array('id'=>$tanque['id'])) ?>"
+         class="btn btn-outline-success btn-icon rounded-circle" title="Activar">
+        <i class="bi bi-check-lg"></i>
+      </a>
+    <?php endif; ?>
   </td>
 </tr>
 <?php

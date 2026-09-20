@@ -5,9 +5,9 @@
             <td class="ps-4"><?php echo htmlspecialchars($deposito['nombretipodeposito']); ?></td>
             <td class="text-center">
                 <?php if ($deposito['estado'] === 'A'): ?>
-                    <span class="badge bg-success-subtle text-success-emphasis">Activo</span>
+                    <span class="badge bg-success">Activo</span>
                 <?php else: ?>
-                    <span class="badge bg-secondary-subtle text-secondary-emphasis">Inactivo</span>
+                    <span class="badge bg-danger">Inactivo</span>
                 <?php endif; ?>
             </td>
             <td class="text-center">
@@ -21,7 +21,7 @@
                     <a href="<?php echo getUrl('Catalogos', 'TipoDeposito', 'activacion', array('id' => $deposito['codtipodeposito'])) ?>"
                         class="btn btn-outline-danger btn-icon rounded-circle" title="Inhabilitar"
                         onclick="return confirm('¿Seguro que deseas inhabilitar este tipo de depósito?')">
-                        <i class="bi bi-eye-slash"></i>
+                        <i class="bi bi-slash-circle"></i>
                     </a>
                 <?php else: ?>
                     <a href="<?php echo getUrl('Catalogos', 'TipoDeposito', 'activacion', array('id' => $deposito['codtipodeposito'])) ?>"

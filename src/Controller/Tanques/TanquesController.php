@@ -4,11 +4,8 @@
 
     use BioGuppy\Model\Tanques\TanquesModel;
     use PDO;
-    use BioGuppy\Controller\Traits\BitacoraTrait;
 
     class TanquesController{
-
-        use BitacoraTrait;
 
         private function consultarSeguro($obj, $sql, $params = []){
             try{
@@ -52,11 +49,17 @@
                  WHERE estado = 'A'
                  ORDER BY nombretipotanque ASC");
 
+            // Próximo número de tanque disponible por cada zoocriadero
+            // (se muestra en el formulario, pero el que realmente se
+            // guarda siempre se recalcula en el servidor).
             $zoocriaderos = $this->consultarSeguro($obj,
-                "SELECT codzoocriadero, nombrezoocriadero
-                 FROM tblzoocriadero
-                 WHERE estado = 'A'
-                 ORDER BY nombrezoocriadero ASC");
+                "SELECT z.codzoocriadero, z.nombrezoocriadero,
+                        COALESCE(MAX(t.numerotanque), 0) + 1 AS siguiente_numero
+                 FROM tblzoocriadero z
+                 LEFT JOIN tblzootanque t ON t.codzoocriadero = z.codzoocriadero
+                 WHERE z.estado = 'A'
+                 GROUP BY z.codzoocriadero, z.nombrezoocriadero
+                 ORDER BY z.nombrezoocriadero ASC");
 
             include_once __DIR__ . '/../../../view/Tanques/createTan.php';
 
@@ -67,45 +70,62 @@
 
             $obj = new TanquesModel();
 
-            $numero        = trim($_POST['numero_tanque'] ?? '');
             $codTipoTanque = $_POST['codtipotanque'] ?? '';
-            $capacidad     = $_POST['capacidad'] ?? '';
+            $capacidadTexto = trim($_POST['capacidad'] ?? '');
             $codZoocriadero = $_POST['codzoocriadero'] ?? '';
-            $estado        = isset($_POST['estado_tanque']) ? 'A' : 'I';
+            // El estado ya no se pide en el formulario: todo tanque nuevo
+            // se crea Activo; el estado se maneja únicamente con el botón
+            // Inhabilitar de la lista.
+            $estado        = 'A';
 
-            if(empty($numero) || empty($codTipoTanque) || empty($capacidad) || empty($codZoocriadero)){
-                $_SESSION['error'] = "Número de tanque, tipo, capacidad y zoocriadero son obligatorios.";
+            if(empty($codTipoTanque) || empty($capacidadTexto) || empty($codZoocriadero)){
+                $_SESSION['error'] = "Tipo, capacidad y zoocriadero son obligatorios.";
                 redirect(getUrl('Tanques','Tanques','create'));
                 exit();
             }
 
-            if(!is_numeric($numero) || $numero <= 0){
-                $_SESSION['error'] = "El número de tanque debe ser un número entero (ej. 6), sin letras ni guiones.";
+            // -----------------------------------------------------------
+            // VALIDAR FORMATO DE CAPACIDAD (litros)
+            // Solo números, con una coma opcional para decimales
+            // (ej. 20 ó 20,5). No se permiten letras ni puntos.
+            // -----------------------------------------------------------
+            if(!preg_match('/^\d+(,\d{1,2})?$/', $capacidadTexto)){
+                $_SESSION['error'] = "La capacidad solo puede llevar números y, si aplica, una coma para decimales (ej: 20,5).";
                 redirect(getUrl('Tanques','Tanques','create'));
                 exit();
             }
 
-            if(!is_numeric($capacidad) || $capacidad <= 0){
-                $_SESSION['error'] = "La capacidad debe ser un número mayor a cero.";
+            $capacidad = (float) str_replace(',', '.', $capacidadTexto);
+
+            // -----------------------------------------------------------
+            // RANGO REALISTA DE CAPACIDAD (litros)
+            // -----------------------------------------------------------
+            $capacidadMinima = 5;
+            $capacidadMaxima = 1000;
+
+            if($capacidad < $capacidadMinima || $capacidad > $capacidadMaxima){
+                $_SESSION['error'] = "La capacidad debe estar entre {$capacidadMinima} y {$capacidadMaxima} litros.";
                 redirect(getUrl('Tanques','Tanques','create'));
                 exit();
             }
 
             try{
 
-                // valida que no exista ya ese numero de tanque en el mismo zoocriadero (UNIQUE en BD)
-                $sqlValidar = "SELECT codtanque FROM tblzootanque
-                               WHERE numerotanque = :numero AND codzoocriadero = :codzoocriadero";
-                $existe = $obj->select($sqlValidar, [
-                    ':numero' => $numero,
+                // -----------------------------------------------------------
+                // EL NÚMERO DE TANQUE NUNCA SE TOMA DEL FORMULARIO:
+                // siempre es el siguiente consecutivo dentro del
+                // zoocriadero seleccionado, para que no se puedan crear
+                // huecos ni números arbitrarios.
+                // -----------------------------------------------------------
+                $sqlSiguiente = "SELECT COALESCE(MAX(numerotanque), 0) + 1 AS siguiente
+                                  FROM tblzootanque
+                                  WHERE codzoocriadero = :codzoocriadero";
+
+                $siguiente = $obj->select($sqlSiguiente, [
                     ':codzoocriadero' => $codZoocriadero,
                 ])->fetch(PDO::FETCH_ASSOC);
 
-                if($existe){
-                    $_SESSION['error'] = "Ya existe un tanque con ese número en ese zoocriadero.";
-                    redirect(getUrl('Tanques','Tanques','create'));
-                    exit();
-                }
+                $numero = $siguiente['siguiente'];
 
                 $sql = "INSERT INTO public.tblzootanque
                             (codtanque, codzoocriadero, codtipotanque, numerotanque, capacidad, fechacreacion, estado)
@@ -119,9 +139,6 @@
                     ':capacidad'      => $capacidad,
                     ':estado'         => $estado,
                 ]);
-
-                $nuevoId = $obj->select("SELECT MAX(codtanque) AS id FROM tblzootanque")->fetch(PDO::FETCH_ASSOC);
-                $this->registrarBitacora($obj, 'INSERT', 'Tanques', $nuevoId['id'] ?? null, null, $numero);
 
             }catch(\Throwable $error){
                 error_log("Error al registrar tanque: " . $error->getMessage());
@@ -167,11 +184,16 @@
                  WHERE estado = 'A'
                  ORDER BY nombretipotanque ASC");
 
+            // Próximo número disponible por zoocriadero, para el caso en que
+            // el usuario cambie el tanque de zoocriadero durante la edición.
             $zoocriaderos = $this->consultarSeguro($obj,
-                "SELECT codzoocriadero, nombrezoocriadero
-                 FROM tblzoocriadero
-                 WHERE estado = 'A'
-                 ORDER BY nombrezoocriadero ASC");
+                "SELECT z.codzoocriadero, z.nombrezoocriadero,
+                        COALESCE(MAX(t.numerotanque), 0) + 1 AS siguiente_numero
+                 FROM tblzoocriadero z
+                 LEFT JOIN tblzootanque t ON t.codzoocriadero = z.codzoocriadero
+                 WHERE z.estado = 'A'
+                 GROUP BY z.codzoocriadero, z.nombrezoocriadero
+                 ORDER BY z.nombrezoocriadero ASC");
 
             include_once __DIR__ . '/../../../view/Tanques/getUpdateTan.php';
 
@@ -183,11 +205,12 @@
             $obj = new TanquesModel();
 
             $id             = $_POST['codtanque'] ?? null;
-            $numero         = trim($_POST['numero_tanque'] ?? '');
             $codTipoTanque  = $_POST['codtipotanque'] ?? '';
-            $capacidad      = $_POST['capacidad'] ?? '';
+            $capacidadTexto = trim($_POST['capacidad'] ?? '');
             $codZoocriadero = $_POST['codzoocriadero'] ?? '';
-            $estado         = isset($_POST['estado_tanque']) ? 'A' : 'I';
+            // El estado ya no se edita desde este formulario: se maneja
+            // únicamente con el botón Inhabilitar de la lista, así que
+            // la edición nunca lo modifica.
 
             if(empty($id)){
                 $_SESSION['error'] = "Tanque no válido.";
@@ -195,48 +218,74 @@
                 exit();
             }
 
-            if(empty($numero) || empty($codTipoTanque) || empty($capacidad) || empty($codZoocriadero)){
-                $_SESSION['error'] = "Número de tanque, tipo, capacidad y zoocriadero son obligatorios.";
+            if(empty($codTipoTanque) || empty($capacidadTexto) || empty($codZoocriadero)){
+                $_SESSION['error'] = "Tipo, capacidad y zoocriadero son obligatorios.";
                 redirect(getUrl('Tanques','Tanques','getUpdate',['id'=>$id]));
                 exit();
             }
 
-            if(!is_numeric($numero) || $numero <= 0){
-                $_SESSION['error'] = "El número de tanque debe ser un número entero (ej. 6), sin letras ni guiones.";
+            // -----------------------------------------------------------
+            // VALIDAR FORMATO DE CAPACIDAD (litros) - igual que al crear
+            // -----------------------------------------------------------
+            if(!preg_match('/^\d+(,\d{1,2})?$/', $capacidadTexto)){
+                $_SESSION['error'] = "La capacidad solo puede llevar números y, si aplica, una coma para decimales (ej: 20,5).";
                 redirect(getUrl('Tanques','Tanques','getUpdate',['id'=>$id]));
                 exit();
             }
 
-            if(!is_numeric($capacidad) || $capacidad <= 0){
-                $_SESSION['error'] = "La capacidad debe ser un número mayor a cero.";
+            $capacidad = (float) str_replace(',', '.', $capacidadTexto);
+
+            $capacidadMinima = 5;
+            $capacidadMaxima = 1000;
+
+            if($capacidad < $capacidadMinima || $capacidad > $capacidadMaxima){
+                $_SESSION['error'] = "La capacidad debe estar entre {$capacidadMinima} y {$capacidadMaxima} litros.";
                 redirect(getUrl('Tanques','Tanques','getUpdate',['id'=>$id]));
                 exit();
             }
 
             try{
 
-                // valida que no exista OTRO tanque con ese mismo numero en el mismo zoocriadero
-                $sqlValidar = "SELECT codtanque FROM tblzootanque
-                               WHERE numerotanque = :numero AND codzoocriadero = :codzoocriadero
-                               AND codtanque != :id";
-                $existe = $obj->select($sqlValidar, [
-                    ':numero' => $numero,
-                    ':codzoocriadero' => $codZoocriadero,
-                    ':id' => $id,
-                ])->fetch(PDO::FETCH_ASSOC);
+                // -----------------------------------------------------------
+                // EL NÚMERO DE TANQUE NUNCA SE TOMA DEL FORMULARIO.
+                // Si el zoocriadero no cambió, se conserva el número que
+                // ya tenía. Si cambió, se le asigna el siguiente
+                // consecutivo disponible en el nuevo zoocriadero.
+                // -----------------------------------------------------------
+                $actual = $obj->select(
+                    "SELECT numerotanque, codzoocriadero FROM tblzootanque WHERE codtanque = :id",
+                    [':id' => $id]
+                )->fetch(PDO::FETCH_ASSOC);
 
-                if($existe){
-                    $_SESSION['error'] = "Ya existe otro tanque con ese número en ese zoocriadero.";
-                    redirect(getUrl('Tanques','Tanques','getUpdate',['id'=>$id]));
+                if(!$actual){
+                    $_SESSION['error'] = "Tanque no válido.";
+                    redirect(getUrl('Tanques','Tanques','listTan'));
                     exit();
+                }
+
+                if((string) $actual['codzoocriadero'] === (string) $codZoocriadero){
+
+                    $numero = $actual['numerotanque'];
+
+                } else {
+
+                    $sqlSiguiente = "SELECT COALESCE(MAX(numerotanque), 0) + 1 AS siguiente
+                                      FROM tblzootanque
+                                      WHERE codzoocriadero = :codzoocriadero";
+
+                    $siguiente = $obj->select($sqlSiguiente, [
+                        ':codzoocriadero' => $codZoocriadero,
+                    ])->fetch(PDO::FETCH_ASSOC);
+
+                    $numero = $siguiente['siguiente'];
+
                 }
 
                 $sql = "UPDATE tblzootanque
                         SET codzoocriadero = :codzoocriadero,
                             codtipotanque  = :codtipotanque,
                             numerotanque   = :numero,
-                            capacidad      = :capacidad,
-                            estado         = :estado
+                            capacidad      = :capacidad
                         WHERE codtanque = :id";
 
                 $obj->update($sql, [
@@ -244,11 +293,8 @@
                     ':codtipotanque'  => $codTipoTanque,
                     ':numero'         => $numero,
                     ':capacidad'      => $capacidad,
-                    ':estado'         => $estado,
                     ':id'             => $id,
                 ]);
-
-                $this->registrarBitacora($obj, 'UPDATE', 'Tanques', $id, null, $numero);
 
             }catch(\Throwable $error){
                 error_log("Error al editar tanque: " . $error->getMessage());
@@ -290,8 +336,6 @@ public function delete(){
         ':estado' => $nuevoEstado,
         ':id' => $id,
     ]);
-
-    $this->registrarBitacora($obj, 'UPDATE', 'Tanques', $id, $actual['estado'] ?? null, $nuevoEstado);
 
     $_SESSION['exito'] = "El estado del tanque se actualizó correctamente.";
     redirect(getUrl('Tanques','Tanques','listTan'));

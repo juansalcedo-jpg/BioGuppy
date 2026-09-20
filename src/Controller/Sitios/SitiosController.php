@@ -4,17 +4,13 @@ namespace BioGuppy\Controller\Sitios;
 
 use BioGuppy\Model\Sitios\SitiosModel;
 use PDO;
-use BioGuppy\Controller\Traits\BitacoraTrait;
 class SitiosController{
-
-    use BitacoraTrait;
 
         private function consultarSeguro($obj, $sql, $params = []){
         try{
             return $obj->select($sql, $params);
         }catch(\Throwable $error){
             error_log("Consulta fallida en SitiosController: " . $error->getMessage());
-            $_SESSION['error'] = "DEBUG: " . $error->getMessage();
             return false;
         }
     }
@@ -77,6 +73,33 @@ class SitiosController{
             exit();
         }
 
+        // -----------------------------------------------------------
+        // VALIDAR FORMATO DE NOMBRE
+        // Solo letras y espacios (sin números, símbolos ni puntuación),
+        // máximo 80 caracteres.
+        // -----------------------------------------------------------
+        if(mb_strlen($nombresitio) > 80){
+            $_SESSION['error'] = "El nombre no puede tener más de 80 caracteres.";
+            redirect(getUrl('Sitios','Sitios','createSit'));
+            exit();
+        }
+
+        if(!preg_match('/^[\p{L} ]+$/u', $nombresitio)){
+            $_SESSION['error'] = "El nombre solo puede contener letras y espacios (sin números, símbolos ni puntuación).";
+            redirect(getUrl('Sitios','Sitios','createSit'));
+            exit();
+        }
+
+        // -----------------------------------------------------------
+        // VALIDAR FORMATO DE DIRECCIÓN
+        // Debe iniciar con la nomenclatura vial usada en Cali.
+        // -----------------------------------------------------------
+        if(!preg_match('/^(Calle|Carrera|Avenida)\b/iu', $direccion)){
+            $_SESSION['error'] = "La dirección debe iniciar con Calle, Carrera o Avenida.";
+            redirect(getUrl('Sitios','Sitios','createSit'));
+            exit();
+        }
+
         $sqlValidar = "SELECT codsitio FROM tblsitio WHERE nombresitio ILIKE :nombre";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombresitio])->fetch(PDO::FETCH_ASSOC);
 
@@ -96,9 +119,6 @@ class SitiosController{
             ':nombresitio'     => trim($nombresitio),
             ':direccion'       => trim($direccion),
         ]);
-
-        $nuevoId = $obj->select("SELECT MAX(codsitio) AS id FROM tblsitio")->fetch(PDO::FETCH_ASSOC);
-        $this->registrarBitacora($obj, 'INSERT', 'Sitios', $nuevoId['id'] ?? null, null, trim($nombresitio));
 
         $_SESSION['exito'] = "El sitio se registró exitosamente.";
         redirect(getUrl('Sitios','Sitios','listSit'));
@@ -154,6 +174,27 @@ class SitiosController{
             exit();
         }
 
+        // -----------------------------------------------------------
+        // VALIDAR FORMATO DE NOMBRE Y DIRECCIÓN (igual que al crear)
+        // -----------------------------------------------------------
+        if(mb_strlen($nombresitio) > 80){
+            $_SESSION['error'] = "El nombre no puede tener más de 80 caracteres.";
+            redirect(getUrl('Sitios','Sitios','editSit',['id'=>$id]));
+            exit();
+        }
+
+        if(!preg_match('/^[\p{L} ]+$/u', $nombresitio)){
+            $_SESSION['error'] = "El nombre solo puede contener letras y espacios (sin números, símbolos ni puntuación).";
+            redirect(getUrl('Sitios','Sitios','editSit',['id'=>$id]));
+            exit();
+        }
+
+        if(!preg_match('/^(Calle|Carrera|Avenida)\b/iu', $direccion)){
+            $_SESSION['error'] = "La dirección debe iniciar con Calle, Carrera o Avenida.";
+            redirect(getUrl('Sitios','Sitios','editSit',['id'=>$id]));
+            exit();
+        }
+
         // valida que no exista OTRO sitio con ese nombre
         $sqlValidar = "SELECT codsitio FROM tblsitio WHERE nombresitio ILIKE :nombre AND codsitio != :id";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombresitio, ':id' => $id])->fetch(PDO::FETCH_ASSOC);
@@ -169,8 +210,6 @@ class SitiosController{
                     nombresitio = :nombresitio, direccion = :direccion
                 WHERE codsitio = :id";
 
-        $anterior = $obj->select("SELECT nombresitio FROM tblsitio WHERE codsitio = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
-
         $obj->update($sql, [
             ':codcomuna'       => $codcomuna,
             ':codbarrio'       => $codbarrio,
@@ -179,8 +218,6 @@ class SitiosController{
             ':direccion'       => trim($direccion),
             ':id'              => $id,
         ]);
-
-        $this->registrarBitacora($obj, 'UPDATE', 'Sitios', $id, $anterior['nombresitio'] ?? null, trim($nombresitio));
 
         $_SESSION['exito'] = "El sitio se actualizó correctamente.";
         redirect(getUrl('Sitios','Sitios','listSit'));
@@ -206,8 +243,6 @@ class SitiosController{
             ':estado' => $nuevoEstado,
             ':id' => $id,
         ]);
-
-        $this->registrarBitacora($obj, 'UPDATE', 'Sitios', $id, $actual['estado'] ?? null, $nuevoEstado);
 
         $_SESSION['exito'] = "El estado del sitio se actualizó correctamente.";
         redirect(getUrl('Sitios','Sitios','listSit'));

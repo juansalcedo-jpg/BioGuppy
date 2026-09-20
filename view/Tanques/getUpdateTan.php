@@ -1,5 +1,10 @@
 <?php
 $tanque = $tanque->fetch(PDO::FETCH_ASSOC);
+
+$capacidadNum = (float) $tanque['capacidad'];
+$capacidadTexto = (floor($capacidadNum) == $capacidadNum)
+    ? number_format($capacidadNum, 0, ',', '')
+    : rtrim(rtrim(number_format($capacidadNum, 2, ',', ''), '0'), ',');
 ?>
 <div id="tanqueFormEdicion">
 <div class="container-fluid py-2">
@@ -12,12 +17,26 @@ $tanque = $tanque->fetch(PDO::FETCH_ASSOC);
         <div class="row g-3 mb-3">
 
           <div class="col-md-6">
-            <label for="numero_tanque" class="form-label fw-semibold">Número de tanque <span class="text-danger">*</span></label>
-            <div class="input-group">
-              <span class="input-group-text bg-light"><i class="bi bi-hash"></i></span>
-              <input type="number" min="1" step="1" class="form-control" id="numero_tanque" name="numero_tanque"
-                     value="<?php echo htmlspecialchars($tanque['numerotanque']); ?>" required>
-            </div>
+            <label for="codzoocriadero" class="form-label fw-semibold">Zoocriadero <span class="text-danger">*</span></label>
+            <select class="form-select" id="codzoocriadero" name="codzoocriadero" required>
+              <?php
+                $hayZoo = isset($zoocriaderos) && $zoocriaderos && $zoocriaderos->rowCount() > 0;
+                if ($hayZoo):
+                    while($zoo = $zoocriaderos->fetch(PDO::FETCH_ASSOC)):
+                        $seleccionado = ($zoo['codzoocriadero'] == $tanque['codzoocriadero']) ? 'selected' : '';
+              ?>
+                <option value="<?php echo $zoo['codzoocriadero']; ?>"
+                        data-siguiente="<?php echo $zoo['siguiente_numero']; ?>"
+                        <?php echo $seleccionado; ?>>
+                  <?php echo htmlspecialchars($zoo['nombrezoocriadero']); ?>
+                </option>
+              <?php
+                    endwhile;
+                else:
+              ?>
+                <option value="">No hay zoocriaderos registrados</option>
+              <?php endif; ?>
+            </select>
           </div>
 
           <div class="col-md-6">
@@ -49,41 +68,24 @@ $tanque = $tanque->fetch(PDO::FETCH_ASSOC);
             <label for="capacidad" class="form-label fw-semibold">Capacidad (litros) <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text bg-light"><i class="bi bi-droplet-fill"></i></span>
-              <input type="number" min="1" step="1" class="form-control" id="capacidad" name="capacidad"
-                     value="<?php echo htmlspecialchars($tanque['capacidad']); ?>" required>
+              <input type="text" inputmode="decimal" class="form-control" id="capacidad" name="capacidad"
+                     pattern="^\d+(,\d{1,2})?$"
+                     title="Solo números; usa una coma para decimales (ej: 20,5)"
+                     value="<?php echo htmlspecialchars($capacidadTexto); ?>" required>
             </div>
+            <div class="form-text">Entre 5 y 1000 litros. Usa coma para decimales (ej: 20,5).</div>
           </div>
 
           <div class="col-md-6">
-            <label for="codzoocriadero" class="form-label fw-semibold">Zoocriadero</label>
-            <select class="form-select" id="codzoocriadero" name="codzoocriadero">
-              <?php
-                $hayZoo = isset($zoocriaderos) && $zoocriaderos && $zoocriaderos->rowCount() > 0;
-                if ($hayZoo):
-                    while($zoo = $zoocriaderos->fetch(PDO::FETCH_ASSOC)):
-                        $seleccionado = ($zoo['codzoocriadero'] == $tanque['codzoocriadero']) ? 'selected' : '';
-              ?>
-                <option value="<?php echo $zoo['codzoocriadero']; ?>" <?php echo $seleccionado; ?>>
-                  <?php echo htmlspecialchars($zoo['nombrezoocriadero']); ?>
-                </option>
-              <?php
-                    endwhile;
-                else:
-              ?>
-                <option value="">No hay zoocriaderos registrados</option>
-              <?php endif; ?>
-            </select>
+            <label for="numero_tanque" class="form-label fw-semibold">Número de tanque</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light"><i class="bi bi-hash"></i></span>
+              <input type="text" class="form-control" id="numero_tanque" name="numero_tanque_preview"
+                     value="<?php echo htmlspecialchars($tanque['numerotanque']); ?>" readonly tabindex="-1">
+            </div>
+            <div class="form-text">Se asigna automáticamente según el zoocriadero seleccionado.</div>
           </div>
 
-        </div>
-
-        <div class="mb-4">
-          <label class="form-label fw-semibold d-block">Estado</label>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch"
-                   id="estado_tanque" name="estado_tanque" <?php echo ($tanque['estado'] === 'A') ? 'checked' : ''; ?>>
-            <label class="form-check-label" for="estado_tanque">Activo</label>
-          </div>
         </div>
 
         <div class="d-flex justify-content-end gap-2">
@@ -96,6 +98,28 @@ $tanque = $tanque->fetch(PDO::FETCH_ASSOC);
         </div>
 
       </form>
+
+      <script>
+        (function () {
+          var comboZoo = document.getElementById('codzoocriadero');
+          var campoNumero = document.getElementById('numero_tanque');
+          if (!comboZoo || !campoNumero) return;
+
+          var zoocriaderoOriginal = "<?php echo $tanque['codzoocriadero']; ?>";
+          var numeroOriginal = "<?php echo htmlspecialchars($tanque['numerotanque']); ?>";
+
+          comboZoo.addEventListener('change', function () {
+            if (comboZoo.value === zoocriaderoOriginal) {
+              campoNumero.value = numeroOriginal;
+              return;
+            }
+
+            var opcion = comboZoo.options[comboZoo.selectedIndex];
+            var siguiente = opcion ? opcion.getAttribute('data-siguiente') : null;
+            campoNumero.value = siguiente ? siguiente : '';
+          });
+        })();
+      </script>
 
     </div>
   </div>
