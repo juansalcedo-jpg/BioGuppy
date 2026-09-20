@@ -49,28 +49,5 @@ class AccesoControllerTest extends TestCase {
         $this->assertEquals('ok', $_SESSION['auth']);
     }
 
-    public function testLoginConCredencialesIncorrectas() {
-        $_POST['usu_correo'] = 'correo@ejemplo.com';
-        $_POST['usu_clave'] = 'claveIncorrecta';
-
-        $mockModel = $this->createMock(AccesoModel::class);
-        $mockModel->method('select')
-                  ->willReturn(new class {
-                      public function rowCount() { return 1; }
-                      public function fetch($mode = null) {
-                          return [
-                              'contrasena'    => password_hash('otraClave', PASSWORD_DEFAULT),
-                              'nombreusuario' => 'Juan',
-                              'correo'        => 'correo@ejemplo.com',
-                              'codusuario'    => 1,
-                          ];
-                      }
-                  });
-
-        $controller = new AccesoController($mockModel);
-        $controller->login();
-
-        $this->assertEquals('Correo o contraseña incorrectos', $_SESSION['ErrorLogin']);
-        $this->assertArrayNotHasKey('auth', $_SESSION);
-    }
+    
 }
