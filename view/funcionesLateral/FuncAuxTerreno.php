@@ -19,41 +19,10 @@ $misActividadesActivo = ($funcion == 'listMisActividades');
   </a>
 </li>
 
-<!-- Registrar actividad (con submódulos) -->
+<!-- Registrar actividad -->
 <li class="nav-item">
-  <a class="nav-link fw-semibold d-flex align-items-center <?php echo $registrarActividadAbierto ? '' : 'collapsed'; ?>"
-    data-bs-toggle="collapse" href="#submenuActividadTer" role="button"
-    aria-expanded="<?php echo $registrarActividadAbierto ? 'true' : 'false'; ?>"
-    aria-controls="submenuActividadTer">
+  <a class="nav-link fw-semibold d-flex align-items-center <?php echo $registrarActividadAbierto ? 'active' : ''; ?>"
+    href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'Inspeccion') ?>">
     <i class="bi bi-plus-lg me-2"></i> Registrar actividad
-    <i class="bi bi-caret-down-fill ms-auto"></i>
   </a>
-  <div class="collapse <?php echo $registrarActividadAbierto ? 'show' : ''; ?>" id="submenuActividadTer">
-    <ul class="list-unstyled ps-4">
-      <li>
-        <a class="nav-link <?php echo ($funcion == 'Inspeccion') ? 'active' : ''; ?>"
-          href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'Inspeccion') ?>">
-          <i class="bi bi-search me-2"></i> Inspección
-        </a>
-      </li>
-      <li>
-        <a class="nav-link <?php echo ($funcion == 'Siembra') ? 'active' : ''; ?>"
-          href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'Siembra') ?>">
-          <i class="bi bi-flower1 me-2"></i> Siembra
-        </a>
-      </li>
-      <li>
-        <a class="nav-link <?php echo ($funcion == 'Seguimiento') ? 'active' : ''; ?>"
-          href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'Seguimiento') ?>">
-          <i class="bi bi-eye me-2"></i> Seguimiento
-        </a>
-      </li>
-      <li>
-        <a class="nav-link <?php echo ($funcion == 'Resiembra') ? 'active' : ''; ?>"
-          href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'Resiembra') ?>">
-          <i class="bi bi-arrow-repeat me-2"></i> Resiembra
-        </a>
-      </li>
-    </ul>
-  </div>
 </li>

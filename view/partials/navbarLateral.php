@@ -25,14 +25,14 @@ $funcion = $_GET['funcion'] ?? '';
         color: #fff;
     }
     .sidebar-biogu .text-accent {
-        color: #22c1a4 !important;
-    }
+    color: #159EE8 !important;
+}
     .bg-accent {
-        background-color: #22c1a4 !important;
-    }
+    background-color: #159EE8 !important;
+}
 
     .otro{
-        color: #38D7C8;
+        color:  #159EE8;
     }
 </style>
 <aside class="sidebar-biogu d-flex flex-column vh-100 position-fixed top-0 start-0">
