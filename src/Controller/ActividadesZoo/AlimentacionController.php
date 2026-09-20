@@ -4,10 +4,12 @@ namespace BioGuppy\Controller\ActividadesZoo;
 
 use BioGuppy\Model\ActividadesZoo\AlimentacionModel;
 use PDO;
+use BioGuppy\Controller\Traits\BitacoraTrait;
 
 class AlimentacionController{
 
     use ActividadZooHelpersTrait;
+    use BitacoraTrait;
 
     public function Alimentacion(){
         $obj = new AlimentacionModel();
@@ -47,6 +49,9 @@ class AlimentacionController{
             ':tipopez'          => $tipoPez,
             ':tipoalimento'     => $tipoAlimento,
         ]);
+
+        $nuevoId = $obj->select("SELECT MAX(codactividad) AS id FROM tblactividadzoo")->fetch(PDO::FETCH_ASSOC);
+        $this->registrarBitacora($obj, 'INSERT', 'ActividadesZoo', $nuevoId['id'] ?? null, null, 'ALIMENTACIÓN');
 
         $_SESSION['exito'] = "La actividad de alimentación se registró exitosamente.";
         redirect(getUrl('ActividadesListZoo','ActividadesListZoo','ActividadesListZoo'));

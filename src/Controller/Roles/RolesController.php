@@ -4,33 +4,11 @@ namespace BioGuppy\Controller\Roles;
 
 use BioGuppy\Model\Roles\rolesModel;
 use PDO;
+use BioGuppy\Controller\Traits\BitacoraTrait;
 
 class RolesController{
 
-    private function registrarBitacora($obj, $accion, $modulo, $idregistro = null, $valoranterior = null, $valornuevo = null){
-
-        $codusuario = $_SESSION['usu_id'] ?? null;
-
-        if(empty($codusuario)){
-            return;
-        }
-
-        $sql = "CALL sp_registrar_bitacora(:codusuario, :accion, :modulo, :idregistro, :valoranterior, :valornuevo)";
-
-        try{
-            $obj->insert($sql, [
-                ':codusuario'    => $codusuario,
-                ':accion'        => $accion,
-                ':modulo'        => $modulo,
-                ':idregistro'    => $idregistro,
-                ':valoranterior' => $valoranterior,
-                ':valornuevo'    => $valornuevo,
-            ]);
-        }catch(\Throwable $error){
-            error_log("No se pudo registrar en bitácora: " . $error->getMessage());
-        }
-
-    }
+    use BitacoraTrait;
 
     public function createRol(){
         include_once __DIR__ . '/../../../view/Roles/createRol.php';

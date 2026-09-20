@@ -4,9 +4,12 @@ namespace BioGuppy\Controller\Zoocriadero;
 
 use BioGuppy\Model\ZoocriaderoCor\Zoocriaderocor;
 use PDO;
+use BioGuppy\Controller\Traits\BitacoraTrait;
 
 class ZoocriaderoController
 {
+    use BitacoraTrait;
+
 
     // ---------------------------------------------------------------
     // LISTADO PRINCIPAL
@@ -70,7 +73,7 @@ class ZoocriaderoController
                             nombrebarrio
                        FROM tblbarrio
                        WHERE estado = 'A'
-                       ORDER BY nombrebarrio ASC";
+                       ORDER BY codbarrio ASC";
 
         $barrios = $obj->select($sqlBarrios);
 
@@ -330,6 +333,9 @@ class ZoocriaderoController
             ]
         );
 
+        $nuevoId = $obj->select("SELECT MAX(codzoocriadero) AS id FROM tblzoocriadero")->fetch(PDO::FETCH_ASSOC);
+        $this->registrarBitacora($obj, 'INSERT', 'Zoocriadero', $nuevoId['id'] ?? null, null, $nombre);
+
 
         $_SESSION['exito'] =
             "El zoocriadero se registró correctamente.";
@@ -569,6 +575,8 @@ class ZoocriaderoController
             ]
         );
 
+        $this->registrarBitacora($obj, 'UPDATE', 'Zoocriadero', $id, null, $nombre);
+
 
         $_SESSION['exito'] =
             "El zoocriadero se actualizó correctamente.";
@@ -628,6 +636,8 @@ class ZoocriaderoController
                 ':id' => $id
             ]
         );
+
+        $this->registrarBitacora($obj, 'UPDATE', 'Zoocriadero', $id, $actual['estado'] ?? null, $nuevoEstado);
 
 
         redirect(

@@ -4,8 +4,11 @@
 
     use BioGuppy\Model\Tanques\TanquesModel;
     use PDO;
+    use BioGuppy\Controller\Traits\BitacoraTrait;
 
     class TanquesController{
+
+        use BitacoraTrait;
 
         private function consultarSeguro($obj, $sql, $params = []){
             try{
@@ -119,6 +122,9 @@
                     ':capacidad'      => $capacidad,
                     ':estado'         => $estado,
                 ]);
+
+                $nuevoId = $obj->select("SELECT MAX(codtanque) AS id FROM tblzootanque")->fetch(PDO::FETCH_ASSOC);
+                $this->registrarBitacora($obj, 'INSERT', 'Tanques', $nuevoId['id'] ?? null, null, $numero);
 
             }catch(\Throwable $error){
                 error_log("Error al registrar tanque: " . $error->getMessage());
@@ -245,6 +251,8 @@
                     ':id'             => $id,
                 ]);
 
+                $this->registrarBitacora($obj, 'UPDATE', 'Tanques', $id, null, $numero);
+
             }catch(\Throwable $error){
                 error_log("Error al editar tanque: " . $error->getMessage());
                 $_SESSION['error'] = "No se pudo actualizar el tanque. Verifica los datos e intenta de nuevo.";
@@ -285,6 +293,8 @@ public function delete(){
         ':estado' => $nuevoEstado,
         ':id' => $id,
     ]);
+
+    $this->registrarBitacora($obj, 'UPDATE', 'Tanques', $id, $actual['estado'] ?? null, $nuevoEstado);
 
     $_SESSION['exito'] = "El estado del tanque se actualizó correctamente.";
     redirect(getUrl('Tanques','Tanques','listTan'));

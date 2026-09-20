@@ -4,10 +4,12 @@ namespace BioGuppy\Controller\ActividadesZoo;
 
 use BioGuppy\Model\ActividadesZoo\NacidosMuertosModel;
 use PDO;
+use BioGuppy\Controller\Traits\BitacoraTrait;
 
 class NacidosMuertosController{
 
     use ActividadZooHelpersTrait;
+    use BitacoraTrait;
 
     public function NacidosMuertos(){
         $obj = new NacidosMuertosModel();
@@ -45,6 +47,9 @@ class NacidosMuertosController{
             ':pecesnacidos'     => $pecesNacidos,
             ':pecesmuertos'     => $pecesMuertos,
         ]);
+
+        $nuevoId = $obj->select("SELECT MAX(codactividad) AS id FROM tblactividadzoo")->fetch(PDO::FETCH_ASSOC);
+        $this->registrarBitacora($obj, 'INSERT', 'ActividadesZoo', $nuevoId['id'] ?? null, null, 'RECOLECCIÓN');
 
         $_SESSION['exito'] = "El registro de nacidos/muertos se guardó exitosamente.";
         redirect(getUrl('ActividadesListZoo','ActividadesListZoo','ActividadesListZoo'));
