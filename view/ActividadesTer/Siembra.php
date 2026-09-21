@@ -68,6 +68,13 @@
                             </div>
 
                             <div class="col-md-3">
+                                <label for="volumen_agua" class="form-label fw-semibold">Volumen de agua (litros)</label>
+                                <input type="number" min="0" class="form-control form-control-lg fs-6" id="volumen_agua" name="volumen_agua" value="0">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-3">
                                 <label for="recolectar_empacar" class="form-label fw-semibold">¿Recolectar y empacar?</label>
                                 <select class="form-select form-select-lg fs-6" id="recolectar_empacar" name="recolectar_empacar">
                                     <option value="S" selected>Sí</option>

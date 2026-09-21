@@ -32,7 +32,7 @@ class NacidosMuertosController{
             exit();
         }
 
-        $codTipo = $this->obtenerCodTipoActividadZoo($obj, 'RECOLECCIÓN');
+        $codTipo = $this->obtenerCodTipoActividadZoo($obj, 'RECOLECCION');
 
         $sql = "INSERT INTO public.tblactividadzoo
                     (codactividad, codtipoactividad, codtanque, codusuario, fecha, pecesnacidos, pecesmuertos, fechacreacion, estado)
@@ -49,7 +49,7 @@ class NacidosMuertosController{
         ]);
 
         $nuevoId = $obj->select("SELECT MAX(codactividad) AS id FROM tblactividadzoo")->fetch(PDO::FETCH_ASSOC);
-        $this->registrarBitacora($obj, 'INSERT', 'ActividadesZoo', $nuevoId['id'] ?? null, null, 'RECOLECCIÓN');
+        $this->registrarBitacora($obj, 'INSERT', 'ActividadesZoo', $nuevoId['id'] ?? null, null, 'RECOLECCION');
 
         $_SESSION['exito'] = "El registro de nacidos/muertos se guardó exitosamente.";
         redirect(getUrl('ActividadesListZoo','ActividadesListZoo','ActividadesListZoo'));

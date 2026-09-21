@@ -18,7 +18,13 @@ trait ActividadZooHelpersTrait
 
     private function obtenerCodTipoActividadZoo($obj, $nombre)
     {
-        $sql = "SELECT codtipoactividad FROM tbltipoactividadzoo WHERE nombreactividad ILIKE :nombre LIMIT 1";
+        // Comparacion sin tildes ni mayusculas/minusculas, para evitar
+        // problemas de codificacion entre PHP y PostgreSQL con palabras
+        // como "Alimentacion" o "Recoleccion".
+        $sql = "SELECT codtipoactividad
+                FROM tbltipoactividadzoo
+                WHERE UPPER(TRANSLATE(nombreactividad, 'ÁÉÍÓÚ', 'AEIOU')) = UPPER(:nombre)
+                LIMIT 1";
         $resultado = $obj->select($sql, [':nombre' => $nombre])->fetch(PDO::FETCH_ASSOC);
         return $resultado ? $resultado['codtipoactividad'] : null;
     }

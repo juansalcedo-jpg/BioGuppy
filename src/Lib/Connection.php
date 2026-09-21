@@ -36,6 +36,12 @@ class Connection{
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             ]);
+
+            // Se fija explicitamente UTF-8 para esta conexion: sin esto, en Windows
+            // PHP y PostgreSQL pueden no coincidir en como interpretan tildes y
+            // caracteres especiales (ej. "Inspección", "José"), causando que
+            // comparaciones y textos con acentos fallen o se guarden mal.
+            $this->link->exec("SET client_encoding TO 'UTF8'");
         }catch(PDOException $e){
             die("Error de conexion: " . $e->getMessage());
         }

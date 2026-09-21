@@ -4,8 +4,11 @@ namespace BioGuppy\Controller\ActividadesTer;
 
 use BioGuppy\Model\ActividadesTer\ActividadesTerModel;
 use PDO;
+use BioGuppy\Controller\Traits\BitacoraTrait;
 
 class ActividadesTerController{
+
+    use BitacoraTrait;
 
     private function consultarSeguro($obj, $sql, $params = []){
         try{
@@ -16,35 +19,16 @@ class ActividadesTerController{
         }
     }
 
-    private function registrarBitacora($obj, $accion, $modulo, $idregistro = null, $valoranterior = null, $valornuevo = null){
-
-        $codusuario = $_SESSION['usu_id'] ?? null;
-
-        if(empty($codusuario)){
-            return; // si no hay sesión activa, no se registra nada
-        }
-
-        $sql = "CALL sp_registrar_bitacora(:codusuario, :accion, :modulo, :idregistro, :valoranterior, :valornuevo)";
-
-        try{
-            $obj->insert($sql, [
-                ':codusuario'    => $codusuario,
-                ':accion'        => $accion,
-                ':modulo'        => $modulo,
-                ':idregistro'    => $idregistro,
-                ':valoranterior' => $valoranterior,
-                ':valornuevo'    => $valornuevo,
-            ]);
-        }catch(\Throwable $error){
-            error_log("No se pudo registrar en bitácora: " . $error->getMessage());
-        }
-
-    }
-    
 // busca el codigo de un tipo de actividad de terreno por su nombre en el catalogo tbltipoactividadterreno
 
     private function obtenerCodTipoActividad($obj, $nombre){
-        $sql = "SELECT codtipoactividad FROM tbltipoactividadterreno WHERE nombreactividad ILIKE :nombre LIMIT 1";
+        // Se compara sin tildes ni mayusculas/minusculas (con TRANSLATE dentro
+        // de PostgreSQL) para evitar errores de codificacion entre PHP y la
+        // base de datos al escribir palabras con tilde (ej. "Inspeccion").
+        $sql = "SELECT codtipoactividad
+                FROM tbltipoactividadterreno
+                WHERE UPPER(TRANSLATE(nombreactividad, 'ÁÉÍÓÚ', 'AEIOU')) = UPPER(:nombre)
+                LIMIT 1";
         $resultado = $obj->select($sql, [':nombre' => $nombre])->fetch(PDO::FETCH_ASSOC); 
         return $resultado ? $resultado['codtipoactividad'] : null;
     }
@@ -70,13 +54,11 @@ class ActividadesTerController{
 
         $obj = new ActividadesTerModel();
 
-        $depositoId = $_POST['deposito_id'] ?? null; // ??: operador de fusion null, es para campos donde no existe un valor
+        $depositoId = $_POST['deposito_id'] ?? null;
         $fecha      = $_POST['fecha_actividad'] ?? null;
-        $hora       = $_POST['hora_actividad'] ?: null; //?: es parecido solo que muestra que el valor xiste pero esta vacio, muestra en este caso una cadena de texto vacia no que no existe como ??
+        $hora       = $_POST['hora_actividad'] ?: null;
         $ph         = $_POST['ph'] !== '' ? $_POST['ph'] : null;
         $temperatura = $_POST['temperatura'] !== '' ? $_POST['temperatura'] : null;
-
-        // lo mismo, solo que en vez de null ponemos 0 para la cantidad
 
         $larvasAedes = $_POST['larvas_aedes'] !== '' ? $_POST['larvas_aedes'] : 0;
         $pupas       = $_POST['pupas'] !== '' ? $_POST['pupas'] : 0;
@@ -84,7 +66,6 @@ class ActividadesTerController{
 
         $observaciones = $_POST['observaciones'] ?? '';
 
-        // Validando campos obligatorios, solo 2 deposito y fecha.
         if(empty($depositoId) || empty($fecha)){
             $_SESSION['error'] = "El depósito y la fecha son obligatorios.";
             redirect(getUrl('ActividadesTer','ActividadesTer','Inspeccion'));
@@ -112,7 +93,6 @@ class ActividadesTerController{
             ':observaciones'    => $observaciones,
         ]);
 
-        // AUDITORÍA
         $nuevo = $obj->select(
             "SELECT codactividad FROM tblactividadterreno WHERE codusuario = :codusuario ORDER BY codactividad DESC LIMIT 1",
             [':codusuario' => $_SESSION['usu_id']]
@@ -133,7 +113,6 @@ class ActividadesTerController{
 
     }
 
-//
     public function Siembra(){
         $obj = new ActividadesTerModel();
         $depositos = $this->obtenerDepositosActivos($obj);
@@ -150,6 +129,7 @@ class ActividadesTerController{
         $hembras     = $_POST['cantidad_hembras'] !== '' ? $_POST['cantidad_hembras'] : 0;
         $machos      = $_POST['cantidad_machos'] !== '' ? $_POST['cantidad_machos'] : 0;
         $tiempoAclimatar = $_POST['tiempo_aclimatar'] !== '' ? $_POST['tiempo_aclimatar'] : 0;
+        $volumenAgua = $_POST['volumen_agua'] !== '' ? $_POST['volumen_agua'] : 0;
         $recolectarEmpacar = $_POST['recolectar_empacar'] ?? 'N';
         $observaciones = $_POST['observaciones'] ?? '';
 
@@ -162,9 +142,9 @@ class ActividadesTerController{
         $codTipo = $this->obtenerCodTipoActividad($obj, 'Siembra');
 
         $sql = "INSERT INTO public.tblactividadterreno
-                    (codactividad, codtipoactividad, codsitio, codusuario, fecha, hora, cantidadhembras, cantidadmachos, tiempoaclimatacionmin, recolectarempacar, observaciones, fechacreacion, estado)
+                    (codactividad, codtipoactividad, codsitio, codusuario, fecha, hora, cantidadhembras, cantidadmachos, tiempoaclimatacionmin, volumenagualitros, recolectarempacar, observaciones, fechacreacion, estado)
                 VALUES
-                    (DEFAULT, :codtipoactividad, :codsitio, :codusuario, :fecha, :hora, :hembras, :machos, :tiempoaclimatacionmin, :recolectarempacar, :observaciones, DEFAULT, DEFAULT)";
+                    (DEFAULT, :codtipoactividad, :codsitio, :codusuario, :fecha, :hora, :hembras, :machos, :tiempoaclimatacionmin, :volumenagualitros, :recolectarempacar, :observaciones, DEFAULT, DEFAULT)";
 
         $obj->insert($sql, [
             ':codtipoactividad'      => $codTipo,
@@ -175,11 +155,11 @@ class ActividadesTerController{
             ':hembras'               => $hembras,
             ':machos'                => $machos,
             ':tiempoaclimatacionmin' => $tiempoAclimatar,
+            ':volumenagualitros'     => $volumenAgua,
             ':recolectarempacar'     => $recolectarEmpacar,
             ':observaciones'         => $observaciones,
         ]);
 
-        // AUDITORÍA
         $nuevo = $obj->select(
             "SELECT codactividad FROM tblactividadterreno WHERE codusuario = :codusuario ORDER BY codactividad DESC LIMIT 1",
             [':codusuario' => $_SESSION['usu_id']]
@@ -241,7 +221,6 @@ class ActividadesTerController{
             ':observaciones'    => $observaciones,
         ]);
 
-        // AUDITORÍA
         $nuevo = $obj->select(
             "SELECT codactividad FROM tblactividadterreno WHERE codusuario = :codusuario ORDER BY codactividad DESC LIMIT 1",
             [':codusuario' => $_SESSION['usu_id']]
@@ -307,7 +286,6 @@ class ActividadesTerController{
             ':observaciones'         => $observaciones,
         ]);
 
-        // AUDITORÍA
         $nuevo = $obj->select(
             "SELECT codactividad FROM tblactividadterreno WHERE codusuario = :codusuario ORDER BY codactividad DESC LIMIT 1",
             [':codusuario' => $_SESSION['usu_id']]
@@ -328,7 +306,6 @@ class ActividadesTerController{
 
     }
 
-// 
     public function listMisActividades(){
 
         $obj = new ActividadesTerModel();
@@ -346,17 +323,15 @@ class ActividadesTerController{
                 INNER JOIN tbltipodeposito td ON td.codtipodeposito = s.codtipodeposito  
                 WHERE a.codusuario = :codusuario
                 ORDER BY a.fecha DESC, a.codactividad DESC";
-//es para mostrar estos 3 datos: actividad, sitio y tipo de depósito del sitio en una fila
+
         $actividades = $this->consultarSeguro($obj, $sql, [':codusuario' => $_SESSION['usu_id']]);
 
-        // Se cargan tambien los depositos activos, para el combo de filtro
         $depositos = $this->obtenerDepositosActivos($obj);
-// aqui se llena el select de Deposito ene l formulario del filtro
+
         include_once __DIR__ . '/../../../view/ActividadesTer/listMisActividades.php';
 
     }
 
-// Historial de actividades de terreno (vista del Coordinador, muestra TODAS las actividades de TODOS los usuarios)
     public function listActTer(){
 
         $obj = new ActividadesTerModel();
@@ -433,8 +408,8 @@ class ActividadesTerController{
         $mesInicio = null;
         $mesFin = null;
         if ($mes) {
-            $mesInicio = $mes . '-01';                                   // "2026-09" -> "2026-09-01"
-            $mesFin = date('Y-m-d', strtotime($mesInicio . ' +1 month')); // -> "2026-10-01"
+            $mesInicio = $mes . '-01';
+            $mesFin = date('Y-m-d', strtotime($mesInicio . ' +1 month'));
         }
 
         $coddeposito   = $_POST['coddeposito'] ?: null;
@@ -469,7 +444,6 @@ class ActividadesTerController{
 
     }
 
-//
     public function getUpdate(){
 
         $obj = new ActividadesTerModel();
@@ -483,7 +457,6 @@ class ActividadesTerController{
 
         $actividad = $obj->select($sql, [':id' => $id])->fetch(PDO::FETCH_ASSOC);
 
-// No permitir editar un registro que no le pertenece al usuario
         if(!$actividad || $actividad['codusuario'] != $_SESSION['usu_id']){
             $_SESSION['error'] = "No tiene permisos para editar este registro.";
             redirect(getUrl('ActividadesTer','ActividadesTer','listMisActividades'));
@@ -502,10 +475,6 @@ class ActividadesTerController{
 
         $codactividad = $_POST['codactividad'] ?? null;
 
-// Se vuelve a validar la propiedad del registro antes de actualizar,
-// y de paso se trae la fila completa: los campos que no vengan en
-// este formulario (dependen del tipo de actividad) conservan su
-// valor actual en vez de guardarse como NULL.
         $sqlActual = "SELECT * FROM tblactividadterreno WHERE codactividad = :id";
         $actual = $obj->select($sqlActual, [':id' => $codactividad])->fetch(PDO::FETCH_ASSOC);
 
@@ -525,10 +494,6 @@ class ActividadesTerController{
             exit();
         }
 
-// Se actualizan todos los campos posibles; el campo que no aplique al
-// tipo de actividad (no vino en este formulario) conserva su valor
-// anterior en vez de borrarse, para no violar columnas NOT NULL ni
-// perder datos de otros tipos de actividad.
         $sql = "UPDATE tblactividadterreno SET
                     fecha = :fecha,
                     hora = :hora,
@@ -578,6 +543,7 @@ class ActividadesTerController{
         exit();
 
     }
+
     public function delete(){
 
         $obj = new ActividadesTerModel();
@@ -585,8 +551,6 @@ class ActividadesTerController{
         $id  = $_GET['id'] ?? null;
         $rol = $_SESSION['nombre_rol'] ?? '';
 
-        // El Coordinador ve/gestiona el historial completo (listActTer);
-        // el Auxiliar solo ve y gestiona sus propias actividades (listMisActividades)
         $funcionRetorno = ($rol === 'Coordinador Control Biologico') ? 'listActTer' : 'listMisActividades';
 
         if(empty($id)){

@@ -4,6 +4,7 @@ namespace BioGuppy\Controller\Depositos;
 
 use BioGuppy\Model\Depositos\DepositosModel;
 use PDO;
+use BioGuppy\Controller\Traits\BitacoraTrait;
 class DepositosController{
 
         private function consultarSeguro($obj, $sql, $params = []){
@@ -15,32 +16,9 @@ class DepositosController{
         }
     }
 
-    private function registrarBitacora($obj, $accion, $modulo, $idregistro = null, $valoranterior = null, $valornuevo = null){
+    use BitacoraTrait;
 
-        $codusuario = $_SESSION['usu_id'] ?? null;
-
-        if(empty($codusuario)){
-            return; // si no hay sesión activa, no se registra nada
-        }
-
-        $sql = "CALL sp_registrar_bitacora(:codusuario, :accion, :modulo, :idregistro, :valoranterior, :valornuevo)";
-
-        try{
-            $obj->insert($sql, [
-                ':codusuario'    => $codusuario,
-                ':accion'        => $accion,
-                ':modulo'        => $modulo,
-                ':idregistro'    => $idregistro,
-                ':valoranterior' => $valoranterior,
-                ':valornuevo'    => $valornuevo,
-            ]);
-        }catch(\Throwable $error){
-            error_log("No se pudo registrar en bitácora: " . $error->getMessage());
-        }
-
-    }
-
-//
+        //
     public function listDep(){
 
         $obj = new DepositosModel();

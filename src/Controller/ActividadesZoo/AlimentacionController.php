@@ -33,7 +33,7 @@ class AlimentacionController{
             exit();
         }
 
-        $codTipo = $this->obtenerCodTipoActividadZoo($obj, 'ALIMENTACIÓN');
+        $codTipo = $this->obtenerCodTipoActividadZoo($obj, 'ALIMENTACION');
 
         $sql = "INSERT INTO public.tblactividadzoo
                     (codactividad, codtipoactividad, codtanque, codusuario, fecha, horadia, tipopez, tipoalimento, fechacreacion, estado)
@@ -51,7 +51,7 @@ class AlimentacionController{
         ]);
 
         $nuevoId = $obj->select("SELECT MAX(codactividad) AS id FROM tblactividadzoo")->fetch(PDO::FETCH_ASSOC);
-        $this->registrarBitacora($obj, 'INSERT', 'ActividadesZoo', $nuevoId['id'] ?? null, null, 'ALIMENTACIÓN');
+        $this->registrarBitacora($obj, 'INSERT', 'ActividadesZoo', $nuevoId['id'] ?? null, null, 'ALIMENTACION');
 
         $_SESSION['exito'] = "La actividad de alimentación se registró exitosamente.";
         redirect(getUrl('ActividadesListZoo','ActividadesListZoo','ActividadesListZoo'));

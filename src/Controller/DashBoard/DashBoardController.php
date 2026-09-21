@@ -49,7 +49,7 @@ class DashBoardController
         $sqlLarvas = "SELECT COUNT(DISTINCT codsitio) AS focos_larvas
                       FROM tblactividadterreno
                       WHERE estado = 'A'
-                      AND (larvasaedes = 'S' OR pupas = 'S' OR larvasculex = 'S')
+                      AND (larvasaedes > 0 OR pupas > 0 OR larvasculex > 0)
                       AND DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE)";
         $resultL = $obj->select($sqlLarvas);
         $larvas = $resultL->fetch(PDO::FETCH_ASSOC);
