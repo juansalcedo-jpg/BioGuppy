@@ -61,7 +61,7 @@ class TipoDepositoController
 
         $obj->insert($sql, [':nombre' => $nombreGuardado]);
 
-        // AUDITORÍA: buscamos el id recién creado (el nombre es único gracias a la validación de arriba)
+        // AUDITORÍA
         $nuevo = $obj->select("SELECT codtipodeposito FROM tbltipodeposito WHERE nombretipodeposito = :nombre", [':nombre' => $nombreGuardado])
                       ->fetch(PDO::FETCH_ASSOC);
 
@@ -124,7 +124,7 @@ class TipoDepositoController
             exit();
         }
 
-        // AUDITORÍA: capturamos el valor anterior antes de sobreescribirlo
+        // AUDITORÍA
         $anterior = $obj->select("SELECT nombretipodeposito FROM tbltipodeposito WHERE codtipodeposito = :id", [':id' => $id])
                          ->fetch(PDO::FETCH_ASSOC);
 
@@ -161,7 +161,7 @@ class TipoDepositoController
             exit();
         }
 
-        // AUDITORÍA: se consulta el estado real en BD (no se confía en lo que llegue por la URL)
+        // AUDITORÍA
         $actual = $obj->select("SELECT estado FROM tbltipodeposito WHERE codtipodeposito = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
         $estadoAnterior = $actual['estado'] ?? null;
         $nuevoEstado = ($estadoAnterior === 'A') ? 'I' : 'A';

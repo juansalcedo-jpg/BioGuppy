@@ -1,24 +1,8 @@
 <?php
 
-/**
- * Control de acceso por rol — CONECTADO A BASE DE DATOS.
- *
- * Cada rol tiene, en tblrolaccion, la lista de acciones (Ver/Crear/Editar/
- * Inhabilitar) que puede hacer sobre cada "Modulo:Controlador" — eso lo
- * administra el Super Admin desde Roles > Permisos.
- *
- * Esta función decide, para cada request, a qué "acción" corresponde la
- * función que se está pidiendo (según su nombre), y consulta si el rol
- * actual tiene esa acción habilitada para ese módulo.
- */
-
-// Módulos que deben poder usarse SIN haber iniciado sesión todavía
-// (login y recuperación de contraseña).
 $GLOBALS['MODULOS_PUBLICOS'] = ['Acceso', 'CambioContra'];
 
 
-// Traduce el nombre de una función del controlador a una de las 4
-// acciones genéricas que se administran en Roles > Permisos.
 function clasificarAccionPorFuncion($funcion)
 {
     $f = strtolower($funcion);

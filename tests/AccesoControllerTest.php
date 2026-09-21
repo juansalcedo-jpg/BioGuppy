@@ -14,14 +14,9 @@ class AccesoControllerTest extends TestCase {
     }
 
     public function testLoginConUsuarioValido() {
-        // Simular POST
         $_POST['usu_correo'] = 'correo@ejemplo.com';
         $_POST['usu_clave'] = 'claveCorrecta';
 
-        // Simular el modelo con un mock: el ->select() de login() se llama dos
-        // veces (usuario y luego rol), y como devolvemos siempre la misma fila,
-        // usamos rowCount()=1 y un fetch() que acepta el argumento PDO::FETCH_ASSOC
-        // tal como lo llama el controlador.
         $mockModel = $this->createMock(AccesoModel::class);
         $mockModel->method('select')
                   ->willReturn(new class {

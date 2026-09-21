@@ -155,7 +155,7 @@ class DepositosController{
             exit();
         }
 
-        // AUDITORÍA: capturamos el valor anterior antes de sobreescribirlo
+        // AUDITORÍA
         $anterior = $obj->select("SELECT nombretipodeposito FROM tbltipodeposito WHERE codtipodeposito = :id", [':id' => $id])
                          ->fetch(PDO::FETCH_ASSOC);
 

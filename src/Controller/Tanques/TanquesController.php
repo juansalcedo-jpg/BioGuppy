@@ -75,8 +75,6 @@
                  ORDER BY nombretipotanque ASC");
 
             // Próximo número de tanque disponible por cada zoocriadero
-            // (se muestra en el formulario, pero el que realmente se
-            // guarda siempre se recalcula en el servidor).
             $zoocriaderos = $this->consultarSeguro($obj,
                 "SELECT z.codzoocriadero, z.nombrezoocriadero,
                         COALESCE(MAX(t.numerotanque), 0) + 1 AS siguiente_numero
@@ -98,9 +96,6 @@
             $codTipoTanque = $_POST['codtipotanque'] ?? '';
             $capacidadTexto = trim($_POST['capacidad'] ?? '');
             $codZoocriadero = $_POST['codzoocriadero'] ?? '';
-            // El estado ya no se pide en el formulario: todo tanque nuevo
-            // se crea Activo; el estado se maneja únicamente con el botón
-            // Inhabilitar de la lista.
             $estado        = 'A';
 
             if(empty($codTipoTanque) || empty($capacidadTexto) || empty($codZoocriadero)){
@@ -109,11 +104,7 @@
                 exit();
             }
 
-            // -----------------------------------------------------------
-            // VALIDAR FORMATO DE CAPACIDAD (litros)
-            // Solo números, con una coma opcional para decimales
-            // (ej. 20 ó 20,5). No se permiten letras ni puntos.
-            // -----------------------------------------------------------
+            //Validar formato
             if(!preg_match('/^\d+(,\d{1,2})?$/', $capacidadTexto)){
                 $_SESSION['error'] = "La capacidad solo puede llevar números y, si aplica, una coma para decimales (ej: 20,5).";
                 redirect(getUrl('Tanques','Tanques','create'));
@@ -122,9 +113,6 @@
 
             $capacidad = (float) str_replace(',', '.', $capacidadTexto);
 
-            // -----------------------------------------------------------
-            // RANGO REALISTA DE CAPACIDAD (litros)
-            // -----------------------------------------------------------
             $capacidadMinima = 5;
             $capacidadMaxima = 1000;
 
@@ -136,12 +124,8 @@
 
             try{
 
-                // -----------------------------------------------------------
-                // EL NÚMERO DE TANQUE NUNCA SE TOMA DEL FORMULARIO:
-                // siempre es el siguiente consecutivo dentro del
-                // zoocriadero seleccionado, para que no se puedan crear
-                // huecos ni números arbitrarios.
-                // -----------------------------------------------------------
+
+                // Número de tanque
                 $sqlSiguiente = "SELECT COALESCE(MAX(numerotanque), 0) + 1 AS siguiente
                                   FROM tblzootanque
                                   WHERE codzoocriadero = :codzoocriadero";
@@ -165,7 +149,7 @@
                     ':estado'         => $estado,
                 ]);
 
-                // AUDITORÍA: buscamos el id recién creado
+                // AUDITORÍA
                 $nuevo = $obj->select(
                     "SELECT codtanque FROM tblzootanque
                      WHERE codzoocriadero = :codzoocriadero AND numerotanque = :numero",
@@ -225,8 +209,6 @@
                  WHERE estado = 'A'
                  ORDER BY nombretipotanque ASC");
 
-            // Próximo número disponible por zoocriadero, para el caso en que
-            // el usuario cambie el tanque de zoocriadero durante la edición.
             $zoocriaderos = $this->consultarSeguro($obj,
                 "SELECT z.codzoocriadero, z.nombrezoocriadero,
                         COALESCE(MAX(t.numerotanque), 0) + 1 AS siguiente_numero
@@ -249,9 +231,6 @@
             $codTipoTanque  = $_POST['codtipotanque'] ?? '';
             $capacidadTexto = trim($_POST['capacidad'] ?? '');
             $codZoocriadero = $_POST['codzoocriadero'] ?? '';
-            // El estado ya no se edita desde este formulario: se maneja
-            // únicamente con el botón Inhabilitar de la lista, así que
-            // la edición nunca lo modifica.
 
             if(empty($id)){
                 $_SESSION['error'] = "Tanque no válido.";
@@ -265,9 +244,7 @@
                 exit();
             }
 
-            // -----------------------------------------------------------
-            // VALIDAR FORMATO DE CAPACIDAD (litros) - igual que al crear
-            // -----------------------------------------------------------
+            //Validar formato
             if(!preg_match('/^\d+(,\d{1,2})?$/', $capacidadTexto)){
                 $_SESSION['error'] = "La capacidad solo puede llevar números y, si aplica, una coma para decimales (ej: 20,5).";
                 redirect(getUrl('Tanques','Tanques','getUpdate',['id'=>$id]));
@@ -287,12 +264,6 @@
 
             try{
 
-                // -----------------------------------------------------------
-                // EL NÚMERO DE TANQUE NUNCA SE TOMA DEL FORMULARIO.
-                // Si el zoocriadero no cambió, se conserva el número que
-                // ya tenía. Si cambió, se le asigna el siguiente
-                // consecutivo disponible en el nuevo zoocriadero.
-                // -----------------------------------------------------------
                 $actual = $obj->select(
                     "SELECT numerotanque, codzoocriadero FROM tblzootanque WHERE codtanque = :id",
                     [':id' => $id]

@@ -65,7 +65,7 @@ class ActividadesTerController{
         $depositos = $this->obtenerDepositosActivos($obj);
         include_once __DIR__ . '/../../../view/ActividadesTer/Inspeccion.php';
     }
-//
+
     public function postCreateInspeccion(){
 
         $obj = new ActividadesTerModel();
@@ -101,7 +101,7 @@ class ActividadesTerController{
         $obj->insert($sql, [
             ':codtipoactividad' => $codTipo,
             ':codsitio'         => $depositoId,
-            ':codusuario'       => $_SESSION['usu_id'], //este es el dato para saber "quién" registró la actividad, se guardó ahí al iniciar sesión
+            ':codusuario'       => $_SESSION['usu_id'], 
             ':fecha'            => $fecha,
             ':hora'             => $hora,
             ':ph'               => $ph,
@@ -112,7 +112,7 @@ class ActividadesTerController{
             ':observaciones'    => $observaciones,
         ]);
 
-        // AUDITORÍA: buscamos el id recién creado
+        // AUDITORÍA
         $nuevo = $obj->select(
             "SELECT codactividad FROM tblactividadterreno WHERE codusuario = :codusuario ORDER BY codactividad DESC LIMIT 1",
             [':codusuario' => $_SESSION['usu_id']]
@@ -179,7 +179,7 @@ class ActividadesTerController{
             ':observaciones'         => $observaciones,
         ]);
 
-        // AUDITORÍA: buscamos el id recién creado
+        // AUDITORÍA
         $nuevo = $obj->select(
             "SELECT codactividad FROM tblactividadterreno WHERE codusuario = :codusuario ORDER BY codactividad DESC LIMIT 1",
             [':codusuario' => $_SESSION['usu_id']]
@@ -241,7 +241,7 @@ class ActividadesTerController{
             ':observaciones'    => $observaciones,
         ]);
 
-        // AUDITORÍA: buscamos el id recién creado
+        // AUDITORÍA
         $nuevo = $obj->select(
             "SELECT codactividad FROM tblactividadterreno WHERE codusuario = :codusuario ORDER BY codactividad DESC LIMIT 1",
             [':codusuario' => $_SESSION['usu_id']]
@@ -307,7 +307,7 @@ class ActividadesTerController{
             ':observaciones'         => $observaciones,
         ]);
 
-        // AUDITORÍA: buscamos el id recién creado
+        // AUDITORÍA
         $nuevo = $obj->select(
             "SELECT codactividad FROM tblactividadterreno WHERE codusuario = :codusuario ORDER BY codactividad DESC LIMIT 1",
             [':codusuario' => $_SESSION['usu_id']]

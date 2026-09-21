@@ -33,9 +33,6 @@ class ZoocriaderoController
 
     }
 
-    // ---------------------------------------------------------------
-    // LISTADO PRINCIPAL
-    // ---------------------------------------------------------------
     public function listZoo()
     {
         $obj = new Zoocriaderocor();
@@ -67,10 +64,6 @@ class ZoocriaderoController
         include_once __DIR__
             . '/../../../view/Zoocriadero/listZoo.php';
     }
-
-
-   
-    // FORMULARIO CREAR
     
     public function create()
     {
@@ -126,10 +119,6 @@ class ZoocriaderoController
             . '/../../../view/Zoocriadero/create.php';
     }
 
-
-    // ---------------------------------------------------------------
-    // REGISTRAR
-    // ---------------------------------------------------------------
     public function postCreateZoo()
     {
         $obj = new Zoocriaderocor();
@@ -147,19 +136,12 @@ class ZoocriaderoController
         $codbarrio =
             $_POST['codbarrio'] ?? '';
 
-        // AQUÍ LLEGA EL CODUSUARIO DEL AUXILIAR
         $codusuarioAuxiliar =
             $_POST['encargado'] ?? '';
 
-        // El estado ya no se pide en el formulario: todo registro nuevo
-        // se crea Activo. El estado se maneja únicamente con el botón
-        // Habilitar/Inhabilitar de la lista.
         $estado = 'A';
 
-
-        // -----------------------------------------------------------
-        // VALIDAR CAMPOS
-        // -----------------------------------------------------------
+        //Validar campos
         if (
             empty($nombre) ||
             empty($direccion) ||
@@ -182,12 +164,7 @@ class ZoocriaderoController
             exit();
         }
 
-
-        // -----------------------------------------------------------
-        // VALIDAR FORMATO DE NOMBRE
-        // Solo letras y espacios (sin números, símbolos ni puntuación),
-        // máximo 80 caracteres.
-        // -----------------------------------------------------------
+        //Validar formatos
         if (mb_strlen($nombre) > 80) {
 
             $_SESSION['error'] =
@@ -220,12 +197,7 @@ class ZoocriaderoController
             exit();
         }
 
-
-        // -----------------------------------------------------------
-        // VALIDAR FORMATO DE DIRECCIÓN
-        // Debe iniciar con la nomenclatura vial usada en Cali:
-        // Calle, Carrera o Avenida.
-        // -----------------------------------------------------------
+        //Validar formato
         if (!preg_match('/^(Calle|Carrera|Avenida)\b/iu', $direccion)) {
 
             $_SESSION['error'] =
@@ -243,9 +215,6 @@ class ZoocriaderoController
         }
 
 
-        // -----------------------------------------------------------
-        // VALIDAR COMUNA
-        // -----------------------------------------------------------
         $sqlComuna = "SELECT codcomuna
                       FROM tblcomuna
                       WHERE codcomuna = :codcomuna
@@ -275,10 +244,6 @@ class ZoocriaderoController
             exit();
         }
 
-
-        // -----------------------------------------------------------
-        // VALIDAR BARRIO
-        // -----------------------------------------------------------
         $sqlBarrio = "SELECT codbarrio
                       FROM tblbarrio
                       WHERE codbarrio = :codbarrio
@@ -311,7 +276,7 @@ class ZoocriaderoController
         }
 
 
-        // VALIDAR AUXILIAR
+        //Validar Auxiliar
        
         $sqlAuxiliar = "SELECT
                             u.codusuario
@@ -351,7 +316,7 @@ class ZoocriaderoController
         }
 
 
-        // VALIDAR NOMBRE REPETIDO
+        //Validar nombre repetido
        
         $sqlValidar = "SELECT codzoocriadero
                        FROM tblzoocriadero
@@ -381,8 +346,6 @@ class ZoocriaderoController
             exit();
         }
 
-
-        // INSERTAR
        
         $sql = "INSERT INTO tblzoocriadero
                 (
@@ -416,7 +379,7 @@ class ZoocriaderoController
         );
 
 
-        // AUDITORÍA: buscamos el id recién creado
+        // AUDITORÍA
         $nuevo = $obj->select(
             "SELECT codzoocriadero FROM tblzoocriadero
              WHERE nombrezoocriadero = :nombre AND codbarrio = :codbarrio
@@ -449,10 +412,6 @@ class ZoocriaderoController
         exit();
     }
 
-
-    // ---------------------------------------------------------------
-    // FORMULARIO EDITAR
-    // ---------------------------------------------------------------
     public function getUpdate()
     {
         $obj = new Zoocriaderocor();
@@ -549,10 +508,6 @@ class ZoocriaderoController
             . '/../../../view/Zoocriadero/Getupdatezoo.php';
     }
 
-
-    // ---------------------------------------------------------------
-    // ACTUALIZAR
-    // ---------------------------------------------------------------
     public function postUpdateZoo()
     {
         $obj = new Zoocriaderocor();
@@ -575,10 +530,6 @@ class ZoocriaderoController
 
         $codusuarioAuxiliar =
             $_POST['encargado'] ?? '';
-
-        // El estado ya no se edita desde este formulario: se maneja
-        // únicamente con el botón Habilitar/Inhabilitar de la lista,
-        // así que la edición nunca lo modifica.
 
         if (
             empty($id) ||
@@ -606,10 +557,7 @@ class ZoocriaderoController
             exit();
         }
 
-
-        // -----------------------------------------------------------
-        // VALIDAR FORMATO DE NOMBRE Y DIRECCIÓN (igual que al crear)
-        // -----------------------------------------------------------
+        //Validar formato
         if (mb_strlen($nombre) > 80) {
 
             $_SESSION['error'] =
@@ -709,10 +657,7 @@ class ZoocriaderoController
             exit();
         }
 
-
-        // ACTUALIZAR
-
-        // AUDITORÍA: capturamos el valor anterior antes de sobreescribirlo
+        // AUDITORÍA
         $anterior = $obj->select(
             "SELECT nombrezoocriadero FROM tblzoocriadero WHERE codzoocriadero = :id",
             [':id' => $id]
@@ -766,16 +711,11 @@ class ZoocriaderoController
         exit();
     }
 
-
-    // ---------------------------------------------------------------
-    // HABILITAR / INHABILITAR
-    // ---------------------------------------------------------------
     public function delete()
     {
         $obj = new Zoocriaderocor();
 
-        $id =
-            $_GET['id'] ?? null;
+        $id = $_GET['id'] ?? null;
 
 
         $actual = $obj->select(
@@ -833,9 +773,6 @@ class ZoocriaderoController
     }
 
 
-    // ---------------------------------------------------------------
-    // FILTRO
-    // ---------------------------------------------------------------
     public function filtro()
     {
         $obj = new Zoocriaderocor();

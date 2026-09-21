@@ -19,9 +19,6 @@ class ParametrosController{
         }
     }
 
-    // ---------------------------------------------------------------
-    // LISTADO PRINCIPAL (pestañas de Comunas y Barrios)
-    // ---------------------------------------------------------------
     public function listParametros(){
 
         $obj = new ParametrosModel();
@@ -42,9 +39,6 @@ class ParametrosController{
 
     }
 
-    // ---------------------------------------------------------------
-    // COMUNAS
-    // ---------------------------------------------------------------
 
     public function createComuna(){
         include_once __DIR__ . '/../../../view/parametrosSistema/createComuna.php';
@@ -206,10 +200,6 @@ class ParametrosController{
         include_once __DIR__ . '/../../../view/parametrosSistema/filtroComuna.php';
 
     }
-
-    // ---------------------------------------------------------------
-    // BARRIOS
-    // ---------------------------------------------------------------
 
     public function createBarrio(){
 

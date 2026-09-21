@@ -7,13 +7,6 @@ use ReflectionMethod;
 use BioGuppy\Controller\ActividadesZoo\ActividadZooHelpersTrait;
 use BioGuppy\Controller\ActividadesListZoo\ActividadesListZooController;
 
-/**
- * Módulos de actividades del zoocriadero.
- *   UT-ActividadesZoo-001    ActividadZooHelpersTrait::obtenerCodTipoActividadZoo()
- *   UT-ActividadesZoo-002    ActividadZooHelpersTrait::obtenerTanquesActivos() y consultarSeguro()
- *   UT-ActividadesListZoo-001 ActividadesListZooController::sqlMisActividades()
- * No usan la base de datos: se entrega un "modelo falso" que guarda la consulta recibida.
- */
 class ActividadesTest extends TestCase
 {
     protected function setUp(): void
@@ -21,13 +14,13 @@ class ActividadesTest extends TestCase
         $_SESSION = [];
     }
 
-    /** consultarSeguro() escribe en error_log(): lo mandamos a un archivo temporal para no ensuciar la consola. */
+    ¿
     private function silenciarErrorLog(): void
     {
         ini_set('error_log', sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'bioguppy_phpunit.log');
     }
 
-    /** Clase que usa el trait para poder llamar sus métodos privados. */
+    ¿
     private function ayudante()
     {
         return new class {
@@ -36,7 +29,7 @@ class ActividadesTest extends TestCase
         };
     }
 
-    /** Modelo falso: guarda el SQL y los parámetros y devuelve un resultado fijo. */
+    ¿
     private function modeloFalso($fila, $lanzar = false)
     {
         return new class($fila, $lanzar) {

@@ -6,12 +6,6 @@ use PDO;
 use PHPUnit\Framework\TestCase;
 use BioGuppy\Model\Acceso\AccesoModel;
 
-/**
- * Base de las pruebas de integración (usa la base de datos REAL de BioGuppy).
- * Cada prueba corre dentro de una transacción que se deshace al terminar (ROLLBACK),
- * así que NO deja datos en tu base de datos.
- * Este archivo no es una prueba: PHPUnit solo ejecuta los archivos que terminan en "Test.php".
- */
 abstract class BaseDB extends TestCase
 {
     protected $db;   // un solo modelo = una sola conexión para toda la prueba
@@ -35,13 +29,13 @@ abstract class BaseDB extends TestCase
         }
     }
 
-    /** Primera fila de una consulta (o false). */
+    /
     protected function uno(string $sql, array $p = [])
     {
         return $this->db->select($sql, $p)->fetch(PDO::FETCH_ASSOC);
     }
 
-    /** Código de un dato de catálogo (rol, tipo de tanque...). Falla si no existe. */
+    
     protected function cod(string $sql, array $p = []): int
     {
         $f = $this->uno($sql, $p);
@@ -51,10 +45,7 @@ abstract class BaseDB extends TestCase
         return (int) array_values($f)[0];
     }
 
-    /**
-     * Crea un usuario con el mismo INSERT del módulo Usuarios y devuelve su código.
-     * Si ya existe un usuario real con ese correo, documento o celular, la prueba se omite.
-     */
+    
     protected function usuario(string $rol, string $correo, string $doc, string $tel, string $estado = 'A', string $nombre = 'Ana', string $apellido = 'Pérez', string $clave = 'Prueba123*'): int
     {
         $existe = $this->uno(
@@ -81,7 +72,7 @@ abstract class BaseDB extends TestCase
         return $this->cod('SELECT codusuario FROM tblusuario WHERE correo = :c', [':c' => $correo]);
     }
 
-    /** Crea comuna y barrio de prueba y devuelve el código del barrio. */
+    
     protected function barrio(): int
     {
         $this->db->insert("INSERT INTO tblcomuna (nombrecomuna) VALUES ('Comuna 1')");
@@ -90,7 +81,7 @@ abstract class BaseDB extends TestCase
         return $this->cod("SELECT MAX(codbarrio) FROM tblbarrio WHERE nombrebarrio = 'Barrio Centro'");
     }
 
-    /** Crea el zoocriadero "Zoocriadero Norte" con el tanque N.° 7 (tipo ALEVINES, capacidad 500). */
+    
     protected function tanque(): int
     {
         $coordinador = $this->usuario('Coordinador Control Biologico', 'carlos.rojas@ejemplo.com', '1098765003', '3001230003', 'A', 'Carlos', 'Rojas');
@@ -100,7 +91,7 @@ abstract class BaseDB extends TestCase
         );
         $zoo = $this->cod("SELECT MAX(codzoocriadero) FROM tblzoocriadero WHERE nombrezoocriadero = 'Zoocriadero Norte'");
 
-        // Mismo INSERT de TanquesController
+        
         $this->db->insert(
             "INSERT INTO public.tblzootanque (codtanque, codzoocriadero, codtipotanque, numerotanque, capacidad, fechacreacion, estado)
              VALUES (DEFAULT, :z, :t, 7, 500, DEFAULT, 'A')",

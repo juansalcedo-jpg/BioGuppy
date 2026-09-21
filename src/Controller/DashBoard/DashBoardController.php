@@ -15,7 +15,7 @@ use PDO;
 class DashBoardController
 {
 
-    // Método 1: Renderiza la vista HTML con las tarjetas métricas
+    
     public function listDashboard()
     {
         $obj = new DashBoardModel();
@@ -54,11 +54,11 @@ class DashBoardController
         $resultL = $obj->select($sqlLarvas);
         $larvas = $resultL->fetch(PDO::FETCH_ASSOC);
 
-        // Se incluye únicamente la vista HTML
+        
         include_once __DIR__ . '/../../../view/DashBoard/DashBoard.php';
     }
 
-    // Método 2: Exclusivo para generar y transmitir el gráfico de barras como binario
+    
     public function graficaBarras()
     {
         error_reporting(0);
@@ -168,12 +168,12 @@ class DashBoardController
                 $valores   = [1];
             }
 
-            // 1. Aumentamos las dimensiones del lienzo a 360x300 px
+            // Aumentamos las dimensiones del lienzo a 360x300 px
             $graph = new PieGraph(360, 300);
             $graph->SetMarginColor('white');
             $graph->SetFrame(false);
 
-            // 2. Crear Plot de Pastel
+            // Crear Plot de Pastel
             $pie = new PiePlot($valores);
 
             // Asignar el nombre del área/tipo de actividad directamente al gráfico

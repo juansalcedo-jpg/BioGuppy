@@ -10,19 +10,12 @@ use PDO;
 class ReportesZooController
 {
 
-    // ---------------------------------------------------------------
-    // VISTA PRINCIPAL
-    // ---------------------------------------------------------------
     public function listRepoZoo()
     {
         include_once __DIR__
             . '/../../../view/ReportesZoo/listRepoZoo.php';
     }
 
-
-    // ---------------------------------------------------------------
-    // CONSULTA SEGURA
-    // ---------------------------------------------------------------
     private function consultarSeguro($obj, $sql, $params = [])
     {
         try {
@@ -33,14 +26,6 @@ class ReportesZooController
         }
     }
 
-
-
-
-    // ---------------------------------------------------------------
-    // CONVERTIR UNA IMAGEN DEL PROYECTO A BASE64
-    // (para incrustarla directo en el PDF sin depender de rutas
-    //  absolutas que Dompdf a veces no puede resolver)
-    // ---------------------------------------------------------------
     private function imagenBase64($rutaAbsoluta)
     {
         if (!file_exists($rutaAbsoluta)) {
@@ -55,17 +40,9 @@ class ReportesZooController
         return 'data:image/' . $mime . ';base64,' . base64_encode($datos);
     }
 
-
-    // ---------------------------------------------------------------
-    // OBTENER DATOS SEGÚN EL TIPO DE REPORTE
-    // (usado tanto por generar() como por exportarPdf())
-    // ---------------------------------------------------------------
     private function obtenerDatosReporte($obj, $tipoReporte, $fechaDesde, $fechaHasta)
     {
 
-        // ===========================================================
-        // 1. SEGUIMIENTO DE ACTIVIDADES
-        // ===========================================================
         if ($tipoReporte === 'seguimiento') {
 
             $sql = "SELECT
@@ -125,10 +102,7 @@ class ReportesZooController
             ];
         }
 
-
-        // ===========================================================
-        // 2. NACIDOS Y MUERTOS POR TANQUE
-        // ===========================================================
+        //Nacidos y muertos por tanque
         if ($tipoReporte === 'mortalidad') {
 
             $sql = "SELECT
@@ -202,10 +176,7 @@ class ReportesZooController
             ];
         }
 
-
-        // ===========================================================
-        // 3. TANQUES POR ZOOCRIADERO
-        // ===========================================================
+        //Tanques por Zoocriadero
         if ($tipoReporte === 'tanques') {
 
             $sql = "SELECT
@@ -264,10 +235,7 @@ class ReportesZooController
         return null;
     }
 
-
-    // ---------------------------------------------------------------
-    // VALIDAR PARÁMETROS DEL REPORTE (usado por generar() y exportarPdf())
-    // ---------------------------------------------------------------
+    //Validar parametros
     private function validarParametros($tipoReporte, $fechaDesde, $fechaHasta, &$mensajeError)
     {
         if (empty($tipoReporte) || empty($fechaDesde) || empty($fechaHasta)) {
@@ -297,18 +265,11 @@ class ReportesZooController
         return true;
     }
 
-
-    // ---------------------------------------------------------------
-    // GENERAR REPORTE
-    // ---------------------------------------------------------------
+    //Generar Reporte
     public function generar()
     {
         $obj = new ReporteZoo();
 
-
-        // -----------------------------------------------------------
-        // RECIBIR DATOS
-        // -----------------------------------------------------------
         $tipoReporte =
             trim($_POST['tipoReporte'] ?? '');
 
@@ -362,10 +323,7 @@ class ReportesZooController
         exit();
     }
 
-
-    // ---------------------------------------------------------------
-    // EXPORTAR REPORTE A PDF
-    // ---------------------------------------------------------------
+    //Exportar reporte a pdf
     public function exportarPdf()
     {
         $obj = new ReporteZoo();
@@ -394,10 +352,7 @@ class ReportesZooController
             exit();
         }
 
-
-        // -----------------------------------------------------------
-        // LOGOS (BioGuppy y Secretaría de Salud)
-        // -----------------------------------------------------------
+        //logos
         $logoSistema = $this->imagenBase64(
             __DIR__ . '/../../../img/logo.jpeg'
         );
@@ -406,10 +361,7 @@ class ReportesZooController
             __DIR__ . '/../../../img/Logo_SecretariaSalud.png'
         );
 
-
-        // -----------------------------------------------------------
-        // ARMAR TABLA HTML PARA EL PDF
-        // -----------------------------------------------------------
+        //Armar tabla
         $html = '<html><head><meta charset="utf-8">
             <style>
                 @page {
@@ -549,11 +501,7 @@ class ReportesZooController
 
         $html .= '</tbody></table></body></html>';
 
-
-
-        // -----------------------------------------------------------
-        // GENERAR EL PDF
-        // -----------------------------------------------------------
+        //Generar Pdf
         $opciones = new Options();
         $opciones->set('isRemoteEnabled', false);
 

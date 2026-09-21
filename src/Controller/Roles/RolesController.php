@@ -173,9 +173,6 @@ class RolesController{
         }
     }
 
-    // ---------------------------------------------------------------
-    // PERMISOS POR ROL (tblmodulo -> tblcontrolador -> tblfuncion -> tblaccion -> tblrolaccion)
-    // ---------------------------------------------------------------
 
     public function permisos(){
 

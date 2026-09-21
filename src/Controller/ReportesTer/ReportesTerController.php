@@ -10,20 +10,12 @@ use PDO;
 class ReportesTerController
 {
 
-    // ---------------------------------------------------------------
-    // VISTA PRINCIPAL
-    // ---------------------------------------------------------------
     public function listRepoTer()
     {
         include_once __DIR__
             . '/../../../view/ReportesTer/listRepoTer.php';
     }
 
-
-    // ---------------------------------------------------------------
-    // CONSULTA SEGURA (mismo patrón que ActividadesTerController)
-    // Evita que un error de PHP/PDO rompa el JSON de salida.
-    // ---------------------------------------------------------------
     private function consultarSeguro($obj, $sql, $params = [])
     {
         try {
@@ -35,13 +27,6 @@ class ReportesTerController
     }
 
 
-
-
-    // ---------------------------------------------------------------
-    // CONVERTIR UNA IMAGEN DEL PROYECTO A BASE64
-    // (para incrustarla directo en el PDF sin depender de rutas
-    //  absolutas que Dompdf a veces no puede resolver)
-    // ---------------------------------------------------------------
     private function imagenBase64($rutaAbsoluta)
     {
         if (!file_exists($rutaAbsoluta)) {
@@ -56,11 +41,6 @@ class ReportesTerController
         return 'data:image/' . $mime . ';base64,' . base64_encode($datos);
     }
 
-
-    // ---------------------------------------------------------------
-    // OBTENER DATOS SEGÚN EL TIPO DE REPORTE
-    // (usado tanto por generar() como por exportarPdf())
-    // ---------------------------------------------------------------
     private function obtenerDatosReporte($obj, $tipoReporte, $fechaDesde, $fechaHasta)
     {
         if ($tipoReporte === 'sitios') {
@@ -212,9 +192,6 @@ class ReportesTerController
     }
 
 
-    // ---------------------------------------------------------------
-    // VALIDAR PARÁMETROS DEL REPORTE (usado por generar() y exportarPdf())
-    // ---------------------------------------------------------------
     private function validarParametros($tipoReporte, $fechaDesde, $fechaHasta, &$mensajeError)
     {
         if (empty($tipoReporte) || empty($fechaDesde) || empty($fechaHasta)) {
@@ -245,9 +222,7 @@ class ReportesTerController
     }
 
 
-    // ---------------------------------------------------------------
     // GENERAR REPORTE (JSON para la tabla en pantalla)
-    // ---------------------------------------------------------------
     public function generar()
     {
         $obj = new ReporteTer();
@@ -298,10 +273,7 @@ class ReportesTerController
         exit();
     }
 
-
-    // ---------------------------------------------------------------
-    // EXPORTAR REPORTE A PDF
-    // ---------------------------------------------------------------
+    // Generar reporte PDF
     public function exportarPdf()
     {
         $obj = new ReporteTer();
@@ -330,10 +302,7 @@ class ReportesTerController
             exit();
         }
 
-
-        // -----------------------------------------------------------
-        // LOGOS (BioGuppy y Secretaría de Salud)
-        // -----------------------------------------------------------
+        //Logos
         $logoSistema = $this->imagenBase64(
             __DIR__ . '/../../../img/logo.jpeg'
         );
@@ -342,10 +311,7 @@ class ReportesTerController
             __DIR__ . '/../../../img/Logo_SecretariaSalud.png'
         );
 
-
-        // -----------------------------------------------------------
-        // ARMAR TABLA HTML PARA EL PDF
-        // -----------------------------------------------------------
+        //Armar tabla
         $html = '<html><head><meta charset="utf-8">
             <style>
                 @page {
@@ -485,11 +451,7 @@ class ReportesTerController
 
         $html .= '</tbody></table></body></html>';
 
-
-
-        // -----------------------------------------------------------
-        // GENERAR EL PDF
-        // -----------------------------------------------------------
+        //Generar Pdf
         $opciones = new Options();
         $opciones->set('isRemoteEnabled', false);
 

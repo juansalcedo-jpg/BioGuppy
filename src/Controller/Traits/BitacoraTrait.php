@@ -4,11 +4,6 @@ namespace BioGuppy\Controller\Traits;
 
 trait BitacoraTrait
 {
-    /**
-     * Registra una acción (INSERT/UPDATE/DELETE/etc) en la bitácora del sistema.
-     * $obj debe ser cualquier instancia de un Model que extienda MasterModel,
-     * ya que solo se usa su método insert() para llamar al stored procedure.
-     */
     private function registrarBitacora($obj, $accion, $modulo, $idregistro = null, $valoranterior = null, $valornuevo = null){
 
         $codusuario = $_SESSION['usu_id'] ?? null;

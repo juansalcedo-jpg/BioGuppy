@@ -7,20 +7,14 @@ use ReflectionMethod;
 use BioGuppy\Controller\ReportesZoo\ReportesZooController;
 use BioGuppy\Controller\ReportesTer\ReportesTerController;
 
-/**
- * Módulos de reportes (Zoocriadero y Terreno).
- *   UT-ReportesZoo-001  ReportesZooController::validarParametros()
- *   UT-ReportesTer-001  ReportesTerController::validarParametros()
- * validarParametros() es privado: se invoca con Reflection, sin modificar el código.
- */
 class ReportesTest extends TestCase
 {
-    /** Llama a validarParametros() y devuelve [resultado, mensajeError]. */
+    
     private function validar($controlador, $tipo, $desde, $hasta): array
     {
         $mensaje = '';
         $metodo = new ReflectionMethod($controlador, 'validarParametros');
-        $args = [$tipo, $desde, $hasta, &$mensaje]; // el 4.º parámetro va por referencia
+        $args = [$tipo, $desde, $hasta, &$mensaje]; 
         $ok = $metodo->invokeArgs($controlador, $args);
         return [$ok, $mensaje];
     }

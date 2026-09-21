@@ -6,13 +6,10 @@ use BioGuppy\Controller\ActividadesZoo\ActividadZooHelpersTrait;
 
 require_once __DIR__ . '/BaseDB.php';
 
-/**
- * Integración: Tanques y Alimentación  <->  PostgreSQL real
- *   TI-04 testTanque    TI-05 testAlimenta
- */
+
 class IntActTest extends BaseDB
 {
-    /** Clase que usa el trait del proyecto para llamar sus métodos privados. */
+    
     private function zoo()
     {
         return new class {
@@ -46,7 +43,7 @@ class IntActTest extends BaseDB
         $tanque = $this->tanque();
         $auxiliar = $this->usuario('Auxiliar Zoocriadero', 'maria.ruiz@ejemplo.com', '1098765004', '3001230004', 'A', 'María', 'Ruiz');
 
-        // Mismo INSERT de AlimentacionController
+        
         $this->db->insert(
             "INSERT INTO public.tblactividadzoo
                 (codactividad, codtipoactividad, codtanque, codusuario, fecha, horadia, tipopez, tipoalimento, fechacreacion, estado)

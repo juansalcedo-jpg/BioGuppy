@@ -61,7 +61,7 @@ class ActividadesTerreController
 
         $obj->insert($sql, [':nombre' => $nombreGuardado]);
 
-        // AUDITORÍA: buscamos el id recién creado (el nombre es único gracias a la validación de arriba)
+        // AUDITORÍA
         $nuevo = $obj->select("SELECT codtipoactividad FROM tbltipoactividadterreno WHERE nombreactividad = :nombre", [':nombre' => $nombreGuardado])
                       ->fetch(PDO::FETCH_ASSOC);
 
@@ -124,7 +124,7 @@ class ActividadesTerreController
             exit();
         }
 
-        // AUDITORÍA: capturamos el valor anterior antes de sobreescribirlo
+        // AUDITORÍA
         $anterior = $obj->select("SELECT nombreactividad FROM tbltipoactividadterreno WHERE codtipoactividad = :id", [':id' => $id])
                          ->fetch(PDO::FETCH_ASSOC);
 
@@ -161,7 +161,7 @@ class ActividadesTerreController
             exit();
         }
 
-        // AUDITORÍA: se consulta el estado real en BD (no se confía en lo que llegue por la URL)
+        // AUDITORÍA
         $actual = $obj->select("SELECT estado FROM tbltipoactividadterreno WHERE codtipoactividad = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
         $estadoAnterior = $actual['estado'] ?? null;
         $nuevoEstado = ($estadoAnterior === 'A') ? 'I' : 'A';

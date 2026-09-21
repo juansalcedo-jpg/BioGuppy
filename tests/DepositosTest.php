@@ -6,11 +6,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use BioGuppy\Controller\Depositos\DepositosController;
 
-/**
- * Módulo Depósitos.
- *   UT-Depositos-001  DepositosController::consultarSeguro()
- * Cuando la base de datos falla, el usuario no debe ver el mensaje técnico.
- */
+
 class DepositosTest extends TestCase
 {
     protected function setUp(): void

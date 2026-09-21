@@ -7,13 +7,6 @@ use BioGuppy\Controller\Acceso\AccesoController;
 use BioGuppy\Controller\CambioContra\CambioContraController;
 use BioGuppy\Model\Acceso\AccesoModel;
 
-/**
- * Pruebas de acceso y seguridad:
- *   UT-Login-002        AccesoController::login()  con correo no registrado
- *   UT-Permisos-001     usuarioTienePermiso()      separación de módulos por rol
- *   UT-Recuperacion-001 CambioContraController::enviarCorreo() validación del correo
- * (UT-Login-001, login válido, ya existe en AccesoControllerTest.php)
- */
 class SeguridadTest extends TestCase
 {
     protected function setUp(): void
@@ -22,7 +15,6 @@ class SeguridadTest extends TestCase
         $_POST = [];
     }
 
-    /** Simula lo que devuelve PDOStatement: rowCount() y fetch(). */
     private function resultado(int $filas, $fila = false)
     {
         return new class($filas, $fila) {

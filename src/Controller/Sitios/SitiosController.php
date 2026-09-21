@@ -98,11 +98,7 @@ class SitiosController{
             exit();
         }
 
-        // -----------------------------------------------------------
-        // VALIDAR FORMATO DE NOMBRE
-        // Solo letras y espacios (sin números, símbolos ni puntuación),
-        // máximo 80 caracteres.
-        // -----------------------------------------------------------
+        //Validar formato
         if(mb_strlen($nombresitio) > 80){
             $_SESSION['error'] = "El nombre no puede tener más de 80 caracteres.";
             redirect(getUrl('Sitios','Sitios','createSit'));
@@ -115,10 +111,6 @@ class SitiosController{
             exit();
         }
 
-        // -----------------------------------------------------------
-        // VALIDAR FORMATO DE DIRECCIÓN
-        // Debe iniciar con la nomenclatura vial usada en Cali.
-        // -----------------------------------------------------------
         if(!preg_match('/^(Calle|Carrera|Avenida)\b/iu', $direccion)){
             $_SESSION['error'] = "La dirección debe iniciar con Calle, Carrera o Avenida.";
             redirect(getUrl('Sitios','Sitios','createSit'));
@@ -147,7 +139,7 @@ class SitiosController{
             ':direccion'       => trim($direccion),
         ]);
 
-        // AUDITORÍA: buscamos el id recién creado (el nombre es único gracias a la validación de arriba)
+        // AUDITORÍA
         $nuevo = $obj->select("SELECT codsitio FROM tblsitio WHERE nombresitio = :nombre", [':nombre' => $nombreGuardado])
                       ->fetch(PDO::FETCH_ASSOC);
 
@@ -214,9 +206,7 @@ class SitiosController{
             exit();
         }
 
-        // -----------------------------------------------------------
-        // VALIDAR FORMATO DE NOMBRE Y DIRECCIÓN (igual que al crear)
-        // -----------------------------------------------------------
+        //Validar formato
         if(mb_strlen($nombresitio) > 80){
             $_SESSION['error'] = "El nombre no puede tener más de 80 caracteres.";
             redirect(getUrl('Sitios','Sitios','editSit',['id'=>$id]));
@@ -245,7 +235,7 @@ class SitiosController{
             exit();
         }
 
-        // AUDITORÍA: capturamos el valor anterior antes de sobreescribirlo
+        // AUDITORÍA
         $anterior = $obj->select("SELECT nombresitio FROM tblsitio WHERE codsitio = :id", [':id' => $id])
                          ->fetch(PDO::FETCH_ASSOC);
 
