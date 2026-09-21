@@ -33,6 +33,12 @@ class AlimentacionController{
             exit();
         }
 
+        if($fecha < '2026-09-10' || $fecha > date('Y-m-d')){
+            $_SESSION['error'] = "La fecha debe estar entre el 10 de septiembre de 2026 y hoy.";
+            redirect(getUrl('ActividadesZoo','Alimentacion','Alimentacion'));
+            exit();
+        }
+
         $codTipo = $this->obtenerCodTipoActividadZoo($obj, 'ALIMENTACION');
 
         $sql = "INSERT INTO public.tblactividadzoo

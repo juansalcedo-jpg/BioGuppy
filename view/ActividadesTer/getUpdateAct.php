@@ -29,7 +29,7 @@ $tipo = strtoupper($actividad['nombreactividad']);
             <div class="row g-3 mb-3">
               <div class="col-md-6">
                 <label for="fecha_actividad" class="form-label fw-semibold">Fecha *</label>
-                <input type="date" class="form-control" id="fecha_actividad" name="fecha_actividad" value="<?php echo $actividad['fecha']; ?>" required>
+                <input type="date" class="form-control" id="fecha_actividad" name="fecha_actividad" value="<?php echo $actividad['fecha']; ?>" min="2026-09-10" max="<?php echo date('Y-m-d'); ?>" required>
               </div>
               <div class="col-md-6">
                 <label for="hora_actividad" class="form-label fw-semibold">Hora</label>

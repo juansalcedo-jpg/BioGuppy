@@ -97,6 +97,19 @@ class ParametrosController{
         $actual = $obj->select("SELECT estado FROM tblcomuna WHERE codcomuna = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
         $nuevoEstado = ($actual['estado'] === 'A') ? 'I' : 'A';
 
+        if($nuevoEstado === 'I'){
+            $barriosActivos = $obj->select(
+                "SELECT COUNT(*) AS total FROM tblbarrio WHERE codcomuna = :id AND estado = 'A'",
+                [':id' => $id]
+            )->fetch(PDO::FETCH_ASSOC);
+
+            if(($barriosActivos['total'] ?? 0) > 0){
+                $_SESSION['error'] = "No se puede inhabilitar esta comuna porque tiene " . $barriosActivos['total'] . " barrio(s) activo(s). Inhabilítalos primero.";
+                redirect(getUrl('Parametros','Parametros','listParametros'));
+                exit();
+            }
+        }
+
         $obj->update("UPDATE tblcomuna SET estado = :estado WHERE codcomuna = :id", [
             ':estado' => $nuevoEstado,
             ':id' => $id,
@@ -225,6 +238,18 @@ class ParametrosController{
             exit();
         }
 
+        if(mb_strlen(trim($nombre)) > 100){
+            $_SESSION['error'] = "El nombre del barrio no puede tener más de 100 caracteres.";
+            redirect(getUrl('Parametros','Parametros','createBarrio'));
+            exit();
+        }
+
+        if(!preg_match('/^[\p{L} ]+$/u', trim($nombre))){
+            $_SESSION['error'] = "El nombre del barrio solo puede contener letras y espacios (sin números, símbolos ni puntuación).";
+            redirect(getUrl('Parametros','Parametros','createBarrio'));
+            exit();
+        }
+
         $sqlValidar = "SELECT codbarrio FROM tblbarrio WHERE nombrebarrio ILIKE :nombre AND codcomuna = :codcomuna";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre, ':codcomuna' => $codcomuna])->fetch(PDO::FETCH_ASSOC);
 
@@ -266,6 +291,26 @@ class ParametrosController{
 
         $actual = $obj->select("SELECT estado FROM tblbarrio WHERE codbarrio = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
         $nuevoEstado = ($actual['estado'] === 'A') ? 'I' : 'A';
+
+        if($nuevoEstado === 'I'){
+            $sitiosActivos = $obj->select(
+                "SELECT COUNT(*) AS total FROM tblsitio WHERE codbarrio = :id AND estado = 'A'",
+                [':id' => $id]
+            )->fetch(PDO::FETCH_ASSOC);
+
+            $zoocriaderosActivos = $obj->select(
+                "SELECT COUNT(*) AS total FROM tblzoocriadero WHERE codbarrio = :id AND estado = 'A'",
+                [':id' => $id]
+            )->fetch(PDO::FETCH_ASSOC);
+
+            $totalEnUso = ($sitiosActivos['total'] ?? 0) + ($zoocriaderosActivos['total'] ?? 0);
+
+            if($totalEnUso > 0){
+                $_SESSION['error'] = "No se puede inhabilitar este barrio porque tiene " . $sitiosActivos['total'] . " sitio(s) y " . $zoocriaderosActivos['total'] . " zoocriadero(s) activo(s). Inhabilítalos primero.";
+                redirect(getUrl('Parametros','Parametros','listParametros'));
+                exit();
+            }
+        }
 
         $obj->update("UPDATE tblbarrio SET estado = :estado WHERE codbarrio = :id", [
             ':estado' => $nuevoEstado,
@@ -325,6 +370,18 @@ class ParametrosController{
 
         if(empty(trim($codcomuna)) || empty(trim($nombre))){
             $_SESSION['error'] = "La comuna y el nombre del barrio son obligatorios.";
+            redirect(getUrl('Parametros','Parametros','getUpdateBarrio',['id'=>$id]));
+            exit();
+        }
+
+        if(mb_strlen(trim($nombre)) > 100){
+            $_SESSION['error'] = "El nombre del barrio no puede tener más de 100 caracteres.";
+            redirect(getUrl('Parametros','Parametros','getUpdateBarrio',['id'=>$id]));
+            exit();
+        }
+
+        if(!preg_match('/^[\p{L} ]+$/u', trim($nombre))){
+            $_SESSION['error'] = "El nombre del barrio solo puede contener letras y espacios (sin números, símbolos ni puntuación).";
             redirect(getUrl('Parametros','Parametros','getUpdateBarrio',['id'=>$id]));
             exit();
         }

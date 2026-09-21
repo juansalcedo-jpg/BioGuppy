@@ -44,6 +44,18 @@ class TipoTanqueController
             exit();
         }
 
+        if (mb_strlen(trim($nombre)) > 100) {
+            $_SESSION['error'] = "El nombre no puede tener más de 100 caracteres.";
+            redirect(getUrl('Catalogos', 'TipoTanque', 'createTipoTanque'));
+            exit();
+        }
+
+        if (!preg_match('/^[\p{L}0-9 ]+$/u', trim($nombre))) {
+            $_SESSION['error'] = "El nombre solo puede contener letras, números y espacios (sin símbolos ni puntuación).";
+            redirect(getUrl('Catalogos', 'TipoTanque', 'createTipoTanque'));
+            exit();
+        }
+
         // valida que no exista ya un tipo de tanque con ese nombre
         $sqlValidar = "SELECT codtipotanque FROM tbltipotanque WHERE nombretipotanque ILIKE :nombre";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre])->fetch(PDO::FETCH_ASSOC);
@@ -114,6 +126,18 @@ class TipoTanqueController
             exit();
         }
 
+        if (mb_strlen(trim($nombre)) > 100) {
+            $_SESSION['error'] = "El nombre no puede tener más de 100 caracteres.";
+            redirect(getUrl('Catalogos', 'TipoTanque', 'getUpdateTipoTanque', ['id' => $id]));
+            exit();
+        }
+
+        if (!preg_match('/^[\p{L}0-9 ]+$/u', trim($nombre))) {
+            $_SESSION['error'] = "El nombre solo puede contener letras, números y espacios (sin símbolos ni puntuación).";
+            redirect(getUrl('Catalogos', 'TipoTanque', 'getUpdateTipoTanque', ['id' => $id]));
+            exit();
+        }
+
         // valida que no exista otro tipo de tanque distinto a este con el mismo nombre
         $sqlValidar = "SELECT codtipotanque FROM tbltipotanque WHERE nombretipotanque ILIKE :nombre AND codtipotanque != :id";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre, ':id' => $id])->fetch(PDO::FETCH_ASSOC);
@@ -165,6 +189,19 @@ class TipoTanqueController
         $actual = $obj->select("SELECT estado FROM tbltipotanque WHERE codtipotanque = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
         $estadoAnterior = $actual['estado'] ?? null;
         $nuevoEstado = ($estadoAnterior === 'A') ? 'I' : 'A';
+
+        if ($nuevoEstado === 'I') {
+            $tanquesActivos = $obj->select(
+                "SELECT COUNT(*) AS total FROM tblzootanque WHERE codtipotanque = :id AND estado = 'A'",
+                [':id' => $id]
+            )->fetch(PDO::FETCH_ASSOC);
+
+            if (($tanquesActivos['total'] ?? 0) > 0) {
+                $_SESSION['error'] = "No se puede inhabilitar este tipo de tanque porque " . $tanquesActivos['total'] . " tanque(s) activo(s) lo están usando.";
+                redirect(getUrl('Catalogos', 'TipoTanque', 'listTipoTanq'));
+                exit();
+            }
+        }
 
         $execute = $obj->update("UPDATE tbltipotanque SET estado = :estado WHERE codtipotanque = :id", [
             ':estado' => $nuevoEstado,

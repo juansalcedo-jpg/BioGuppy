@@ -25,7 +25,7 @@
 
                             <div class="col-md-6">
                                 <label for="fecha_actividad" class="form-label fw-semibold">Fecha *</label>
-                                <input type="date" class="form-control form-control-lg fs-6" id="fecha_actividad" name="fecha_actividad" value="<?php echo date('Y-m-d'); ?>" required>
+                                <input type="date" class="form-control form-control-lg fs-6" id="fecha_actividad" name="fecha_actividad" value="<?php echo date('Y-m-d'); ?>" min="2026-09-10" max="<?php echo date('Y-m-d'); ?>" required>
                             </div>
                         </div>
 

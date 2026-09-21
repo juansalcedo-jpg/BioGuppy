@@ -66,8 +66,26 @@ class ActividadesTerController{
 
         $observaciones = $_POST['observaciones'] ?? '';
 
-        if(empty($depositoId) || empty($fecha)){
-            $_SESSION['error'] = "El depósito y la fecha son obligatorios.";
+        if(empty($depositoId) || empty($fecha) || $ph === null || $temperatura === null){
+            $_SESSION['error'] = "El depósito, la fecha, el pH y la temperatura son obligatorios.";
+            redirect(getUrl('ActividadesTer','ActividadesTer','Inspeccion'));
+            exit();
+        }
+
+        if(!is_numeric($ph) || $ph < 0 || $ph > 14){
+            $_SESSION['error'] = "El pH debe ser un número entre 0 y 14.";
+            redirect(getUrl('ActividadesTer','ActividadesTer','Inspeccion'));
+            exit();
+        }
+
+        if(!is_numeric($temperatura) || $temperatura < 0 || $temperatura > 40){
+            $_SESSION['error'] = "La temperatura debe ser un número entre 0°C y 40°C.";
+            redirect(getUrl('ActividadesTer','ActividadesTer','Inspeccion'));
+            exit();
+        }
+
+        if($fecha < '2026-09-10' || $fecha > date('Y-m-d')){
+            $_SESSION['error'] = "La fecha debe estar entre el 10 de septiembre de 2026 y hoy.";
             redirect(getUrl('ActividadesTer','ActividadesTer','Inspeccion'));
             exit();
         }
@@ -139,6 +157,24 @@ class ActividadesTerController{
             exit();
         }
 
+        if(!is_numeric($hembras) || !is_numeric($machos) || $hembras < 0 || $machos < 0){
+            $_SESSION['error'] = "La cantidad de hembras y machos debe ser un número no negativo.";
+            redirect(getUrl('ActividadesTer','ActividadesTer','Siembra'));
+            exit();
+        }
+
+        if(($hembras + $machos) <= 0){
+            $_SESSION['error'] = "Debe registrar al menos un guppy (hembra o macho) en la siembra.";
+            redirect(getUrl('ActividadesTer','ActividadesTer','Siembra'));
+            exit();
+        }
+
+        if($fecha < '2026-09-10' || $fecha > date('Y-m-d')){
+            $_SESSION['error'] = "La fecha debe estar entre el 10 de septiembre de 2026 y hoy.";
+            redirect(getUrl('ActividadesTer','ActividadesTer','Siembra'));
+            exit();
+        }
+
         $codTipo = $this->obtenerCodTipoActividad($obj, 'Siembra');
 
         $sql = "INSERT INTO public.tblactividadterreno
@@ -203,6 +239,12 @@ class ActividadesTerController{
             exit();
         }
 
+        if($fecha < '2026-09-10' || $fecha > date('Y-m-d')){
+            $_SESSION['error'] = "La fecha debe estar entre el 10 de septiembre de 2026 y hoy.";
+            redirect(getUrl('ActividadesTer','ActividadesTer','Seguimiento'));
+            exit();
+        }
+
         $codTipo = $this->obtenerCodTipoActividad($obj, 'Seguimiento');
 
         $sql = "INSERT INTO public.tblactividadterreno
@@ -262,6 +304,24 @@ class ActividadesTerController{
 
         if(empty($depositoId) || empty($fecha)){
             $_SESSION['error'] = "El depósito y la fecha son obligatorios.";
+            redirect(getUrl('ActividadesTer','ActividadesTer','Resiembra'));
+            exit();
+        }
+
+        if(!is_numeric($hembras) || !is_numeric($machos) || $hembras < 0 || $machos < 0){
+            $_SESSION['error'] = "La cantidad de hembras y machos debe ser un número no negativo.";
+            redirect(getUrl('ActividadesTer','ActividadesTer','Resiembra'));
+            exit();
+        }
+
+        if(($hembras + $machos) <= 0){
+            $_SESSION['error'] = "Debe registrar al menos un guppy (hembra o macho) en la resiembra.";
+            redirect(getUrl('ActividadesTer','ActividadesTer','Resiembra'));
+            exit();
+        }
+
+        if($fecha < '2026-09-10' || $fecha > date('Y-m-d')){
+            $_SESSION['error'] = "La fecha debe estar entre el 10 de septiembre de 2026 y hoy.";
             redirect(getUrl('ActividadesTer','ActividadesTer','Resiembra'));
             exit();
         }
@@ -490,6 +550,33 @@ class ActividadesTerController{
 
         if(empty($fecha)){
             $_SESSION['error'] = "La fecha es obligatoria.";
+            redirect(getUrl('ActividadesTer','ActividadesTer','getUpdate',['id'=>$codactividad]));
+            exit();
+        }
+
+        if($fecha < '2026-09-10' || $fecha > date('Y-m-d')){
+            $_SESSION['error'] = "La fecha debe estar entre el 10 de septiembre de 2026 y hoy.";
+            redirect(getUrl('ActividadesTer','ActividadesTer','getUpdate',['id'=>$codactividad]));
+            exit();
+        }
+
+        // Mismos rangos logicos que en la creacion; este endpoint es
+        // compartido por los 4 tipos de actividad de terreno.
+        if(isset($_POST['ph']) && $_POST['ph'] !== '' && (!is_numeric($_POST['ph']) || $_POST['ph'] < 0 || $_POST['ph'] > 14)){
+            $_SESSION['error'] = "El pH debe ser un número entre 0 y 14.";
+            redirect(getUrl('ActividadesTer','ActividadesTer','getUpdate',['id'=>$codactividad]));
+            exit();
+        }
+
+        if(isset($_POST['temperatura']) && $_POST['temperatura'] !== '' && (!is_numeric($_POST['temperatura']) || $_POST['temperatura'] < 0 || $_POST['temperatura'] > 40)){
+            $_SESSION['error'] = "La temperatura debe ser un número entre 0°C y 40°C.";
+            redirect(getUrl('ActividadesTer','ActividadesTer','getUpdate',['id'=>$codactividad]));
+            exit();
+        }
+
+        if((isset($_POST['cantidad_hembras']) && $_POST['cantidad_hembras'] !== '' && (!is_numeric($_POST['cantidad_hembras']) || $_POST['cantidad_hembras'] < 0))
+           || (isset($_POST['cantidad_machos']) && $_POST['cantidad_machos'] !== '' && (!is_numeric($_POST['cantidad_machos']) || $_POST['cantidad_machos'] < 0))){
+            $_SESSION['error'] = "La cantidad de hembras y machos debe ser un número no negativo.";
             redirect(getUrl('ActividadesTer','ActividadesTer','getUpdate',['id'=>$codactividad]));
             exit();
         }

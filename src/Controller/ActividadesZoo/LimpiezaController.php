@@ -46,6 +46,12 @@ class LimpiezaController{
             $metodo = 'SUCCIONADOR';
         }
 
+        if($fecha < '2026-09-10' || $fecha > date('Y-m-d')){
+            $_SESSION['error'] = "La fecha debe estar entre el 10 de septiembre de 2026 y hoy.";
+            redirect(getUrl('ActividadesZoo','Limpieza','Limpieza'));
+            exit();
+        }
+
         $codTipo = $this->obtenerCodTipoActividadZoo($obj, 'LIMPIEZA');
 
         $sql = "INSERT INTO public.tblactividadzoo

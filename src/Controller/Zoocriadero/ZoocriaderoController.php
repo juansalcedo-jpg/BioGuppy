@@ -717,6 +717,24 @@ class ZoocriaderoController
                 ? 'I'
                 : 'A';
 
+        // -----------------------------------------------------------
+        // INTEGRIDAD: no permitir inhabilitar un zoocriadero si todavía
+        // tiene tanques activos (quedarían huérfanos de un zoocriadero
+        // inactivo).
+        // -----------------------------------------------------------
+        if ($nuevoEstado === 'I') {
+            $tanquesActivos = $obj->select(
+                "SELECT COUNT(*) AS total FROM tblzootanque WHERE codzoocriadero = :id AND estado = 'A'",
+                [':id' => $id]
+            )->fetch(PDO::FETCH_ASSOC);
+
+            if (($tanquesActivos['total'] ?? 0) > 0) {
+                $_SESSION['error'] = "No se puede inhabilitar este zoocriadero porque tiene " . $tanquesActivos['total'] . " tanque(s) activo(s). Inhabilítalos primero.";
+                redirect(getUrl('Zoocriadero', 'Zoocriadero', 'listZoo'));
+                exit();
+            }
+        }
+
 
         $obj->update(
             "UPDATE tblzoocriadero
