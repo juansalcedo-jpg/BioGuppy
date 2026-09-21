@@ -97,7 +97,6 @@
   </div>
 </div>
 
-<!-- filtra las filas ya cargadas en la tabla sin recargar la pagina -->
 <script>
   var buscadorTan = document.getElementById('buscadorTanques');
   if (buscadorTan) {

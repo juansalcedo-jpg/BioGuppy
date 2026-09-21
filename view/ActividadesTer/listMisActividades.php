@@ -2,7 +2,6 @@
   <div class="row justify-content-center">
     <div class="col-xl-11">
 
-      <!-- ENCABEZADO DE LA VISTA -->
       <div class="d-flex flex-wrap align-items-end justify-content-between mb-4 gap-2">
         <div>
           <h4 class="fw-semibold mb-1">Mis actividades — Terreno</h4>
@@ -10,21 +9,17 @@
         </div>
       </div>
 
-      <!-- TARJETA CONTENEDORA -->
       <div class="card border-0 shadow-sm">
 
-        <!-- ENCABEZADO DE TARJETA CON FILTROS -->
         <div class="card-header bg-white border-bottom py-3">
           <div class="d-flex align-items-center mb-3">
             <i class="bi bi-file-earmark-text text-primary me-2 fs-5"></i>
             <span class="fw-semibold">Actividades registradas por mí</span>
           </div>
 
-          <!-- FORMULARIO DE FILTROS -->
           <form id="formFiltroMisActividadesTer" action="<?php echo getUrl('ActividadesTer','ActividadesTer','filtro', false, 'ajax'); ?>" method="POST">
             <div class="row g-2 align-items-end">
 
-              <!-- Filtro por MES -->
               <div class="col-6 col-md-2">
                 <label for="mesFiltro" class="form-label small text-muted mb-1">Mes</label>
                 <input type="month" id="mesFiltro" name="mes" class="form-control form-control-sm">
@@ -63,7 +58,6 @@
           </form>
         </div>
 
-        <!-- TABLA DE RESULTADOS -->
         <div class="table-responsive">
           <table class="table table-striped align-middle mb-0" id="tablaMisActividadesTer">
             <thead class="table-dark">

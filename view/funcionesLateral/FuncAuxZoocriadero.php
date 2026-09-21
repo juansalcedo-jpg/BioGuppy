@@ -10,7 +10,6 @@ $ActividadAbierto = (
 $ActividadesListZoo = ($funcion == 'ActividadesListZoo');
 ?>
 
-<!-- Mis actividades -->
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $ActividadesListZoo ? 'active' : ''; ?>"
     href="<?php echo getUrl('ActividadesListZoo', 'ActividadesListZoo', 'ActividadesListZoo') ?>">
@@ -18,7 +17,6 @@ $ActividadesListZoo = ($funcion == 'ActividadesListZoo');
   </a>
 </li>
 
-<!-- istrar actividad (con submódulos) -->
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $misActividadesActivo ? '' : 'collapsed'; ?>"
     data-bs-toggle="collapse" href="#submenuActividad" role="button"

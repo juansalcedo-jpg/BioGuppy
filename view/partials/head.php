@@ -38,7 +38,6 @@
             padding: 24px;
         }
 
-        /* Cuando el sidebar está colapsado, el contenido ocupa todo el ancho */
         .app-layout.sidebar-collapsed .main-content {
             margin-left: 0;
         }

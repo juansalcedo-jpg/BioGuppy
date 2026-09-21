@@ -9,7 +9,6 @@ $funcion = $_GET['funcion'] ?? '';
         z-index: 1030;
         transition: transform .25s ease;
     }
-    /* Cuando el layout tiene la clase sidebar-collapsed, el sidebar se desliza fuera de pantalla */
     .app-layout.sidebar-collapsed .sidebar-biogu {
         transform: translateX(-100%);
     }
@@ -33,6 +32,16 @@ $funcion = $_GET['funcion'] ?? '';
 
     .otro{
         color:  #159EE8;
+    }
+
+        .sn-menu-link {
+        color: #c9d4e6;
+        font-size: .78rem;
+        padding: 4px 0;
+    }
+    .sn-menu-link:hover,
+    .sn-menu-link.active {
+        color: #159EE8;
     }
 </style>
 <aside class="sidebar-biogu d-flex flex-column vh-100 position-fixed top-0 start-0">
@@ -58,6 +67,13 @@ $funcion = $_GET['funcion'] ?? '';
         }
         ?>
     </ul>
+
+        <div class="px-3 pb-2 pt-1 border-top border-secondary border-opacity-25">
+        <a href="<?php echo getUrl('SobreNosotros', 'SobreNosotros', 'index') ?>"
+           class="d-flex align-items-center gap-2 text-decoration-none sn-menu-link <?php echo ($_GET['modulo'] == 'SobreNosotros') ? 'active' : ''; ?>">
+            <i class="bi bi-info-circle"></i> Sobre nosotros
+        </a>
+    </div>
 
     <div class="d-flex align-items-center gap-2 p-3 border-top border-secondary border-opacity-25">
         <div class="bg-accent text-dark fw-bold rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:36px;height:36px;font-size:.85rem;">

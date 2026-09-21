@@ -2,15 +2,12 @@
     <div class="row justify-content-center">
         <div class="col-12 col-xl-10">
 
-            <!-- Título Principal -->
             <h2 class="text-center fw-bold mb-4 text-dark">Actividad de Terreno</h2>
 
-            <!-- Tarjeta del Formulario -->
             <div class="card border-0 shadow-sm rounded-3">
                 <div class="card-body p-4">
                     <form action="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'postCreateInspeccion'); ?>" method="POST">
 
-                        <!-- Fila Superior: Deposito, Fecha y Hora -->
                         <div class="row g-3 mb-4">
                             <div class="col-md-5">
                                 <label for="deposito_id" class="form-label fw-semibold">Depósito *</label>
@@ -39,7 +36,6 @@
                             </div>
                         </div>
 
-                        <!-- Navegación por Pestañas / Tabs -->
                         <ul class="nav nav-tabs mb-4 border-bottom">
                             <li class="nav-item">
                                 <a class="nav-link active fw-semibold text-primary border-0 border-bottom border-primary border-3" href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'Inspeccion'); ?>">Inspección</a>
@@ -55,7 +51,6 @@
                             </li>
                         </ul>
 
-                        <!-- Campos Específicos: parámetros de inspección -->
                         <div class="row g-3 mb-4">
                             <div class="col-md-3">
                                 <label for="ph" class="form-label fw-semibold">pH del agua</label>
@@ -90,7 +85,6 @@
                             </div>
                         </div>
 
-                        <!-- Botón Guardar -->
                         <div class="d-flex justify-content-end pt-3">
                             <button type="submit" class="btn btn-primary px-4 py-2 fs-6 fw-semibold d-inline-flex align-items-center rounded-3">
                                 <i class="bi bi-floppy me-2"></i> Guardar actividad

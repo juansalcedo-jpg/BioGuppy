@@ -11,7 +11,6 @@ $registrarActividadAbierto = (
 $misActividadesActivo = ($funcion == 'listMisActividades');
 ?>
 
-<!-- Mis actividades -->
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $misActividadesActivo ? 'active' : ''; ?>"
     href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'listMisActividades') ?>">
@@ -19,7 +18,6 @@ $misActividadesActivo = ($funcion == 'listMisActividades');
   </a>
 </li>
 
-<!-- Registrar actividad -->
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $registrarActividadAbierto ? 'active' : ''; ?>"
     href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'Inspeccion') ?>">

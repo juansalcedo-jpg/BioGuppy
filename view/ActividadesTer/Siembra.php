@@ -51,7 +51,6 @@
                             </li>
                         </ul>
 
-                        <!-- Campos Específicos: siembra -->
                         <div class="row g-3 mb-4">
                             <div class="col-md-3">
                                 <label for="cantidad_hembras" class="form-label fw-semibold">Cantidad de hembras</label>

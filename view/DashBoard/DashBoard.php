@@ -2,7 +2,6 @@
     <div class="row justify-content-center">
         <div class="col-xl-11">
 
-            <!-- ENCABEZADO DE LA VISTA -->
             <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2">
                 <div>
                     <h4 class="fw-semibold mb-1">Dashboard Consolidado</h4>
@@ -10,7 +9,6 @@
                 </div>
             </div>
 
-            <!-- 1. TARJETAS DE INDICADORES (KPIs) -->
             <div class="row g-3 mb-4">
                 <div class="col-12 col-sm-6 col-lg-3">
                     <div class="card border-0 shadow-sm h-100 py-2">
@@ -69,10 +67,8 @@
                 </div>
             </div>
 
-            <!-- 2. SECCIÓN DE GRÁFICAS PROCESADAS POR PHP -->
             <div class="row g-4 mb-4">
 
-                <!-- Contenedor para Gráfica de Barras (Producción) -->
                 <div class="col-12 col-lg-8">
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-header bg-white border-0 pt-3 pb-0">
@@ -81,7 +77,6 @@
                             </h6>
                         </div>
                         <div class="card-body text-center d-flex align-items-center justify-content-center p-2">
-                            <!-- La imagen llama a la ruta PHP del controlador/método que renderiza la gráfica JPGraph -->
                             <img src="<?php echo getUrl('Dashboard', 'Dashboard', 'graficaBarras', false, 'ajax'); ?>"
                                 alt="Gráfica de Producción Mensual"
                                 class="img-fluid rounded">
@@ -89,7 +84,6 @@
                     </div>
                 </div>
 
-                <!-- Contenedor para Gráfica Circular (Tipos de Actividad) -->
                 <div class="col-12 col-lg-4">
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-header bg-white border-0 pt-3 pb-0">
@@ -98,7 +92,6 @@
                             </h6>
                         </div>
                         <div class="card-body text-center d-flex align-items-center justify-content-center p-2">
-                            <!-- La imagen llama a la ruta PHP del gráfico de pastel -->
                             <img src="<?php echo getUrl('Dashboard', 'Dashboard', 'graficaPastel', false, 'ajax'); ?>"
                                 alt="Gráfica Por Tipo de Actividad"
                                 class="img-fluid rounded">

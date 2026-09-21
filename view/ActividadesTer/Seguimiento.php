@@ -51,7 +51,6 @@
                             </li>
                         </ul>
 
-                        <!-- Campos Específicos: seguimiento -->
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label for="peces" class="form-label fw-semibold">¿Se evidencia presencia de peces?</label>

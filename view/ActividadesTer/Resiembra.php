@@ -50,8 +50,6 @@
                                 <a class="nav-link active fw-semibold text-primary border-0 border-bottom border-primary border-3" href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'Resiembra'); ?>">Resiembra</a>
                             </li>
                         </ul>
-
-                        <!-- Campos Específicos: resiembra -->
                         <div class="row g-3 mb-4">
                             <div class="col-md-3">
                                 <label for="cantidad_hembras" class="form-label fw-semibold">Cantidad de hembras</label>
