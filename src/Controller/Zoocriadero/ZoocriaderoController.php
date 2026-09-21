@@ -8,6 +8,31 @@ use PDO;
 class ZoocriaderoController
 {
 
+    private function registrarBitacora($obj, $accion, $modulo, $idregistro = null, $valoranterior = null, $valornuevo = null){
+
+        $codusuario = $_SESSION['usu_id'] ?? null;
+
+        if(empty($codusuario)){
+            return; // si no hay sesión activa, no se registra nada
+        }
+
+        $sql = "CALL sp_registrar_bitacora(:codusuario, :accion, :modulo, :idregistro, :valoranterior, :valornuevo)";
+
+        try{
+            $obj->insert($sql, [
+                ':codusuario'    => $codusuario,
+                ':accion'        => $accion,
+                ':modulo'        => $modulo,
+                ':idregistro'    => $idregistro,
+                ':valoranterior' => $valoranterior,
+                ':valornuevo'    => $valornuevo,
+            ]);
+        }catch(\Throwable $error){
+            error_log("No se pudo registrar en bitácora: " . $error->getMessage());
+        }
+
+    }
+
     // ---------------------------------------------------------------
     // LISTADO PRINCIPAL
     // ---------------------------------------------------------------
@@ -391,6 +416,24 @@ class ZoocriaderoController
         );
 
 
+        // AUDITORÍA: buscamos el id recién creado
+        $nuevo = $obj->select(
+            "SELECT codzoocriadero FROM tblzoocriadero
+             WHERE nombrezoocriadero = :nombre AND codbarrio = :codbarrio
+             ORDER BY codzoocriadero DESC LIMIT 1",
+            [':nombre' => $nombre, ':codbarrio' => $codbarrio]
+        )->fetch(PDO::FETCH_ASSOC);
+
+        $this->registrarBitacora(
+            $obj,
+            'INSERT',
+            'Zoocriadero',
+            $nuevo['codzoocriadero'] ?? null,
+            null,
+            $nombre
+        );
+
+
         $_SESSION['exito'] =
             "El zoocriadero se registró correctamente.";
 
@@ -668,6 +711,13 @@ class ZoocriaderoController
 
 
         // ACTUALIZAR
+
+        // AUDITORÍA: capturamos el valor anterior antes de sobreescribirlo
+        $anterior = $obj->select(
+            "SELECT nombrezoocriadero FROM tblzoocriadero WHERE codzoocriadero = :id",
+            [':id' => $id]
+        )->fetch(PDO::FETCH_ASSOC);
+
         $sql = "UPDATE tblzoocriadero
 
                 SET
@@ -688,6 +738,16 @@ class ZoocriaderoController
                 ':direccion' => $direccion,
                 ':id' => $id
             ]
+        );
+
+
+        $this->registrarBitacora(
+            $obj,
+            'UPDATE',
+            'Zoocriadero',
+            $id,
+            $anterior['nombrezoocriadero'] ?? null,
+            $nombre
         );
 
 
@@ -748,6 +808,16 @@ class ZoocriaderoController
                 ':estado' => $nuevoEstado,
                 ':id' => $id
             ]
+        );
+
+
+        $this->registrarBitacora(
+            $obj,
+            'UPDATE',
+            'Zoocriadero',
+            $id,
+            $actual['estado'] === 'A' ? 'Activo' : 'Inactivo',
+            $nuevoEstado === 'A' ? 'Activo' : 'Inactivo'
         );
 
 

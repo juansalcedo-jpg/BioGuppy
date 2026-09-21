@@ -15,6 +15,31 @@ class SitiosController{
         }
     }
 
+    private function registrarBitacora($obj, $accion, $modulo, $idregistro = null, $valoranterior = null, $valornuevo = null){
+
+        $codusuario = $_SESSION['usu_id'] ?? null;
+
+        if(empty($codusuario)){
+            return; // si no hay sesión activa, no se registra nada
+        }
+
+        $sql = "CALL sp_registrar_bitacora(:codusuario, :accion, :modulo, :idregistro, :valoranterior, :valornuevo)";
+
+        try{
+            $obj->insert($sql, [
+                ':codusuario'    => $codusuario,
+                ':accion'        => $accion,
+                ':modulo'        => $modulo,
+                ':idregistro'    => $idregistro,
+                ':valoranterior' => $valoranterior,
+                ':valornuevo'    => $valornuevo,
+            ]);
+        }catch(\Throwable $error){
+            error_log("No se pudo registrar en bitácora: " . $error->getMessage());
+        }
+
+    }
+
     public function listSit(){
 
         $obj = new SitiosModel();
@@ -109,6 +134,8 @@ class SitiosController{
             exit();
         }
 
+        $nombreGuardado = trim($nombresitio);
+
         $sql = "INSERT INTO public.tblsitio (codsitio, codcomuna, codbarrio, codtipodeposito, nombresitio, direccion, fechacreacion, estado)
                 VALUES (DEFAULT, :codcomuna, :codbarrio, :codtipodeposito, :nombresitio, :direccion, DEFAULT, DEFAULT)";
 
@@ -116,9 +143,22 @@ class SitiosController{
             ':codcomuna'       => $codcomuna,
             ':codbarrio'       => $codbarrio,
             ':codtipodeposito' => $codtipodeposito,
-            ':nombresitio'     => trim($nombresitio),
+            ':nombresitio'     => $nombreGuardado,
             ':direccion'       => trim($direccion),
         ]);
+
+        // AUDITORÍA: buscamos el id recién creado (el nombre es único gracias a la validación de arriba)
+        $nuevo = $obj->select("SELECT codsitio FROM tblsitio WHERE nombresitio = :nombre", [':nombre' => $nombreGuardado])
+                      ->fetch(PDO::FETCH_ASSOC);
+
+        $this->registrarBitacora(
+            $obj,
+            'INSERT',
+            'Sitios',
+            $nuevo['codsitio'] ?? null,
+            null,
+            $nombreGuardado
+        );
 
         $_SESSION['exito'] = "El sitio se registró exitosamente.";
         redirect(getUrl('Sitios','Sitios','listSit'));
@@ -205,6 +245,12 @@ class SitiosController{
             exit();
         }
 
+        // AUDITORÍA: capturamos el valor anterior antes de sobreescribirlo
+        $anterior = $obj->select("SELECT nombresitio FROM tblsitio WHERE codsitio = :id", [':id' => $id])
+                         ->fetch(PDO::FETCH_ASSOC);
+
+        $nombreGuardado = trim($nombresitio);
+
         $sql = "UPDATE tblsitio
                 SET codcomuna = :codcomuna, codbarrio = :codbarrio, codtipodeposito = :codtipodeposito,
                     nombresitio = :nombresitio, direccion = :direccion
@@ -214,10 +260,19 @@ class SitiosController{
             ':codcomuna'       => $codcomuna,
             ':codbarrio'       => $codbarrio,
             ':codtipodeposito' => $codtipodeposito,
-            ':nombresitio'     => trim($nombresitio),
+            ':nombresitio'     => $nombreGuardado,
             ':direccion'       => trim($direccion),
             ':id'              => $id,
         ]);
+
+        $this->registrarBitacora(
+            $obj,
+            'UPDATE',
+            'Sitios',
+            $id,
+            $anterior['nombresitio'] ?? null,
+            $nombreGuardado
+        );
 
         $_SESSION['exito'] = "El sitio se actualizó correctamente.";
         redirect(getUrl('Sitios','Sitios','listSit'));
@@ -243,6 +298,15 @@ class SitiosController{
             ':estado' => $nuevoEstado,
             ':id' => $id,
         ]);
+
+        $this->registrarBitacora(
+            $obj,
+            'UPDATE',
+            'Sitios',
+            $id,
+            $actual['estado'] === 'A' ? 'Activo' : 'Inactivo',
+            $nuevoEstado === 'A' ? 'Activo' : 'Inactivo'
+        );
 
         $_SESSION['exito'] = "El estado del sitio se actualizó correctamente.";
         redirect(getUrl('Sitios','Sitios','listSit'));

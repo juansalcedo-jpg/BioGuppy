@@ -16,6 +16,31 @@
             }
         }
 
+        private function registrarBitacora($obj, $accion, $modulo, $idregistro = null, $valoranterior = null, $valornuevo = null){
+
+            $codusuario = $_SESSION['usu_id'] ?? null;
+
+            if(empty($codusuario)){
+                return; // si no hay sesión activa, no se registra nada
+            }
+
+            $sql = "CALL sp_registrar_bitacora(:codusuario, :accion, :modulo, :idregistro, :valoranterior, :valornuevo)";
+
+            try{
+                $obj->insert($sql, [
+                    ':codusuario'    => $codusuario,
+                    ':accion'        => $accion,
+                    ':modulo'        => $modulo,
+                    ':idregistro'    => $idregistro,
+                    ':valoranterior' => $valoranterior,
+                    ':valornuevo'    => $valornuevo,
+                ]);
+            }catch(\Throwable $error){
+                error_log("No se pudo registrar en bitácora: " . $error->getMessage());
+            }
+
+        }
+
         // listado principal
         public function listTan(){
 
@@ -139,6 +164,22 @@
                     ':capacidad'      => $capacidad,
                     ':estado'         => $estado,
                 ]);
+
+                // AUDITORÍA: buscamos el id recién creado
+                $nuevo = $obj->select(
+                    "SELECT codtanque FROM tblzootanque
+                     WHERE codzoocriadero = :codzoocriadero AND numerotanque = :numero",
+                    [':codzoocriadero' => $codZoocriadero, ':numero' => $numero]
+                )->fetch(PDO::FETCH_ASSOC);
+
+                $this->registrarBitacora(
+                    $obj,
+                    'INSERT',
+                    'Tanques',
+                    $nuevo['codtanque'] ?? null,
+                    null,
+                    'Tanque #' . $numero
+                );
 
             }catch(\Throwable $error){
                 error_log("Error al registrar tanque: " . $error->getMessage());
@@ -296,6 +337,15 @@
                     ':id'             => $id,
                 ]);
 
+                $this->registrarBitacora(
+                    $obj,
+                    'UPDATE',
+                    'Tanques',
+                    $id,
+                    'Tanque #' . $actual['numerotanque'],
+                    'Tanque #' . $numero
+                );
+
             }catch(\Throwable $error){
                 error_log("Error al editar tanque: " . $error->getMessage());
                 $_SESSION['error'] = "No se pudo actualizar el tanque. Verifica los datos e intenta de nuevo.";
@@ -336,6 +386,15 @@ public function delete(){
         ':estado' => $nuevoEstado,
         ':id' => $id,
     ]);
+
+    $this->registrarBitacora(
+        $obj,
+        'UPDATE',
+        'Tanques',
+        $id,
+        $actual['estado'] === 'A' ? 'Activo' : 'Inactivo',
+        $nuevoEstado === 'A' ? 'Activo' : 'Inactivo'
+    );
 
     $_SESSION['exito'] = "El estado del tanque se actualizó correctamente.";
     redirect(getUrl('Tanques','Tanques','listTan'));

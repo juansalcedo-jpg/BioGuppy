@@ -4,19 +4,40 @@ namespace BioGuppy\Controller\Depositos;
 
 use BioGuppy\Model\Depositos\DepositosModel;
 use PDO;
-use BioGuppy\Controller\Traits\BitacoraTrait;
 class DepositosController{
-
-    use BitacoraTrait;
 
         private function consultarSeguro($obj, $sql, $params = []){
         try{
             return $obj->select($sql, $params);
         }catch(\Throwable $error){
             error_log("Consulta fallida en DepositosController: " . $error->getMessage());
-            $_SESSION['error'] = "DEBUG: " . $error->getMessage();
             return false;
         }
+    }
+
+    private function registrarBitacora($obj, $accion, $modulo, $idregistro = null, $valoranterior = null, $valornuevo = null){
+
+        $codusuario = $_SESSION['usu_id'] ?? null;
+
+        if(empty($codusuario)){
+            return; // si no hay sesión activa, no se registra nada
+        }
+
+        $sql = "CALL sp_registrar_bitacora(:codusuario, :accion, :modulo, :idregistro, :valoranterior, :valornuevo)";
+
+        try{
+            $obj->insert($sql, [
+                ':codusuario'    => $codusuario,
+                ':accion'        => $accion,
+                ':modulo'        => $modulo,
+                ':idregistro'    => $idregistro,
+                ':valoranterior' => $valoranterior,
+                ':valornuevo'    => $valornuevo,
+            ]);
+        }catch(\Throwable $error){
+            error_log("No se pudo registrar en bitácora: " . $error->getMessage());
+        }
+
     }
 
 //
@@ -62,13 +83,25 @@ class DepositosController{
             exit();
         }
 
+        $nombreGuardado = strtoupper(trim($nombre));
+
         $sql = "INSERT INTO public.tbltipodeposito (codtipodeposito, nombretipodeposito, estado)
                 VALUES (DEFAULT, :nombre, DEFAULT)";
 
-        $obj->insert($sql, [':nombre' => strtoupper(trim($nombre))]);
+        $obj->insert($sql, [':nombre' => $nombreGuardado]);
 
-        $nuevoId = $obj->select("SELECT MAX(codtipodeposito) AS id FROM tbltipodeposito")->fetch(PDO::FETCH_ASSOC);
-        $this->registrarBitacora($obj, 'INSERT', 'Depositos', $nuevoId['id'] ?? null, null, strtoupper(trim($nombre)));
+        // AUDITORÍA: buscamos el id recién creado (el nombre es único gracias a la validación de arriba)
+        $nuevo = $obj->select("SELECT codtipodeposito FROM tbltipodeposito WHERE nombretipodeposito = :nombre", [':nombre' => $nombreGuardado])
+                      ->fetch(PDO::FETCH_ASSOC);
+
+        $this->registrarBitacora(
+            $obj,
+            'INSERT',
+            'Depositos',
+            $nuevo['codtipodeposito'] ?? null,
+            null,
+            $nombreGuardado
+        );
 
         $_SESSION['exito'] = "El tipo de depósito se registró exitosamente.";
         redirect(getUrl('Depositos','Depositos','listDep'));
@@ -121,13 +154,25 @@ class DepositosController{
             redirect(getUrl('Depositos','Depositos','getUpdate',['id'=>$id]));
             exit();
         }
-        $anterior = $obj->select("SELECT nombretipodeposito FROM tbltipodeposito WHERE codtipodeposito = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
+
+        // AUDITORÍA: capturamos el valor anterior antes de sobreescribirlo
+        $anterior = $obj->select("SELECT nombretipodeposito FROM tbltipodeposito WHERE codtipodeposito = :id", [':id' => $id])
+                         ->fetch(PDO::FETCH_ASSOC);
+
+        $nombreGuardado = strtoupper(trim($nombre));
 
         $sql = "UPDATE tbltipodeposito SET nombretipodeposito = :nombre WHERE codtipodeposito = :id";
-        
-        $obj->update($sql, [':nombre' => strtoupper(trim($nombre)), ':id' => $id]);
 
-        $this->registrarBitacora($obj, 'UPDATE', 'Depositos', $id, $anterior['nombretipodeposito'] ?? null, strtoupper(trim($nombre)));
+        $obj->update($sql, [':nombre' => $nombreGuardado, ':id' => $id]);
+
+        $this->registrarBitacora(
+            $obj,
+            'UPDATE',
+            'Depositos',
+            $id,
+            $anterior['nombretipodeposito'] ?? null,
+            $nombreGuardado
+        );
 
         $_SESSION['exito'] = "El tipo de depósito se actualizó correctamente.";
         redirect(getUrl('Depositos','Depositos','listDep'));
@@ -149,14 +194,22 @@ class DepositosController{
         }
 
         $actual = $obj->select("SELECT estado FROM tbltipodeposito WHERE codtipodeposito = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
-        $nuevoEstado = ($actual['estado'] === 'A') ? 'I' : 'A';
+        $estadoAnterior = $actual['estado'] ?? null;
+        $nuevoEstado = ($estadoAnterior === 'A') ? 'I' : 'A';
 
         $obj->update("UPDATE tbltipodeposito SET estado = :estado WHERE codtipodeposito = :id", [
             ':estado' => $nuevoEstado,
             ':id' => $id,
         ]);
 
-        $this->registrarBitacora($obj, 'UPDATE', 'Depositos', $id, $actual['estado'] ?? null, $nuevoEstado);
+        $this->registrarBitacora(
+            $obj,
+            'UPDATE',
+            'Depositos',
+            $id,
+            $estadoAnterior === 'A' ? 'Activo' : 'Inactivo',
+            $nuevoEstado === 'A' ? 'Activo' : 'Inactivo'
+        );
 
         $_SESSION['exito'] = "El estado del tipo de depósito se actualizó correctamente.";
         redirect(getUrl('Depositos','Depositos','listDep'));

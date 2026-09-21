@@ -33,7 +33,7 @@ class AccesoController{
 
         if($usuario->rowCount() > 0 && password_verify($usu_clave, $contrasenaBD)){
 
-            $sqlrol = "SELECT r.nombrerol
+            $sqlrol = "SELECT r.codrol, r.nombrerol
                     FROM tblusuario u
                     INNER JOIN tblrol r
                     ON u.codrol = r.codrol
@@ -63,6 +63,7 @@ class AccesoController{
                     $datosRol = $rol->fetch(PDO::FETCH_ASSOC);
 
                     $_SESSION['nombre_rol'] = $datosRol['nombrerol'];
+                    $_SESSION['codrol'] = $datosRol['codrol'];
 
                     if($datosRol['nombrerol'] == 'Super Admin'){
 

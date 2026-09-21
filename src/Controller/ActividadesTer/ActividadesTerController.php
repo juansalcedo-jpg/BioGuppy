@@ -15,6 +15,31 @@ class ActividadesTerController{
             return false;
         }
     }
+
+    private function registrarBitacora($obj, $accion, $modulo, $idregistro = null, $valoranterior = null, $valornuevo = null){
+
+        $codusuario = $_SESSION['usu_id'] ?? null;
+
+        if(empty($codusuario)){
+            return; // si no hay sesión activa, no se registra nada
+        }
+
+        $sql = "CALL sp_registrar_bitacora(:codusuario, :accion, :modulo, :idregistro, :valoranterior, :valornuevo)";
+
+        try{
+            $obj->insert($sql, [
+                ':codusuario'    => $codusuario,
+                ':accion'        => $accion,
+                ':modulo'        => $modulo,
+                ':idregistro'    => $idregistro,
+                ':valoranterior' => $valoranterior,
+                ':valornuevo'    => $valornuevo,
+            ]);
+        }catch(\Throwable $error){
+            error_log("No se pudo registrar en bitácora: " . $error->getMessage());
+        }
+
+    }
     
 // busca el codigo de un tipo de actividad de terreno por su nombre en el catalogo tbltipoactividadterreno
 
@@ -87,6 +112,21 @@ class ActividadesTerController{
             ':observaciones'    => $observaciones,
         ]);
 
+        // AUDITORÍA: buscamos el id recién creado
+        $nuevo = $obj->select(
+            "SELECT codactividad FROM tblactividadterreno WHERE codusuario = :codusuario ORDER BY codactividad DESC LIMIT 1",
+            [':codusuario' => $_SESSION['usu_id']]
+        )->fetch(PDO::FETCH_ASSOC);
+
+        $this->registrarBitacora(
+            $obj,
+            'INSERT',
+            'ActividadesTer',
+            $nuevo['codactividad'] ?? null,
+            null,
+            'Inspección — sitio #' . $depositoId
+        );
+
         $_SESSION['exito'] = "La actividad de inspección se registró exitosamente.";
         redirect(getUrl('ActividadesTer','ActividadesTer','listMisActividades'));
         exit();
@@ -122,22 +162,37 @@ class ActividadesTerController{
         $codTipo = $this->obtenerCodTipoActividad($obj, 'Siembra');
 
         $sql = "INSERT INTO public.tblactividadterreno
-                    (codactividad, codtipoactividad, codsitio, codusuario, fecha, hora, cantidadhembras, cantidadmachos, tiempoaclimatar, recolectarempacar, observaciones, fechacreacion, estado)
+                    (codactividad, codtipoactividad, codsitio, codusuario, fecha, hora, cantidadhembras, cantidadmachos, tiempoaclimatacionmin, recolectarempacar, observaciones, fechacreacion, estado)
                 VALUES
-                    (DEFAULT, :codtipoactividad, :codsitio, :codusuario, :fecha, :hora, :hembras, :machos, :tiempoaclimatar, :recolectarempacar, :observaciones, DEFAULT, DEFAULT)";
+                    (DEFAULT, :codtipoactividad, :codsitio, :codusuario, :fecha, :hora, :hembras, :machos, :tiempoaclimatacionmin, :recolectarempacar, :observaciones, DEFAULT, DEFAULT)";
 
         $obj->insert($sql, [
-            ':codtipoactividad'   => $codTipo,
-            ':codsitio'           => $depositoId,
-            ':codusuario'         => $_SESSION['usu_id'],
-            ':fecha'              => $fecha,
-            ':hora'               => $hora,
-            ':hembras'            => $hembras,
-            ':machos'             => $machos,
-            ':tiempoaclimatar'    => $tiempoAclimatar,
-            ':recolectarempacar'  => $recolectarEmpacar,
-            ':observaciones'      => $observaciones,
+            ':codtipoactividad'      => $codTipo,
+            ':codsitio'              => $depositoId,
+            ':codusuario'            => $_SESSION['usu_id'],
+            ':fecha'                 => $fecha,
+            ':hora'                  => $hora,
+            ':hembras'               => $hembras,
+            ':machos'                => $machos,
+            ':tiempoaclimatacionmin' => $tiempoAclimatar,
+            ':recolectarempacar'     => $recolectarEmpacar,
+            ':observaciones'         => $observaciones,
         ]);
+
+        // AUDITORÍA: buscamos el id recién creado
+        $nuevo = $obj->select(
+            "SELECT codactividad FROM tblactividadterreno WHERE codusuario = :codusuario ORDER BY codactividad DESC LIMIT 1",
+            [':codusuario' => $_SESSION['usu_id']]
+        )->fetch(PDO::FETCH_ASSOC);
+
+        $this->registrarBitacora(
+            $obj,
+            'INSERT',
+            'ActividadesTer',
+            $nuevo['codactividad'] ?? null,
+            null,
+            'Siembra — sitio #' . $depositoId
+        );
 
         $_SESSION['exito'] = "La actividad de siembra se registró exitosamente.";
         redirect(getUrl('ActividadesTer','ActividadesTer','listMisActividades'));
@@ -186,6 +241,21 @@ class ActividadesTerController{
             ':observaciones'    => $observaciones,
         ]);
 
+        // AUDITORÍA: buscamos el id recién creado
+        $nuevo = $obj->select(
+            "SELECT codactividad FROM tblactividadterreno WHERE codusuario = :codusuario ORDER BY codactividad DESC LIMIT 1",
+            [':codusuario' => $_SESSION['usu_id']]
+        )->fetch(PDO::FETCH_ASSOC);
+
+        $this->registrarBitacora(
+            $obj,
+            'INSERT',
+            'ActividadesTer',
+            $nuevo['codactividad'] ?? null,
+            null,
+            'Seguimiento — sitio #' . $depositoId
+        );
+
         $_SESSION['exito'] = "La actividad de seguimiento se registró exitosamente.";
         redirect(getUrl('ActividadesTer','ActividadesTer','listMisActividades'));
         exit();
@@ -220,22 +290,37 @@ class ActividadesTerController{
         $codTipo = $this->obtenerCodTipoActividad($obj, 'Resiembra');
 
         $sql = "INSERT INTO public.tblactividadterreno
-                    (codactividad, codtipoactividad, codsitio, codusuario, fecha, hora, cantidadhembras, cantidadmachos, tiempoaclimatar, recolectarempacar, observaciones, fechacreacion, estado)
+                    (codactividad, codtipoactividad, codsitio, codusuario, fecha, hora, cantidadhembras, cantidadmachos, tiempoaclimatacionmin, recolectarempacar, observaciones, fechacreacion, estado)
                 VALUES
-                    (DEFAULT, :codtipoactividad, :codsitio, :codusuario, :fecha, :hora, :hembras, :machos, :tiempoaclimatar, :recolectarempacar, :observaciones, DEFAULT, DEFAULT)";
+                    (DEFAULT, :codtipoactividad, :codsitio, :codusuario, :fecha, :hora, :hembras, :machos, :tiempoaclimatacionmin, :recolectarempacar, :observaciones, DEFAULT, DEFAULT)";
 
         $obj->insert($sql, [
-            ':codtipoactividad'   => $codTipo,
-            ':codsitio'           => $depositoId,
-            ':codusuario'         => $_SESSION['usu_id'],
-            ':fecha'              => $fecha,
-            ':hora'               => $hora,
-            ':hembras'            => $hembras,
-            ':machos'             => $machos,
-            ':tiempoaclimatar'    => $tiempoAclimatar,
-            ':recolectarempacar'  => $recolectarEmpacar,
-            ':observaciones'      => $observaciones,
+            ':codtipoactividad'      => $codTipo,
+            ':codsitio'              => $depositoId,
+            ':codusuario'            => $_SESSION['usu_id'],
+            ':fecha'                 => $fecha,
+            ':hora'                  => $hora,
+            ':hembras'               => $hembras,
+            ':machos'                => $machos,
+            ':tiempoaclimatacionmin' => $tiempoAclimatar,
+            ':recolectarempacar'     => $recolectarEmpacar,
+            ':observaciones'         => $observaciones,
         ]);
+
+        // AUDITORÍA: buscamos el id recién creado
+        $nuevo = $obj->select(
+            "SELECT codactividad FROM tblactividadterreno WHERE codusuario = :codusuario ORDER BY codactividad DESC LIMIT 1",
+            [':codusuario' => $_SESSION['usu_id']]
+        )->fetch(PDO::FETCH_ASSOC);
+
+        $this->registrarBitacora(
+            $obj,
+            'INSERT',
+            'ActividadesTer',
+            $nuevo['codactividad'] ?? null,
+            null,
+            'Resiembra — sitio #' . $depositoId
+        );
 
         $_SESSION['exito'] = "La actividad de resiembra se registró exitosamente.";
         redirect(getUrl('ActividadesTer','ActividadesTer','listMisActividades'));
@@ -417,11 +502,14 @@ class ActividadesTerController{
 
         $codactividad = $_POST['codactividad'] ?? null;
 
-// Se vuelve a validar la propiedad del registro antes de actualizar
-        $sqlDueno = "SELECT codusuario FROM tblactividadterreno WHERE codactividad = :id";
-        $dueno = $obj->select($sqlDueno, [':id' => $codactividad])->fetch(PDO::FETCH_ASSOC);
+// Se vuelve a validar la propiedad del registro antes de actualizar,
+// y de paso se trae la fila completa: los campos que no vengan en
+// este formulario (dependen del tipo de actividad) conservan su
+// valor actual en vez de guardarse como NULL.
+        $sqlActual = "SELECT * FROM tblactividadterreno WHERE codactividad = :id";
+        $actual = $obj->select($sqlActual, [':id' => $codactividad])->fetch(PDO::FETCH_ASSOC);
 
-        if(!$dueno || $dueno['codusuario'] != $_SESSION['usu_id']){
+        if(!$actual || $actual['codusuario'] != $_SESSION['usu_id']){
             $_SESSION['error'] = "No tiene permisos para editar este registro.";
             redirect(getUrl('ActividadesTer','ActividadesTer','listMisActividades'));
             exit();
@@ -437,7 +525,10 @@ class ActividadesTerController{
             exit();
         }
 
-// Se actualizan todos los campos posibles, los que no aplican al tipo de actividad simplemente llegan vacios/null desde el form
+// Se actualizan todos los campos posibles; el campo que no aplique al
+// tipo de actividad (no vino en este formulario) conserva su valor
+// anterior en vez de borrarse, para no violar columnas NOT NULL ni
+// perder datos de otros tipos de actividad.
         $sql = "UPDATE tblactividadterreno SET
                     fecha = :fecha,
                     hora = :hora,
@@ -450,28 +541,37 @@ class ActividadesTerController{
                     peces = :peces,
                     cantidadhembras = :cantidadhembras,
                     cantidadmachos = :cantidadmachos,
-                    tiempoaclimatar = :tiempoaclimatar,
+                    tiempoaclimatacionmin = :tiempoaclimatacionmin,
                     recolectarempacar = :recolectarempacar,
                     observaciones = :observaciones
                 WHERE codactividad = :codactividad";
 
         $obj->update($sql, [
-            ':fecha'             => $fecha,
-            ':hora'              => $hora,
-            ':ph'                => $_POST['ph'] !== '' ? $_POST['ph'] : null,
-            ':temperatura'       => $_POST['temperatura'] !== '' ? $_POST['temperatura'] : null,
-            ':larvasaedes'       => $_POST['larvas_aedes'] !== '' ? $_POST['larvas_aedes'] : null,
-            ':pupas'             => $_POST['pupas'] !== '' ? $_POST['pupas'] : null,
-            ':larvasculex'       => $_POST['larvas_culex'] !== '' ? $_POST['larvas_culex'] : null,
-            ':larvas'            => $_POST['larvas'] ?? null,
-            ':peces'             => $_POST['peces'] ?? null,
-            ':cantidadhembras'   => $_POST['cantidad_hembras'] !== '' ? $_POST['cantidad_hembras'] : null,
-            ':cantidadmachos'    => $_POST['cantidad_machos'] !== '' ? $_POST['cantidad_machos'] : null,
-            ':tiempoaclimatar'   => $_POST['tiempo_aclimatar'] !== '' ? $_POST['tiempo_aclimatar'] : null,
-            ':recolectarempacar' => $_POST['recolectar_empacar'] ?? null,
-            ':observaciones'     => $observaciones,
-            ':codactividad'      => $codactividad,
+            ':fecha'                 => $fecha,
+            ':hora'                  => $hora,
+            ':ph'                    => (isset($_POST['ph']) && $_POST['ph'] !== '') ? $_POST['ph'] : $actual['ph'],
+            ':temperatura'           => (isset($_POST['temperatura']) && $_POST['temperatura'] !== '') ? $_POST['temperatura'] : $actual['temperatura'],
+            ':larvasaedes'           => (isset($_POST['larvas_aedes']) && $_POST['larvas_aedes'] !== '') ? $_POST['larvas_aedes'] : $actual['larvasaedes'],
+            ':pupas'                 => (isset($_POST['pupas']) && $_POST['pupas'] !== '') ? $_POST['pupas'] : $actual['pupas'],
+            ':larvasculex'           => (isset($_POST['larvas_culex']) && $_POST['larvas_culex'] !== '') ? $_POST['larvas_culex'] : $actual['larvasculex'],
+            ':larvas'                => $_POST['larvas'] ?? $actual['larvas'],
+            ':peces'                 => $_POST['peces'] ?? $actual['peces'],
+            ':cantidadhembras'       => (isset($_POST['cantidad_hembras']) && $_POST['cantidad_hembras'] !== '') ? $_POST['cantidad_hembras'] : $actual['cantidadhembras'],
+            ':cantidadmachos'        => (isset($_POST['cantidad_machos']) && $_POST['cantidad_machos'] !== '') ? $_POST['cantidad_machos'] : $actual['cantidadmachos'],
+            ':tiempoaclimatacionmin' => (isset($_POST['tiempo_aclimatar']) && $_POST['tiempo_aclimatar'] !== '') ? $_POST['tiempo_aclimatar'] : $actual['tiempoaclimatacionmin'],
+            ':recolectarempacar'     => $_POST['recolectar_empacar'] ?? $actual['recolectarempacar'],
+            ':observaciones'         => $observaciones,
+            ':codactividad'          => $codactividad,
         ]);
+
+        $this->registrarBitacora(
+            $obj,
+            'UPDATE',
+            'ActividadesTer',
+            $codactividad,
+            null,
+            'Actividad #' . $codactividad . ' editada'
+        );
 
         $_SESSION['exito'] = "El registro se actualizó correctamente.";
         redirect(getUrl('ActividadesTer','ActividadesTer','listMisActividades'));
@@ -512,6 +612,15 @@ class ActividadesTerController{
             ':estado' => $nuevoEstado,
             ':id' => $id,
         ]);
+
+        $this->registrarBitacora(
+            $obj,
+            'UPDATE',
+            'ActividadesTer',
+            $id,
+            $actual['estado'] === 'A' ? 'Activo' : 'Inactivo',
+            $nuevoEstado === 'A' ? 'Activo' : 'Inactivo'
+        );
 
         $_SESSION['exito'] = "El estado del registro se actualizó correctamente.";
         redirect(getUrl('ActividadesTer','ActividadesTer',$funcionRetorno));

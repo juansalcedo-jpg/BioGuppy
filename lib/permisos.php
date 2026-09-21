@@ -1,89 +1,86 @@
 <?php
 
 /**
- * Mapa de permisos por rol.
+ * Control de acceso por rol — CONECTADO A BASE DE DATOS.
  *
- * 'pares': lista de "Modulo:Controlador" que ese rol puede usar COMPLETO
- *          (todas las funciones actuales y futuras de ese controlador:
- *          listar, crear, editar, activar/inhabilitar, etc.).
+ * Cada rol tiene, en tblrolaccion, la lista de acciones (Ver/Crear/Editar/
+ * Inhabilitar) que puede hacer sobre cada "Modulo:Controlador" — eso lo
+ * administra el Super Admin desde Roles > Permisos.
  *
- * 'funciones_por_par': para los pares que se COMPARTEN entre roles con
- *          funciones distintas (ej: ActividadesTer lo usa el Coordinador
- *          para ver el historial, y el Auxiliar Terreno para registrar),
- *          aquí se restringe a la lista exacta de funciones permitidas.
+ * Esta función decide, para cada request, a qué "acción" corresponde la
+ * función que se está pidiendo (según su nombre), y consulta si el rol
+ * actual tiene esa acción habilitada para ese módulo.
  */
-$GLOBALS['PERMISOS_POR_ROL'] = [
-
-    'Super Admin' => [
-        'pares' => ['Usuarios:Usuarios', 'Roles:Roles', 'Auditoria:Auditoria', 'Parametros:Parametros'],
-    ],
-
-    'Administrador' => [
-        'pares' => ['Dashboard:Dashboard', 'Catalogos:Catalogos', 'Catalogos:TipoTanque', 'Catalogos:TipoDeposito', 'Catalogos:ActividadesZoo', 'Catalogos:ActividadesTerre'],
-    ],
-
-    'Coordinador Control Biologico' => [
-        'pares' => [
-            'Zoocriadero:Zoocriadero',
-            'Tanques:Tanques',
-            'Sitios:Sitios',
-            'Depositos:Depositos',
-            'HistorialZoo:HistorialZoo',
-            'ReportesZoo:ReportesZoo',
-            'ReportesTer:ReportesTer',
-        ],
-        'funciones_por_par' => [
-            'ActividadesTer:ActividadesTer' => ['listActTer'],
-        ],
-    ],
-
-    'Auxiliar Zoocriadero' => [
-        'pares' => [
-            'ActividadesListZoo:ActividadesListZoo',
-            'ActividadesZoo:Alimentacion',
-            'ActividadesZoo:NacidosMuertos',
-            'ActividadesZoo:Limpieza',
-            'ActividadesZoo:AjusteNivel',
-            'ActividadesZoo:Lavado',
-        ],
-    ],
-
-    'Auxiliar Terreno' => [
-        'pares' => [],
-        'funciones_por_par' => [
-            'ActividadesTer:ActividadesTer' => ['listMisActividades', 'Inspeccion', 'Siembra', 'Seguimiento', 'Resiembra'],
-        ],
-    ],
-
-];
 
 // Módulos que deben poder usarse SIN haber iniciado sesión todavía
 // (login y recuperación de contraseña).
 $GLOBALS['MODULOS_PUBLICOS'] = ['Acceso', 'CambioContra'];
 
+
+// Traduce el nombre de una función del controlador a una de las 4
+// acciones genéricas que se administran en Roles > Permisos.
+function clasificarAccionPorFuncion($funcion)
+{
+    $f = strtolower($funcion);
+
+    if (strpos($f, 'delete') !== false || $f === 'activacion') {
+        return 'Inhabilitar';
+    }
+
+    if (strpos($f, 'update') !== false) {
+        return 'Editar';
+    }
+
+    if (strpos($f, 'create') !== false) {
+        return 'Crear';
+    }
+
+    // Todo lo demás (listar, filtrar, ver detalle, generar reportes, etc.)
+    return 'Ver';
+}
+
+
 function usuarioTienePermiso($modulo, $controlador, $funcion)
 {
 
-    if (in_array($modulo, $GLOBALS['MODULOS_PUBLICOS'])) {
+    if (in_array($modulo, $GLOBALS['MODULOS_PUBLICOS'] ?? [])) {
         return true;
     }
 
-    $rol = $_SESSION['nombre_rol'] ?? null;
+    $codrol = $_SESSION['codrol'] ?? null;
 
-    if (!$rol || !isset($GLOBALS['PERMISOS_POR_ROL'][$rol])) {
+    if (empty($codrol)) {
         return false;
     }
 
-    $permisosRol = $GLOBALS['PERMISOS_POR_ROL'][$rol];
     $par = "$modulo:$controlador";
+    $accionNecesaria = clasificarAccionPorFuncion($funcion);
 
-    if (in_array($par, $permisosRol['pares'] ?? [])) {
-        return true;
+    try {
+
+        $obj = new \BioGuppy\Model\MasterModel();
+
+        $sql = "SELECT 1
+                FROM tblrolaccion ra
+                INNER JOIN tblaccion a ON a.codaccion = ra.codaccion
+                INNER JOIN tblmodulo m ON m.codmodulo = a.codmodulo
+                INNER JOIN tblpermiso p ON p.codpermiso = a.codpermiso
+                WHERE ra.codrol = :codrol
+                  AND m.nombremodulo = :par
+                  AND p.nombrepermiso = :accion
+                LIMIT 1";
+
+        $stmt = $obj->select($sql, [
+            ':codrol' => $codrol,
+            ':par' => $par,
+            ':accion' => $accionNecesaria,
+        ]);
+
+        return (bool) $stmt->fetchColumn();
+
+    } catch (\Throwable $error) {
+        error_log("Error verificando permisos: " . $error->getMessage());
+        return false;
     }
 
-    if (isset($permisosRol['funciones_por_par'][$par])) {
-        return in_array($funcion, $permisosRol['funciones_por_par'][$par]);
-    }
-
-    return false;
 }

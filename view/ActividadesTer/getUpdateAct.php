@@ -96,7 +96,7 @@ $tipo = strtoupper($actividad['nombreactividad']);
               </div>
               <div class="col-md-3">
                 <label for="tiempo_aclimatar" class="form-label fw-semibold">Aclimatación (min)</label>
-                <input type="number" min="0" class="form-control" id="tiempo_aclimatar" name="tiempo_aclimatar" value="<?php echo htmlspecialchars($actividad['tiempoaclimatar'] ?? 0); ?>">
+                <input type="number" min="0" class="form-control" id="tiempo_aclimatar" name="tiempo_aclimatar" value="<?php echo htmlspecialchars($actividad['tiempoaclimatacionmin'] ?? 0); ?>">
               </div>
               <div class="col-md-3">
                 <label for="recolectar_empacar" class="form-label fw-semibold">¿Recolectar/empacar?</label>
