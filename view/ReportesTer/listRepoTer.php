@@ -41,7 +41,7 @@
         </div>
 
         <div class="card-body p-4">
-            <form id="formGenerarReporteTerreno" action="<?php echo getUrl('ReportesTerreno', 'ReportesTerreno', 'generar', false, 'ajax'); ?>" method="POST">
+            <form id="formGenerarReporteTerreno" action="<?php echo getUrl('ReportesTer', 'ReportesTer', 'generar', false, 'ajax'); ?>"
                 <div class="row g-4 align-items-end">
 
                     <!-- Tipo de Reporte (Terreno) -->
