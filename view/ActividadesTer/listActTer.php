@@ -1,9 +1,4 @@
-<<<<<<< HEAD
 <div class="container-fluid py-3">
-=======
-<?php
-$tipo = strtoupper($actividad['nombreactividad'] ?? '');
->>>>>>> 46dc5ffb580d202bbc13cd1f85402097470c415f
 
     <div class="row justify-content-center">
 
@@ -16,15 +11,9 @@ $tipo = strtoupper($actividad['nombreactividad'] ?? '');
 
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
 
-<<<<<<< HEAD
                     <div>
                         <?php echo htmlspecialchars($_SESSION['error']); ?>
                     </div>
-=======
-        <h4 class="fw-semibold mb-1">
-          Editar actividad — <?php $tipo = strtoupper($actividad['nombreactividad'] ?? ''); ?>
-        </h4>
->>>>>>> 46dc5ffb580d202bbc13cd1f85402097470c415f
 
                 </div>
 
