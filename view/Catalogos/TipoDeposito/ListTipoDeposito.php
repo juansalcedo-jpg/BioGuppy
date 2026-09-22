@@ -1,38 +1,63 @@
 <div class="container-fluid py-2">
     <div class="row justify-content-center">
-        <div class="col-xl-10">
+        <div class="col-xl-11">
 
-            <div class="d-flex flex-wrap align-items-end justify-content-between mb-4 gap-2">
+            <!-- Encabezado -->
+            <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2">
                 <div>
-                    <h4 class="fw-semibold mb-1">Tipo de Depósito</h4>
+                    <h4 class="fw-bold mb-1 text-dark">Tipo de Depósito</h4>
                     <p class="text-muted small mb-0">Consulta y administra los tipos de depósito registrados en el sistema.</p>
                 </div>
-                <button type="button" class="btn btn-primary px-3"
+                <button type="button" class="btn btn-primary px-4 py-2 rounded-3 fw-semibold shadow-sm"
                     onclick="cargarFormularioModal('<?php echo getUrl('Catalogos', 'TipoDeposito', 'createTipoDeposito') ?>', 'Registrar tipo de depósito', 'depositoFormRegistro', '<?php echo getUrl('Catalogos', 'TipoDeposito', 'listTipoDepo') ?>', 'tablaDepositos')">
-                    <i class="bi bi-plus-lg me-1"></i>Nuevo
+                    <i class="bi bi-plus-lg me-1"></i> Nuevo tipo
                 </button>
             </div>
 
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
-                    <span class="fw-semibold">
+            <!-- Alertas de sesión (Error / Éxito) -->
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show py-2 px-3 mb-3 border-0 shadow-sm rounded-3 bg-danger-subtle text-danger-emphasis" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
+                        <div><?php echo $_SESSION['error']; ?></div>
+                    </div>
+                    <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['exito'])): ?>
+                <div class="alert alert-success alert-dismissible fade show py-2 px-3 mb-3 border-0 shadow-sm rounded-3 bg-success-subtle text-success-emphasis" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill fs-5 me-2"></i>
+                        <div><?php echo $_SESSION['exito']; ?></div>
+                    </div>
+                    <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['exito']); ?>
+            <?php endif; ?>
+
+            <!-- Tabla de Contenido -->
+            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <div class="card-header bg-white border-bottom py-3 px-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <span class="fw-semibold text-secondary">
                         <i class="bi bi-bucket me-2 text-primary"></i>Tipos de depósito registrados
                     </span>
                     <div class="input-group input-group-sm" style="max-width: 260px;">
-                        <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
-                        <input type="text" id="buscadorDepositos" class="form-control" placeholder="Buscar tipo..."
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" id="buscadorDepositos" class="form-control border-start-0 shadow-none bg-light" placeholder="Buscar tipo..."
                             data-url="<?php echo getUrl('Catalogos', 'TipoDeposito', 'filtro', false, 'ajax'); ?>">
                     </div>
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-striped align-middle mb-0" id="tablaDepositos">
-                        <thead class="table-dark">
+                    <table class="table table-hover align-middle mb-0" id="tablaDepositos">
+                        <thead class="table-light text-secondary text-uppercase fs-7">
                             <tr>
-                                <th class="ps-4">Nombre</th>
-                                <th class="text-center">Estado</th>
-                                <th class="text-center">Editar</th>
-                                <th class="text-center">Inhabilitar</th>
+                                <th class="ps-4 py-3">Nombre</th>
+                                <th class="text-center py-3">Estado</th>
+                                <th class="text-center py-3">Editar</th>
+                                <th class="text-center py-3">Acción</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -42,16 +67,16 @@
                                 while ($deposito = $depositos->fetch(PDO::FETCH_ASSOC)):
                             ?>
                                     <tr>
-                                        <td class="ps-4"><?php echo htmlspecialchars($deposito['nombretipodeposito']); ?></td>
+                                        <td class="ps-4 fw-semibold"><?php echo htmlspecialchars($deposito['nombretipodeposito']); ?></td>
                                         <td class="text-center">
                                             <?php if ($deposito['estado'] === 'A'): ?>
-                                                <span class="badge bg-success">Activo</span>
+                                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill">Activo</span>
                                             <?php else: ?>
-                                                <span class="badge bg-danger">Inactivo</span>
+                                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 rounded-pill">Inactivo</span>
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-center">
-                                            <button type="button" class="btn btn-outline-primary btn-icon rounded-circle" title="Editar"
+                                            <button type="button" class="btn btn-outline-primary btn-sm rounded-circle p-2 lh-1" title="Editar"
                                                 onclick="cargarFormularioModal('<?php echo getUrl('Catalogos', 'TipoDeposito', 'getUpdateTipoDeposito', array('id' => $deposito['codtipodeposito'])) ?>', 'Editar tipo de depósito', 'depositoFormEdicion', '<?php echo getUrl('Catalogos', 'TipoDeposito', 'listTipoDepo') ?>', 'tablaDepositos')">
                                                 <i class="bi bi-pencil-fill"></i>
                                             </button>
@@ -59,13 +84,13 @@
                                         <td class="text-center">
                                             <?php if ($deposito['estado'] === 'A'): ?>
                                                 <a href="<?php echo getUrl('Catalogos', 'TipoDeposito', 'activacion', array('id' => $deposito['codtipodeposito'])) ?>"
-                                                    class="btn btn-outline-danger btn-icon rounded-circle" title="Inhabilitar"
+                                                    class="btn btn-outline-danger btn-sm rounded-circle p-2 lh-1" title="Inhabilitar"
                                                     onclick="return confirm('¿Seguro que deseas inhabilitar este tipo de depósito?')">
                                                     <i class="bi bi-slash-circle"></i>
                                                 </a>
                                             <?php else: ?>
                                                 <a href="<?php echo getUrl('Catalogos', 'TipoDeposito', 'activacion', array('id' => $deposito['codtipodeposito'])) ?>"
-                                                    class="btn btn-outline-success btn-icon rounded-circle" title="Activar">
+                                                    class="btn btn-outline-success btn-sm rounded-circle p-2 lh-1" title="Activar">
                                                     <i class="bi bi-check-lg"></i>
                                                 </a>
                                             <?php endif; ?>
@@ -77,7 +102,7 @@
                                 ?>
                                 <tr>
                                     <td colspan="4" class="text-center text-muted py-5">
-                                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                        <i class="bi bi-inbox fs-2 d-block mb-2 text-secondary opacity-50"></i>
                                         No hay tipos de depósito registrados todavía.
                                     </td>
                                 </tr>
@@ -92,41 +117,15 @@
 </div>
 
 <script>
-    document.getElementById('buscadorDepositos').addEventListener('keyup', function() {
-        var filtro = this.value.toLowerCase();
-        document.querySelectorAll('#tablaDepositos tbody tr').forEach(function(fila) {
-            fila.style.display = fila.textContent.toLowerCase().includes(filtro) ? '' : 'none';
+    var buscadorDep = document.getElementById('buscadorDepositos');
+    if (buscadorDep) {
+        buscadorDep.addEventListener('keyup', function() {
+            var filtro = this.value.toLowerCase();
+            document.querySelectorAll('#tablaDepositos tbody tr').forEach(function(fila) {
+                fila.style.display = fila.textContent.toLowerCase().includes(filtro) ? '' : 'none';
+            });
         });
-    });
+    }
 </script>
-
-<?php
-if (isset($_SESSION['error'])) {
-?>
-    <div class="row justify-content-center">
-        <div class="col-xl-10">
-            <div class="alert alert-danger d-flex align-items-center mt-3 mb-0" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                <div><?php echo $_SESSION['error']; ?></div>
-            </div>
-        </div>
-    </div>
-<?php
-    unset($_SESSION['error']);
-}
-if (isset($_SESSION['exito'])) {
-?>
-    <div class="row justify-content-center">
-        <div class="col-xl-10">
-            <div class="alert alert-success d-flex align-items-center mt-3 mb-0" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i>
-                <div><?php echo $_SESSION['exito']; ?></div>
-            </div>
-        </div>
-    </div>
-<?php
-    unset($_SESSION['exito']);
-}
-?>
 
 <?php include_once __DIR__ . '/../../partials/modalFormulario.php'; ?>

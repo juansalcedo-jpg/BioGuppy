@@ -2,63 +2,59 @@
 $tanque = $tipoTanque->fetch(PDO::FETCH_ASSOC);
 ?>
 <div id="tanqueFormEdicion">
-    <div class="container-fluid py-3">
-        <div class="row justify-content-center">
-            <div class="col-xl-8">
+    <div class="container-fluid px-1 py-1">
 
-                <div class="mb-4 text-center">
-                    <h4 class="fw-semibold mb-1">Editar tipo de tanque</h4>
-                    <p class="text-muted small mb-0">Actualiza el nombre del tipo de tanque.</p>
-                </div>
-
-                <form action="<?php echo getUrl('Catalogos', 'TipoTanque', 'postUpdateTipoTanque') ?>" method="post" novalidate>
-                    <input type="hidden" name="codtipotanque" value="<?php echo $tanque['codtipotanque']; ?>">
-
-                    <div class="card border-0 shadow-sm mb-4">
-                        <div class="card-header bg-white border-bottom py-3">
-                            <span class="fw-semibold">
-                                <i class="bi bi-box-seam me-2 text-primary"></i>Datos del tipo de tanque
-                            </span>
-                        </div>
-                        <div class="card-body p-4">
-
-                            <div class="mb-3">
-                                <label for="nombretanque" class="form-label fw-semibold">Nombre del tanque</label>
-                                <div class="input-group input-group-lg">
-                                    <span class="input-group-text bg-light"><i class="bi bi-droplet"></i></span>
-                                    <input type="text" class="form-control" id="nombretanque" name="nombretanque"
-                                        value="<?php echo htmlspecialchars($tanque['nombretipotanque']); ?>">
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class="d-flex justify-content-end gap-2 mb-4">
-                        <button type="submit" class="btn btn-primary px-4">
-                            <i class="bi bi-check-lg me-1"></i>Guardar cambios
-                        </button>
-                    </div>
-
-                </form>
-
-            </div>
-        </div>
-    </div>
-
-    <?php
-    if (isset($_SESSION['error'])) {
-    ?>
-        <div class="row justify-content-center">
-            <div class="col-xl-8">
-                <div class="alert alert-danger d-flex align-items-center mt-3 mb-0" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <!-- Alerta de error -->
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show py-2 px-3 mb-3 border-0 shadow-sm rounded-3 bg-danger-subtle text-danger-emphasis" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
                     <div><?php echo $_SESSION['error']; ?></div>
                 </div>
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        </div>
-    <?php
-        unset($_SESSION['error']);
-    }
-    ?>
+            <?php unset($_SESSION['error']); ?>
+        <?php endif; ?>
+
+        <form action="<?php echo getUrl('Catalogos', 'TipoTanque', 'postUpdateTipoTanque') ?>" method="post" novalidate class="needs-validation">
+            <input type="hidden" name="codtipotanque" value="<?php echo $tanque['codtipotanque']; ?>">
+
+            <!-- Campo del nombre del tipo de tanque -->
+            <div class="mb-3">
+                <label for="nombretanque" class="form-label text-secondary fs-7 fw-bold text-uppercase tracking-wider mb-1">
+                    Nombre del tipo de tanque <span class="text-danger">*</span>
+                </label>
+                <div class="input-group shadow-sm rounded-3 overflow-hidden border bg-white">
+                    <span class="input-group-text bg-white border-0 text-muted ps-3">
+                        <i class="bi bi-box-seam text-primary"></i>
+                    </span>
+                    <input type="text" class="form-control border-0 bg-white py-2 ps-2 shadow-none" id="nombretanque" name="nombretanque"
+                           value="<?php echo htmlspecialchars($tanque['nombretipotanque']); ?>" placeholder="Ej: Concreto, Geomembrana..." required>
+                </div>
+                <div class="form-text text-muted small mt-1">Modifica el nombre con el que se identifica este tipo de tanque.</div>
+            </div>
+
+            <!-- Botones de acción alineados -->
+            <div class="d-flex justify-content-end gap-2 pt-3 border-top mt-4">
+                <button type="button" class="btn btn-light px-4 py-2 rounded-3 fw-semibold text-secondary border" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary px-4 py-2 rounded-3 fw-semibold shadow-sm">
+                    <i class="bi bi-check-lg me-1"></i> Guardar cambios
+                </button>
+            </div>
+
+        </form>
+
+    </div>
 </div>
+
+<style>
+  .input-group:focus-within, .border:focus-within {
+    border-color: var(--bs-primary) !important;
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.15) !important;
+  }
+  .fs-7 {
+    font-size: 0.75rem;
+  }
+</style>
