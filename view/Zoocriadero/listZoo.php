@@ -33,16 +33,10 @@
           <h4 class="fw-bold text-dark mb-1">Zoocriaderos</h4>
           <p class="text-muted small mb-0">Consulta y administra los zoocriaderos registrados en el sistema.</p>
         </div>
-<<<<<<< HEAD
-        <button type="button" class="btn btn-primary px-3 py-2 rounded-3 shadow-sm fw-semibold d-flex align-items-center"
-                onclick="cargarFormularioModal('<?php echo getUrl('Zoocriadero','Zoocriadero','create') ?>', 'Registrar zoocriadero', 'zoocriaderoFormRegistro', '<?php echo getUrl('Zoocriadero','Zoocriadero','listZoo') ?>', 'tablaZoocriaderos')">
-          <i class="bi bi-plus-lg me-1"></i> Nuevo zoocriadero
-=======
         <button type="button" class="btn btn-primary px-3"
                 onclick="cargarFormularioModal('<?php echo getUrl('Zoocriadero','Zoocriadero','create') ?>',
                 'Registrar Zoocriadero', 'zoocriaderoFormRegistro', '<?php echo getUrl('Zoocriadero','Zoocriadero','listZoo') ?>', 'tablaZoocriaderos')">
           <i class="bi bi-plus-lg me-1"></i>Nuevo zoocriadero
->>>>>>> a9e9d374a1581d64b3798339e2bef7b455efa469
         </button>
       </div>
 
@@ -92,15 +86,9 @@
                     <span class="badge bg-danger-subtle text-danger-emphasis px-3 py-1 rounded-pill fw-semibold">Inactivo</span>
                   <?php endif; ?>
                 </td>
-<<<<<<< HEAD
-                <td class="text-center py-3">
-                  <button type="button" class="btn btn-light btn-sm text-primary rounded-circle shadow-sm p-2" title="Editar"
-                          onclick="cargarFormularioModal('<?php echo getUrl('Zoocriadero','Zoocriadero','getUpdate',array('id'=>$zoo['id'])) ?>', 'Editar zoocriadero', 'zoocriaderoFormEdicion', '<?php echo getUrl('Zoocriadero','Zoocriadero','listZoo') ?>', 'tablaZoocriaderos')">
-=======
                 <td class="text-center">
                   <button type="button" class="btn btn-outline-primary btn-icon rounded-circle" title="Editar"
                           onclick="cargarFormularioModal('<?php echo getUrl('Zoocriadero','Zoocriadero','getUpdate',array('id'=>$zoo['id'])) ?>', 'Editar Zoocriadero', 'zoocriaderoFormEdicion', '<?php echo getUrl('Zoocriadero','Zoocriadero','listZoo') ?>', 'tablaZoocriaderos')">
->>>>>>> a9e9d374a1581d64b3798339e2bef7b455efa469
                     <i class="bi bi-pencil-fill"></i>
                   </button>
                 </td>
