@@ -1,5 +1,5 @@
 <?php
-$filasActividades=$actividades
+$filasActividades=(isset($actividades)&&$actividades)
 ?$actividades->fetchAll(PDO::FETCH_ASSOC)
 :[];
 ?>
@@ -32,15 +32,11 @@ $filasActividades=$actividades
 
                 <?php if($act['estado']==='A'): ?>
 
-                    <span class="badge bg-success">
-                        Activo
-                    </span>
+                    <span class="badge bg-success">Activo</span>
 
                 <?php else: ?>
 
-                    <span class="badge bg-danger">
-                        Inactivo
-                    </span>
+                    <span class="badge bg-danger">Inactivo</span>
 
                 <?php endif; ?>
 
@@ -48,10 +44,17 @@ $filasActividades=$actividades
 
             <td class="text-center">
 
-                <button type="button"
-                class="btn btn-outline-primary btn-icon rounded-circle"
-                title="Editar"
-                onclick="cargarFormularioModal('<?php echo getUrl('ActividadesTer','ActividadesTer','getUpdate',array('id'=>$act['id'])) ?>','Editar actividad','actividadTerFormEdicion','<?php echo getUrl('ActividadesTer','ActividadesTer','listMisActividades') ?>','tablaMisActividadesTer')">
+                <button
+                    type="button"
+                    class="btn btn-outline-primary btn-icon rounded-circle"
+                    title="Editar"
+                    onclick="cargarFormularioModal(
+                    '<?php echo getUrl('ActividadesTer','ActividadesTer','getUpdate',array('id'=>$act['id'])); ?>',
+                    'Editar actividad',
+                    'actividadTerFormEdicion',
+                    '<?php echo getUrl('ActividadesTer','ActividadesTer','listMisActividades'); ?>',
+                    'tablaMisActividadesTer'
+                    )">
 
                     <i class="bi bi-pencil-fill"></i>
 
@@ -63,9 +66,10 @@ $filasActividades=$actividades
 
                 <?php if($act['estado']==='A'): ?>
 
-                    <a href="<?php echo getUrl('ActividadesTer','ActividadesTer','delete',array('id'=>$act['id'])) ?>"
-                    class="btn btn-outline-danger btn-icon rounded-circle"
-                    title="Inhabilitar">
+                    <a
+                        href="<?php echo getUrl('ActividadesTer','ActividadesTer','delete',array('id'=>$act['id'])); ?>"
+                        class="btn btn-outline-danger btn-icon rounded-circle"
+                        title="Inhabilitar">
 
                         <i class="bi bi-slash-circle"></i>
 
@@ -73,9 +77,10 @@ $filasActividades=$actividades
 
                 <?php else: ?>
 
-                    <a href="<?php echo getUrl('ActividadesTer','ActividadesTer','delete',array('id'=>$act['id'])) ?>"
-                    class="btn btn-outline-success btn-icon rounded-circle"
-                    title="Activar">
+                    <a
+                        href="<?php echo getUrl('ActividadesTer','ActividadesTer','delete',array('id'=>$act['id'])); ?>"
+                        class="btn btn-outline-success btn-icon rounded-circle"
+                        title="Activar">
 
                         <i class="bi bi-check-lg"></i>
 

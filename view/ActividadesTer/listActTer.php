@@ -1,366 +1,439 @@
-<?php
-$tipo=strtoupper($actividad['nombreactividad']);
+<div class="container-fluid py-3">
 
-$esInspeccion=(strpos($tipo,'INSPEC')!==false);
-$esSiembra=(strpos($tipo,'SIEMBRA')!==false);
-$esSeguimiento=(strpos($tipo,'SEGUIMIENTO')!==false);
-$esResiembra=(strpos($tipo,'RESIEMBRA')!==false);
-?>
+    <div class="row justify-content-center">
 
-<div id="actividadTerFormEdicion">
+        <div class="col-xl-11">
 
-<div class="container-fluid py-2">
 
-  <div class="row justify-content-center">
+            <?php if(isset($_SESSION['error'])): ?>
 
-    <div class="col-xl-9">
+                <div class="alert alert-danger d-flex align-items-center mb-3">
 
-      <div class="mb-4">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
 
-        <h4 class="fw-semibold mb-1">
-          Editar actividad — <?php echo htmlspecialchars($actividad['nombreactividad']); ?>
-        </h4>
+                    <div>
+                        <?php echo htmlspecialchars($_SESSION['error']); ?>
+                    </div>
 
-        <p class="text-muted small mb-0">
-          Corrige los datos de esta actividad de terreno.
-        </p>
+                </div>
 
-      </div>
-
-      <?php if(isset($_SESSION['error'])): ?>
-
-        <div class="alert alert-danger d-flex align-items-center mb-3" role="alert">
-
-          <i class="bi bi-exclamation-triangle-fill me-2"></i>
-
-          <div>
-            <?php echo htmlspecialchars($_SESSION['error']); ?>
-          </div>
-
-        </div>
-
-        <?php unset($_SESSION['error']); ?>
-
-      <?php endif; ?>
-
-      <form action="<?php echo getUrl('ActividadesTer','ActividadesTer','postUpdate')?>"
-      method="post"
-      novalidate>
-
-        <input type="hidden"
-        name="codactividad"
-        value="<?php echo $actividad['codactividad']; ?>">
-
-        <div class="card border-0 shadow-sm mb-4">
-
-          <div class="card-header bg-white border-bottom py-3">
-
-            <span class="fw-semibold">
-
-              <i class="bi bi-pencil-square me-2 text-primary"></i>
-
-              Datos de la actividad
-
-            </span>
-
-          </div>
-
-          <div class="card-body p-4">
-
-            <div class="row g-3 mb-3">
-
-              <div class="col-md-6">
-
-                <label for="fecha_actividad" class="form-label fw-semibold">
-                  Fecha *
-                </label>
-
-                <input type="date"
-                class="form-control"
-                id="fecha_actividad"
-                name="fecha_actividad"
-                value="<?php echo htmlspecialchars($actividad['fecha']); ?>"
-                max="<?php echo date('Y-m-d'); ?>">
-
-              </div>
-
-              <div class="col-md-6">
-
-                <label for="hora_actividad" class="form-label fw-semibold">
-                  Hora
-                </label>
-
-                <input type="time"
-                class="form-control"
-                id="hora_actividad"
-                name="hora_actividad"
-                min="08:00"
-                max="18:00"
-                value="<?php echo htmlspecialchars(substr($actividad['hora']??'',0,5)); ?>">
-
-              </div>
-
-            </div>
-
-            <?php if($esInspeccion): ?>
-
-            <div class="row g-3 mb-3">
-
-              <div class="col-md-3">
-
-                <label for="ph" class="form-label fw-semibold">
-                  pH del agua
-                </label>
-
-                <input type="number"
-                min="0"
-                max="14"
-                step="0.01"
-                class="form-control"
-                id="ph"
-                name="ph"
-                value="<?php echo htmlspecialchars($actividad['ph']??''); ?>">
-
-              </div>
-
-              <div class="col-md-3">
-
-                <label for="temperatura" class="form-label fw-semibold">
-                  Temperatura (°C)
-                </label>
-
-                <input type="number"
-                min="0"
-                max="40"
-                step="0.01"
-                class="form-control"
-                id="temperatura"
-                name="temperatura"
-                value="<?php echo htmlspecialchars($actividad['temperatura']??''); ?>">
-
-              </div>
-
-              <div class="col-md-2">
-
-                <label for="larvas_aedes" class="form-label fw-semibold">
-                  Larvas Aedes
-                </label>
-
-                <input type="number"
-                min="0"
-                step="1"
-                class="form-control"
-                id="larvas_aedes"
-                name="larvas_aedes"
-                value="<?php echo htmlspecialchars($actividad['larvasaedes']??0); ?>">
-
-              </div>
-
-              <div class="col-md-2">
-
-                <label for="pupas" class="form-label fw-semibold">
-                  Pupas
-                </label>
-
-                <input type="number"
-                min="0"
-                step="1"
-                class="form-control"
-                id="pupas"
-                name="pupas"
-                value="<?php echo htmlspecialchars($actividad['pupas']??0); ?>">
-
-              </div>
-
-              <div class="col-md-2">
-
-                <label for="larvas_culex" class="form-label fw-semibold">
-                  Larvas Culex
-                </label>
-
-                <input type="number"
-                min="0"
-                step="1"
-                class="form-control"
-                id="larvas_culex"
-                name="larvas_culex"
-                value="<?php echo htmlspecialchars($actividad['larvasculex']??0); ?>">
-
-              </div>
-
-            </div>
+                <?php unset($_SESSION['error']); ?>
 
             <?php endif; ?>
 
-            <?php if($esSeguimiento): ?>
 
-            <div class="row g-3 mb-3">
+            <?php if(isset($_SESSION['exito'])): ?>
 
-              <div class="col-md-6">
+                <div class="alert alert-success d-flex align-items-center mb-3">
 
-                <label for="peces" class="form-label fw-semibold">
-                  ¿Presencia de peces?
-                </label>
+                    <i class="bi bi-check-circle-fill me-2"></i>
 
-                <select class="form-select"
-                id="peces"
-                name="peces">
+                    <div>
+                        <?php echo htmlspecialchars($_SESSION['exito']); ?>
+                    </div>
 
-                  <option value="S" <?php echo ($actividad['peces']=='S')?'selected':''; ?>>
-                    Sí
-                  </option>
+                </div>
 
-                  <option value="N" <?php echo ($actividad['peces']=='N')?'selected':''; ?>>
-                    No
-                  </option>
-
-                </select>
-
-              </div>
-
-              <div class="col-md-6">
-
-                <label for="larvas" class="form-label fw-semibold">
-                  ¿Presencia de larvas?
-                </label>
-
-                <select class="form-select"
-                id="larvas"
-                name="larvas">
-
-                  <option value="N" <?php echo ($actividad['larvas']=='N')?'selected':''; ?>>
-                    No
-                  </option>
-
-                  <option value="S" <?php echo ($actividad['larvas']=='S')?'selected':''; ?>>
-                    Sí
-                  </option>
-
-                </select>
-
-              </div>
-
-            </div>
+                <?php unset($_SESSION['exito']); ?>
 
             <?php endif; ?>
 
-            <?php if($esSiembra||$esResiembra): ?>
 
-            <div class="row g-3 mb-3">
+            <?php if(!empty($errorFechas)): ?>
 
-              <div class="col-md-3">
+                <div class="alert alert-danger d-flex align-items-center mb-3">
 
-                <label for="cantidad_hembras" class="form-label fw-semibold">
-                  Cantidad hembras
-                </label>
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
 
-                <input type="number"
-                min="0"
-                step="1"
-                class="form-control"
-                id="cantidad_hembras"
-                name="cantidad_hembras"
-                value="<?php echo htmlspecialchars($actividad['cantidadhembras']??0); ?>">
+                    <div>
+                        <?php echo htmlspecialchars($errorFechas); ?>
+                    </div>
 
-              </div>
-
-              <div class="col-md-3">
-
-                <label for="cantidad_machos" class="form-label fw-semibold">
-                  Cantidad machos
-                </label>
-
-                <input type="number"
-                min="0"
-                step="1"
-                class="form-control"
-                id="cantidad_machos"
-                name="cantidad_machos"
-                value="<?php echo htmlspecialchars($actividad['cantidadmachos']??0); ?>">
-
-              </div>
-
-              <div class="col-md-3">
-
-                <label for="tiempo_aclimatar" class="form-label fw-semibold">
-                  Aclimatación (min)
-                </label>
-
-                <input type="number"
-                min="0"
-                step="1"
-                class="form-control"
-                id="tiempo_aclimatar"
-                name="tiempo_aclimatar"
-                value="<?php echo htmlspecialchars($actividad['tiempoaclimatacionmin']??0); ?>">
-
-              </div>
-
-              <div class="col-md-3">
-
-                <label for="recolectar_empacar" class="form-label fw-semibold">
-                  ¿Recolectar/empacar?
-                </label>
-
-                <select class="form-select"
-                id="recolectar_empacar"
-                name="recolectar_empacar">
-
-                  <option value="S" <?php echo ($actividad['recolectarempacar']=='S')?'selected':''; ?>>
-                    Sí
-                  </option>
-
-                  <option value="N" <?php echo ($actividad['recolectarempacar']=='N')?'selected':''; ?>>
-                    No
-                  </option>
-
-                </select>
-
-              </div>
-
-            </div>
+                </div>
 
             <?php endif; ?>
 
-            <div class="row">
 
-              <div class="col-12">
+            <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2">
 
-                <label for="observaciones" class="form-label fw-semibold">
-                  Observaciones
-                </label>
+                <div>
 
-                <textarea class="form-control"
-                id="observaciones"
-                name="observaciones"
-                rows="2"><?php echo htmlspecialchars($actividad['observaciones']??''); ?></textarea>
+                    <h4 class="fw-bold text-dark mb-1">
+                        Historial de Actividades — Terreno
+                    </h4>
 
-              </div>
+                    <p class="text-muted small mb-0">
+                        Consulta las actividades registradas en terreno.
+                    </p>
+
+                </div>
 
             </div>
 
-          </div>
+
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+
+
+                <div class="card-header bg-white border-bottom py-3 px-4">
+
+                    <div class="d-flex align-items-center mb-3">
+
+                        <i class="bi bi-funnel text-primary me-2 fs-5"></i>
+
+                        <span class="fw-semibold">
+                            Filtros
+                        </span>
+
+                    </div>
+
+
+                    <form action="index.php" method="GET">
+
+                        <input
+                            type="hidden"
+                            name="modulo"
+                            value="ActividadesTer">
+
+                        <input
+                            type="hidden"
+                            name="controlador"
+                            value="ActividadesTer">
+
+                        <input
+                            type="hidden"
+                            name="funcion"
+                            value="listActTer">
+
+
+                        <div class="row g-3 align-items-end">
+
+
+                            <div class="col-md-2">
+
+                                <label
+                                    for="fechaDesde"
+                                    class="form-label fw-semibold">
+
+                                    Desde
+
+                                </label>
+
+                                <input
+                                    type="date"
+                                    id="fechaDesde"
+                                    name="fechaDesde"
+                                    class="form-control"
+                                    max="<?php echo date('Y-m-d'); ?>"
+                                    value="<?php echo htmlspecialchars($_GET['fechaDesde']??''); ?>">
+
+                            </div>
+
+
+                            <div class="col-md-2">
+
+                                <label
+                                    for="fechaHasta"
+                                    class="form-label fw-semibold">
+
+                                    Hasta
+
+                                </label>
+
+                                <input
+                                    type="date"
+                                    id="fechaHasta"
+                                    name="fechaHasta"
+                                    class="form-control"
+                                    max="<?php echo date('Y-m-d'); ?>"
+                                    value="<?php echo htmlspecialchars($_GET['fechaHasta']??''); ?>">
+
+                            </div>
+
+
+                            <div class="col-md-3">
+
+                                <label
+                                    for="codsitio"
+                                    class="form-label fw-semibold">
+
+                                    Sitio
+
+                                </label>
+
+                                <select
+                                    id="codsitio"
+                                    name="codsitio"
+                                    class="form-select">
+
+                                    <option value="">
+                                        Todos
+                                    </option>
+
+                                    <?php if(isset($sitios)&&$sitios): ?>
+
+                                        <?php while($sitio=$sitios->fetch(PDO::FETCH_ASSOC)): ?>
+
+                                            <option
+                                                value="<?php echo $sitio['codsitio']; ?>"
+                                                <?php
+                                                echo (($_GET['codsitio']??'')==$sitio['codsitio'])
+                                                ?'selected'
+                                                :'';
+                                                ?>>
+
+                                                <?php echo htmlspecialchars($sitio['nombresitio']); ?>
+
+                                            </option>
+
+                                        <?php endwhile; ?>
+
+                                    <?php endif; ?>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="col-md-3">
+
+                                <label
+                                    for="codtipoactividad"
+                                    class="form-label fw-semibold">
+
+                                    Tipo de actividad
+
+                                </label>
+
+                                <select
+                                    id="codtipoactividad"
+                                    name="codtipoactividad"
+                                    class="form-select">
+
+                                    <option value="">
+                                        Todas
+                                    </option>
+
+                                    <?php if(isset($tiposActividad)&&$tiposActividad): ?>
+
+                                        <?php while($tipo=$tiposActividad->fetch(PDO::FETCH_ASSOC)): ?>
+
+                                            <option
+                                                value="<?php echo $tipo['codtipoactividad']; ?>"
+                                                <?php
+                                                echo (($_GET['codtipoactividad']??'')==$tipo['codtipoactividad'])
+                                                ?'selected'
+                                                :'';
+                                                ?>>
+
+                                                <?php echo htmlspecialchars($tipo['nombreactividad']); ?>
+
+                                            </option>
+
+                                        <?php endwhile; ?>
+
+                                    <?php endif; ?>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="col-md-2 d-grid">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary">
+
+                                    <i class="bi bi-funnel me-1"></i>
+
+                                    Filtrar
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-dark">
+
+                            <tr>
+
+                                <th class="ps-4">
+                                    Fecha
+                                </th>
+
+                                <th>
+                                    Tipo de actividad
+                                </th>
+
+                                <th>
+                                    Sitio
+                                </th>
+
+                                <th>
+                                    Responsable
+                                </th>
+
+                                <th>
+                                    Observaciones
+                                </th>
+
+                                <th class="text-center">
+                                    Estado
+                                </th>
+
+                                <th class="text-center">
+                                    Acción
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                        <?php
+
+                        $filas=(isset($actividades)&&$actividades)
+                        ?$actividades->fetchAll(PDO::FETCH_ASSOC)
+                        :[];
+
+                        ?>
+
+                        <?php if(!empty($filas)): ?>
+
+                            <?php foreach($filas as $act): ?>
+
+                                <tr>
+
+                                    <td class="ps-4">
+
+                                        <?php echo htmlspecialchars($act['fecha']); ?>
+
+                                    </td>
+
+
+                                    <td class="fw-semibold">
+
+                                        <?php echo htmlspecialchars($act['tipo_actividad']); ?>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <?php echo htmlspecialchars($act['sitio']); ?>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <?php echo htmlspecialchars($act['responsable']); ?>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <?php
+                                        echo htmlspecialchars(
+                                            $act['observaciones']??''
+                                        );
+                                        ?>
+
+                                    </td>
+
+
+                                    <td class="text-center">
+
+                                        <?php if($act['estado']==='A'): ?>
+
+                                            <span class="badge bg-success">
+                                                Activo
+                                            </span>
+
+                                        <?php else: ?>
+
+                                            <span class="badge bg-danger">
+                                                Inactivo
+                                            </span>
+
+                                        <?php endif; ?>
+
+                                    </td>
+
+
+                                    <td class="text-center">
+
+                                        <?php if($act['estado']==='A'): ?>
+
+                                            <a
+                                                href="<?php echo getUrl('ActividadesTer','ActividadesTer','delete',array('id'=>$act['codactividad'])); ?>"
+                                                class="btn btn-outline-danger btn-icon rounded-circle"
+                                                title="Inhabilitar">
+
+                                                <i class="bi bi-slash-circle"></i>
+
+                                            </a>
+
+                                        <?php else: ?>
+
+                                            <a
+                                                href="<?php echo getUrl('ActividadesTer','ActividadesTer','delete',array('id'=>$act['codactividad'])); ?>"
+                                                class="btn btn-outline-success btn-icon rounded-circle"
+                                                title="Activar">
+
+                                                <i class="bi bi-check-lg"></i>
+
+                                            </a>
+
+                                        <?php endif; ?>
+
+                                    </td>
+
+                                </tr>
+
+                            <?php endforeach; ?>
+
+                        <?php else: ?>
+
+                            <tr>
+
+                                <td
+                                    colspan="7"
+                                    class="text-center text-muted py-5">
+
+                                    <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+
+                                    No se encontraron actividades.
+
+                                </td>
+
+                            </tr>
+
+                        <?php endif; ?>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
 
         </div>
-
-        <div class="d-flex justify-content-end gap-2 mb-4">
-
-          <button type="submit"
-          class="btn btn-primary px-4">
-
-            <i class="bi bi-check-lg me-1"></i>
-            Guardar cambios
-
-          </button>
-
-        </div>
-
-      </form>
 
     </div>
-
-  </div>
-
-</div>
 
 </div>
