@@ -3,6 +3,10 @@
 namespace BioGuppy\Controller\ReportesTer;
 
 use BioGuppy\Model\ReporteTer\ReporteTer;
+use BioGuppy\Controller\ReportesTer\Strategies\SitiosStrategy;
+use BioGuppy\Controller\ReportesTer\Strategies\ActividadStrategy;
+use BioGuppy\Controller\ReportesTer\Strategies\AuxiliarStrategy;
+use BioGuppy\Controller\ReportesTer\Strategies\DepositoStrategy;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use PDO;
@@ -43,154 +47,29 @@ class ReportesTerController
 
     private function obtenerDatosReporte($obj, $tipoReporte, $fechaDesde, $fechaHasta)
     {
-        if ($tipoReporte === 'sitios') {
+        $strategies = [
+            'sitios'    => SitiosStrategy::class,
+            'actividad' => ActividadStrategy::class,
+            'auxiliar'  => AuxiliarStrategy::class,
+            'deposito'  => DepositoStrategy::class
+        ];
 
-            $sql = "SELECT
-                        s.fechacreacion::date AS fecha,
-                        s.nombresitio AS sitio,
-                        s.direccion AS ubicacion,
-                        u.nombreusuario || ' ' || u.apellidousuario AS responsable,
-                        s.estado
-                    FROM tblsitio s
-                    LEFT JOIN tblusuario u
-                        ON u.codusuario = s.codusuario
-                    WHERE s.fechacreacion::date
-                        BETWEEN :fechaDesde AND :fechaHasta
-                    ORDER BY s.fechacreacion ASC";
+        $strategyClass = $strategies[$tipoReporte] ?? null;
 
-            $stmt = $this->consultarSeguro(
-                $obj,
-                $sql,
-                [
-                    ':fechaDesde' => $fechaDesde,
-                    ':fechaHasta' => $fechaHasta
-                ]
-            );
-
-            return [
-                'titulo'   => 'Reporte de sitios',
-                'columnas' => ['Fecha', 'Sitio', 'Ubicación', 'Responsable', 'Estado'],
-                'campos'   => ['fecha', 'sitio', 'ubicacion', 'responsable', 'estado'],
-                'datos'    => $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : []
-            ];
+        if ($strategyClass === null) {
+            return null;
         }
 
+        $strategy = new $strategyClass(
+            \Closure::fromCallable([$this, 'consultarSeguro'])
+        );
 
-        if ($tipoReporte === 'actividad') {
-
-            $sql = "SELECT
-                        a.fecha,
-                        ta.nombreactividad AS tipo,
-                        s.nombresitio AS sitio,
-                        u.nombreusuario || ' ' || u.apellidousuario AS responsable,
-                        a.estado
-                    FROM tblactividadterreno a
-                    INNER JOIN tbltipoactividadterreno ta
-                        ON ta.codtipoactividad = a.codtipoactividad
-                    INNER JOIN tblsitio s
-                        ON s.codsitio = a.codsitio
-                    INNER JOIN tblusuario u
-                        ON u.codusuario = a.codusuario
-                    WHERE a.fecha
-                        BETWEEN :fechaDesde AND :fechaHasta
-                    ORDER BY a.fecha ASC, a.codactividad ASC";
-
-            $stmt = $this->consultarSeguro(
-                $obj,
-                $sql,
-                [
-                    ':fechaDesde' => $fechaDesde,
-                    ':fechaHasta' => $fechaHasta
-                ]
-            );
-
-            return [
-                'titulo'   => 'Por tipo de actividad',
-                'columnas' => ['Fecha', 'Tipo', 'Sitio', 'Responsable', 'Estado'],
-                'campos'   => ['fecha', 'tipo', 'sitio', 'responsable', 'estado'],
-                'datos'    => $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : []
-            ];
-        }
-
-
-        if ($tipoReporte === 'auxiliar') {
-
-            $sql = "SELECT
-                        a.fecha,
-                        u.nombreusuario || ' ' || u.apellidousuario AS auxiliar,
-                        s.nombresitio AS sitio,
-                        ta.nombreactividad AS tipo,
-                        a.estado
-                    FROM tblactividadterreno a
-                    INNER JOIN tbltipoactividadterreno ta
-                        ON ta.codtipoactividad = a.codtipoactividad
-                    INNER JOIN tblsitio s
-                        ON s.codsitio = a.codsitio
-                    INNER JOIN tblusuario u
-                        ON u.codusuario = a.codusuario
-                    WHERE a.fecha
-                        BETWEEN :fechaDesde AND :fechaHasta
-                    ORDER BY u.nombreusuario ASC, a.fecha ASC";
-
-            $stmt = $this->consultarSeguro(
-                $obj,
-                $sql,
-                [
-                    ':fechaDesde' => $fechaDesde,
-                    ':fechaHasta' => $fechaHasta
-                ]
-            );
-
-            return [
-                'titulo'   => 'Por auxiliar',
-                'columnas' => ['Fecha', 'Auxiliar', 'Sitio', 'Tipo', 'Estado'],
-                'campos'   => ['fecha', 'auxiliar', 'sitio', 'tipo', 'estado'],
-                'datos'    => $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : []
-            ];
-        }
-
-
-        if ($tipoReporte === 'deposito') {
-
-            $sql = "SELECT
-                        s.fechacreacion::date AS fecha,
-                        s.nombresitio AS sitio,
-                        td.nombretipodeposito AS tipo,
-                        COUNT(a.codactividad) AS cantidad,
-                        s.estado
-                    FROM tblsitio s
-                    INNER JOIN tbltipodeposito td
-                        ON td.codtipodeposito = s.codtipodeposito
-                    LEFT JOIN tblactividadterreno a
-                        ON a.codsitio = s.codsitio
-                        AND a.fecha BETWEEN :fechaDesde AND :fechaHasta
-                    WHERE s.fechacreacion::date
-                        BETWEEN :fechaDesde2 AND :fechaHasta2
-                    GROUP BY s.fechacreacion, s.nombresitio, td.nombretipodeposito, s.estado
-                    ORDER BY td.nombretipodeposito ASC";
-
-            $stmt = $this->consultarSeguro(
-                $obj,
-                $sql,
-                [
-                    ':fechaDesde'  => $fechaDesde,
-                    ':fechaHasta'  => $fechaHasta,
-                    ':fechaDesde2' => $fechaDesde,
-                    ':fechaHasta2' => $fechaHasta
-                ]
-            );
-
-            return [
-                'titulo'   => 'Por tipo de depósito',
-                'columnas' => ['Fecha', 'Sitio', 'Tipo de depósito', 'Cantidad', 'Estado'],
-                'campos'   => ['fecha', 'sitio', 'tipo', 'cantidad', 'estado'],
-                'datos'    => $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : []
-            ];
-        }
-
-        return null;
+        return $strategy->generar(
+            $obj,
+            $fechaDesde,
+            $fechaHasta
+        );
     }
-
 
     private function validarParametros($tipoReporte, $fechaDesde, $fechaHasta, &$mensajeError)
     {

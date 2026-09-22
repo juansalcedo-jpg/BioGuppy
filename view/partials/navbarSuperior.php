@@ -94,6 +94,11 @@
         <li><a class="dropdown-item" href="#" data-filtro="tritanopia">Tritanopia</a></li>
     </ul>
 </div>
+
+
+<button class="btn-accesibilidad" id="botonTema" type="button" title="Cambiar a tema oscuro">
+    <i class="bi bi-moon-stars" id="iconoTema"></i>
+</button>
     
     </div>
 

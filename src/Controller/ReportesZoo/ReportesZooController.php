@@ -3,6 +3,9 @@
 namespace BioGuppy\Controller\ReportesZoo;
 
 use BioGuppy\Model\ReporteZoo\ReporteZoo;
+use BioGuppy\Controller\ReportesZoo\Strategies\SeguimientoStrategy;
+use BioGuppy\Controller\ReportesZoo\Strategies\MortalidadStrategy;
+use BioGuppy\Controller\ReportesZoo\Strategies\TanquesStrategy;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use PDO;
@@ -42,197 +45,27 @@ class ReportesZooController
 
     private function obtenerDatosReporte($obj, $tipoReporte, $fechaDesde, $fechaHasta)
     {
+        $strategies = [
+            'seguimiento' => SeguimientoStrategy::class,
+            'mortalidad'  => MortalidadStrategy::class,
+            'tanques'     => TanquesStrategy::class
+        ];
 
-        if ($tipoReporte === 'seguimiento') {
+        $strategyClass = $strategies[$tipoReporte] ?? null;
 
-            $sql = "SELECT
-                        a.fecha,
-
-                        ta.nombreactividad AS tipo,
-
-                        'Tanque ' ||
-                        t.numerotanque AS tanque,
-
-                        u.nombreusuario || ' ' ||
-                        u.apellidousuario AS responsable,
-
-                        COALESCE(
-                            a.observaciones,
-                            'Sin observaciones'
-                        ) AS observaciones,
-
-                        a.estado
-
-                    FROM tblactividadzoo a
-
-                    INNER JOIN tbltipoactividadzoo ta
-                        ON ta.codtipoactividad =
-                           a.codtipoactividad
-
-                    INNER JOIN tblzootanque t
-                        ON t.codtanque =
-                           a.codtanque
-
-                    INNER JOIN tblusuario u
-                        ON u.codusuario =
-                           a.codusuario
-
-                    WHERE a.fecha
-                        BETWEEN :fechaDesde
-                        AND :fechaHasta
-
-                    ORDER BY
-                        a.fecha ASC,
-                        a.codactividad ASC";
-
-            $stmt = $this->consultarSeguro(
-                $obj,
-                $sql,
-                [
-                    ':fechaDesde' => $fechaDesde,
-                    ':fechaHasta' => $fechaHasta
-                ]
-            );
-
-            return [
-                'titulo'   => 'Seguimiento de actividades',
-                'columnas' => ['Fecha', 'Tipo', 'Tanque', 'Responsable', 'Observaciones', 'Estado'],
-                'campos'   => ['fecha', 'tipo', 'tanque', 'responsable', 'observaciones', 'estado'],
-                'datos'    => $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : []
-            ];
+        if ($strategyClass === null) {
+            return null;
         }
 
-        //Nacidos y muertos por tanque
-        if ($tipoReporte === 'mortalidad') {
+        $strategy = new $strategyClass(
+            \Closure::fromCallable([$this, 'consultarSeguro'])
+        );
 
-            $sql = "SELECT
-                        a.fecha,
-
-                        'Tanque ' ||
-                        t.numerotanque AS tanque,
-
-                        z.nombrezoocriadero
-                            AS zoocriadero,
-
-                        COALESCE(
-                            a.pecesnacidos,
-                            0
-                        ) AS nacidos,
-
-                        COALESCE(
-                            a.pecesmuertos,
-                            0
-                        ) AS muertos,
-
-                        u.nombreusuario || ' ' ||
-                        u.apellidousuario
-                            AS responsable,
-
-                        a.estado
-
-                    FROM tblactividadzoo a
-
-                    INNER JOIN tbltipoactividadzoo ta
-                        ON ta.codtipoactividad =
-                           a.codtipoactividad
-
-                    INNER JOIN tblzootanque t
-                        ON t.codtanque =
-                           a.codtanque
-
-                    INNER JOIN tblzoocriadero z
-                        ON z.codzoocriadero =
-                           t.codzoocriadero
-
-                    INNER JOIN tblusuario u
-                        ON u.codusuario =
-                           a.codusuario
-
-                    WHERE a.fecha
-                        BETWEEN :fechaDesde
-                        AND :fechaHasta
-
-                    AND ta.nombreactividad =
-                        'RECOLECCIÓN'
-
-                    ORDER BY
-                        a.fecha ASC,
-                        a.codactividad ASC";
-
-            $stmt = $this->consultarSeguro(
-                $obj,
-                $sql,
-                [
-                    ':fechaDesde' => $fechaDesde,
-                    ':fechaHasta' => $fechaHasta
-                ]
-            );
-
-            return [
-                'titulo'   => 'Nacidos y muertos por tanque',
-                'columnas' => ['Fecha', 'Tanque', 'Zoocriadero', 'Nacidos', 'Muertos', 'Responsable', 'Estado'],
-                'campos'   => ['fecha', 'tanque', 'zoocriadero', 'nacidos', 'muertos', 'responsable', 'estado'],
-                'datos'    => $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : []
-            ];
-        }
-
-        //Tanques por Zoocriadero
-        if ($tipoReporte === 'tanques') {
-
-            $sql = "SELECT
-                        t.fechacreacion::date
-                            AS fecha,
-
-                        z.nombrezoocriadero
-                            AS zoocriadero,
-
-                        'Tanque ' ||
-                        t.numerotanque
-                            AS tanque,
-
-                        tt.nombretipotanque
-                            AS tipo,
-
-                        t.capacidad,
-
-                        t.estado
-
-                    FROM tblzootanque t
-
-                    INNER JOIN tblzoocriadero z
-                        ON z.codzoocriadero =
-                           t.codzoocriadero
-
-                    INNER JOIN tbltipotanque tt
-                        ON tt.codtipotanque =
-                           t.codtipotanque
-
-                    WHERE t.fechacreacion::date
-                        BETWEEN :fechaDesde
-                        AND :fechaHasta
-
-                    ORDER BY
-                        z.nombrezoocriadero ASC,
-                        t.numerotanque ASC";
-
-            $stmt = $this->consultarSeguro(
-                $obj,
-                $sql,
-                [
-                    ':fechaDesde' => $fechaDesde,
-                    ':fechaHasta' => $fechaHasta
-                ]
-            );
-
-            return [
-                'titulo'   => 'Tanques por zoocriadero',
-                'columnas' => ['Fecha', 'Zoocriadero', 'Tanque', 'Tipo', 'Capacidad', 'Estado'],
-                'campos'   => ['fecha', 'zoocriadero', 'tanque', 'tipo', 'capacidad', 'estado'],
-                'datos'    => $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : []
-            ];
-        }
-
-        return null;
+        return $strategy->generar(
+            $obj,
+            $fechaDesde,
+            $fechaHasta
+        );
     }
 
     //Validar parametros

@@ -62,7 +62,33 @@ $(document).ready(function () {
         $(".accesibilidad-wrapper [data-filtro='ninguno']").addClass("filtro-activo");
     }
 
+    function actualizarIconoTema(esOscuro) {
+        $("#iconoTema")
+            .toggleClass("bi-moon-stars", !esOscuro)
+            .toggleClass("bi-sun", esOscuro);
+        $("#botonTema").attr(
+            "title",
+            esOscuro ? "Cambiar a tema claro" : "Cambiar a tema oscuro"
+        );
+    }
+
+    $(document).on("click", "#botonTema", function () {
+        $("body").toggleClass("tema-oscuro");
+
+        let esOscuro = $("body").hasClass("tema-oscuro");
+        localStorage.setItem("tema", esOscuro ? "oscuro" : "claro");
+        actualizarIconoTema(esOscuro);
+    });
+
+    let temaGuardado = localStorage.getItem("tema") === "oscuro";
+
+    if (temaGuardado) {
+        $("body").addClass("tema-oscuro");
+    }
+    actualizarIconoTema(temaGuardado);
+
 });
+
 
 
 // ======================================================
