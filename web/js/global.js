@@ -639,8 +639,8 @@ $(document).on("input", ".input-direccion", function () {
         peticionDireccion.abort();
     }
 
-    // Si ya está escribiendo la placa (después del #) o escribió muy poco, no se busca
-    if (texto.indexOf("#") !== -1 || via.length < 4) {
+    // Si escribió muy poco no se busca
+    if (via.length < 4) {
         lista.addClass("d-none").html("");
         return;
     }
@@ -655,7 +655,7 @@ $(document).on("input", ".input-direccion", function () {
         peticionDireccion = $.ajax({
             url: input.attr("data-url"),
             type: "GET",
-            data: { direccion: via },
+            data: { direccion: texto },
             success: function (html) {
                 lista.html(html);
             },
@@ -668,7 +668,44 @@ $(document).on("input", ".input-direccion", function () {
     }, 700);
 });
 
-// Al elegir una opción: se pone en el input y el cursor queda listo para la placa
+// Quita tildes y mayúsculas para comparar nombres de barrios
+function textoComparable(texto) {
+    return String(texto || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
+}
+
+// Si el barrio que trae el mapa existe en el formulario, se seleccionan la comuna y el barrio
+function seleccionarBarrioDireccion(formulario, nombreBarrio) {
+    if (!formulario || !nombreBarrio) {
+        return;
+    }
+
+    const selectComuna = formulario.querySelector("#codcomuna");
+    const selectBarrio = formulario.querySelector("#codbarrio");
+
+    if (!selectComuna || !selectBarrio) {
+        return;
+    }
+
+    const buscado = textoComparable(nombreBarrio);
+    const opcion = Array.prototype.find.call(selectBarrio.options, function (op) {
+        return op.value !== "" && textoComparable(op.textContent) === buscado;
+    });
+
+    if (!opcion) {
+        return;
+    }
+
+    selectComuna.value = opcion.getAttribute("data-comuna");
+    selectComuna.dispatchEvent(new Event("change", { bubbles: true }));
+
+    opcion.hidden = false;
+    opcion.disabled = false;
+    opcion.style.display = "";
+    selectBarrio.disabled = false;
+    selectBarrio.value = opcion.value;
+}
+
+// Al elegir una opción: se pone en el input y, si se puede, se selecciona el barrio
 $(document).on("click", ".opcion-direccion", function () {
     const lista = $(this).closest(".sugerencias-direccion");
     const input = $('.input-direccion[data-sugerencias="' + lista.attr("id") + '"]');
@@ -676,6 +713,8 @@ $(document).on("click", ".opcion-direccion", function () {
 
     input.val(valor).trigger("focus");
     input[0].setSelectionRange(valor.length, valor.length);
+
+    seleccionarBarrioDireccion(input[0].form, $(this).attr("data-barrio"));
 
     ocultarSugerenciasDireccion();
     mostrarErrorDireccion(input, null);

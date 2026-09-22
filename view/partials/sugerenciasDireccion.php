@@ -5,14 +5,18 @@
 <?php else: ?>
     <?php foreach ($sugerencias as $sugerencia): ?>
         <button type="button" class="list-group-item list-group-item-action py-2 opcion-direccion"
-                data-direccion="<?php echo htmlspecialchars($sugerencia['valor']); ?>">
+                data-direccion="<?php echo htmlspecialchars($sugerencia['valor']); ?>"
+                data-barrio="<?php echo htmlspecialchars($sugerencia['barrio']); ?>">
             <div class="d-flex align-items-center">
                 <i class="bi bi-geo-alt text-primary me-2"></i>
                 <div>
-                    <div class="fw-semibold text-dark small"><?php echo htmlspecialchars($sugerencia['via']); ?></div>
+                    <div class="fw-semibold text-dark small"><?php echo htmlspecialchars($sugerencia['titulo']); ?></div>
                     <div class="text-muted small">
                         <?php echo htmlspecialchars(($sugerencia['barrio'] !== '' ? $sugerencia['barrio'] . ' · ' : '') . $sugerencia['ciudad']); ?>
                     </div>
+                    <?php if (!empty($sugerencia['detalle'])): ?>
+                        <div class="text-muted fst-italic" style="font-size: 0.75rem;"><?php echo htmlspecialchars($sugerencia['detalle']); ?></div>
+                    <?php endif; ?>
                 </div>
             </div>
         </button>
