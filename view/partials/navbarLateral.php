@@ -58,11 +58,11 @@ $funcion = $_GET['funcion'] ?? '';
 
     <a href="<?php echo getUrl('Inicio', 'Inicio', 'index') ?>"
        class="d-flex align-items-center gap-2 p-3 border-bottom border-secondary border-opacity-25 text-decoration-none">
-        <div class="rounded-3 overflow-hidden" style="width:50px;height:50px;">
+        <div class="rounded-3 overflow-hidden" style="width:70px;height:70px;">
             <img src="/BioGuppy/Img/logo.png" alt="BioGuppy" class="w-100 h-100" style="object-fit:cover;">
         </div>
         <div>
-            <h1 class="h6 text-white mb-0"><strong>Bio</strong><span class="otro">Guppy</span></h1>
+            <h1 class="h5 text-white mb-0"><strong>Bio</strong><span class="otro">Guppy</span></h1>
             
         </div>
     </a>

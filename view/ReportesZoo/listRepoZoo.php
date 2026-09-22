@@ -9,7 +9,7 @@
                         <i class="bi bi-file-earmark-bar-graph fs-3"></i>
                     </div>
                     <div>
-                        <span class="badge bg-primary-subtle text-primary px-2.5 py-1 rounded-pill fs-7 fw-bold text-uppercase">Módulo Administrativo</span>
+                        
                         <h3 class="fw-bold text-dark mb-0 mt-1">Reportes — Zoocriadero</h3>
                         <p class="text-muted small mb-0">Genera y exporta reportes consolidados sobre las actividades, mortalidad y tanques del sistema.</p>
                     </div>

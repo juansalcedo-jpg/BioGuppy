@@ -3,8 +3,8 @@
 namespace BioGuppy\Controller\ActividadesTer;
 
 use BioGuppy\Model\ActividadesTer\ActividadesTerModel;
-use PDO;
 use BioGuppy\Controller\Traits\BitacoraTrait;
+use PDO;
 
 class ActividadesTerController{
     use BitacoraTrait;
@@ -35,9 +35,8 @@ class ActividadesTerController{
     private function obtenerCodTipoActividad($obj,$nombre){
         $resultado=$obj->select("SELECT codtipoactividad
         FROM tbltipoactividadterreno
-        WHERE UPPER(TRANSLATE(nombreactividad,'ÁÉÍÓÚ','AEIOU'))=UPPER(:nombre)
+        WHERE TRANSLATE(UPPER(nombreactividad),'ÁÉÍÓÚ','AEIOU')=TRANSLATE(UPPER(:nombre),'ÁÉÍÓÚ','AEIOU')
         LIMIT 1",[':nombre'=>$nombre])->fetch(PDO::FETCH_ASSOC);
-
         return $resultado?$resultado['codtipoactividad']:null;
     }
 
@@ -70,7 +69,7 @@ class ActividadesTerController{
     private function validarEntero($valor,$nombre,$funcion,$params=[]){
         if($valor===null||$valor==='') $this->error("Debe ingresar ".$nombre.".",$funcion,$params);
         if(is_numeric($valor)&&$valor<0) $this->error(ucfirst($nombre)." no puede ser un número negativo.",$funcion,$params);
-        if(!preg_match('/^(0|[1-9][0-9]*)$/',$valor)){
+        if(!preg_match('/^(0|[1-9][0-9]*)$/',(string)$valor)){
             $this->error(ucfirst($nombre)." debe ser un número entero sin ceros a la izquierda.",$funcion,$params);
         }
     }
@@ -79,9 +78,9 @@ class ActividadesTerController{
         $datos=[
             'ph'=>$actual['ph']??null,
             'temperatura'=>$actual['temperatura']??null,
-            'larvasaedes'=>$actual['larvasaedes']??null,
-            'pupas'=>$actual['pupas']??null,
-            'larvasculex'=>$actual['larvasculex']??null,
+            'larvasaedes'=>$actual['larvasaedes']??0,
+            'pupas'=>$actual['pupas']??0,
+            'larvasculex'=>$actual['larvasculex']??0,
             'peces'=>$actual['peces']??null,
             'larvas'=>$actual['larvas']??null,
             'cantidadhembras'=>$actual['cantidadhembras']??null,
@@ -124,7 +123,7 @@ class ActividadesTerController{
             $this->validarEntero($machos,'la cantidad de machos',$funcion,$params);
             $this->validarEntero($tiempo,'el tiempo de aclimatación',$funcion,$params);
 
-            if(($hembras+$machos)<=0) $this->error("Debe registrar al menos un guppy (hembra o macho).",$funcion,$params);
+            if(((int)$hembras+(int)$machos)<=0) $this->error("Debe registrar al menos un guppy, hembra o macho.",$funcion,$params);
             if($recolectar!=='S'&&$recolectar!=='N') $this->error("Debe seleccionar si se recolecta y empaca.",$funcion,$params);
 
             $datos['cantidadhembras']=$hembras;
@@ -142,10 +141,8 @@ class ActividadesTerController{
         if($tipo==='Seguimiento'){
             $peces=$fuente['peces']??null;
             $larvas=$fuente['larvas']??null;
-
             if($peces!=='S'&&$peces!=='N') $this->error("Debe seleccionar si se evidencia presencia de peces.",$funcion,$params);
             if($larvas!=='S'&&$larvas!=='N') $this->error("Debe seleccionar si se evidencia presencia de larvas.",$funcion,$params);
-
             $datos['peces']=$peces;
             $datos['larvas']=$larvas;
         }
@@ -206,26 +203,31 @@ class ActividadesTerController{
         (:codtipoactividad,:codsitio,:codusuario,:fecha,:hora,:ph,:temperatura,:larvasaedes,:pupas,:larvasculex,:peces,:larvas,
         :cantidadhembras,:cantidadmachos,:tiempoaclimatacionmin,:volumenagualitros,:recolectarempacar,:observaciones,'A')";
 
-        $obj->insert($sql,[
-            ':codtipoactividad'=>$codTipo,
-            ':codsitio'=>$deposito,
-            ':codusuario'=>$_SESSION['usu_id'],
-            ':fecha'=>$fecha,
-            ':hora'=>$hora,
-            ':ph'=>$datos['ph'],
-            ':temperatura'=>$datos['temperatura'],
-            ':larvasaedes'=>$datos['larvasaedes'],
-            ':pupas'=>$datos['pupas'],
-            ':larvasculex'=>$datos['larvasculex'],
-            ':peces'=>$datos['peces'],
-            ':larvas'=>$datos['larvas'],
-            ':cantidadhembras'=>$datos['cantidadhembras'],
-            ':cantidadmachos'=>$datos['cantidadmachos'],
-            ':tiempoaclimatacionmin'=>$datos['tiempoaclimatacionmin'],
-            ':volumenagualitros'=>$datos['volumenagualitros'],
-            ':recolectarempacar'=>$datos['recolectarempacar'],
-            ':observaciones'=>$observaciones
-        ]);
+        try{
+            $obj->insert($sql,[
+                ':codtipoactividad'=>$codTipo,
+                ':codsitio'=>$deposito,
+                ':codusuario'=>$_SESSION['usu_id'],
+                ':fecha'=>$fecha,
+                ':hora'=>$hora,
+                ':ph'=>$datos['ph'],
+                ':temperatura'=>$datos['temperatura'],
+                ':larvasaedes'=>$datos['larvasaedes'],
+                ':pupas'=>$datos['pupas'],
+                ':larvasculex'=>$datos['larvasculex'],
+                ':peces'=>$datos['peces'],
+                ':larvas'=>$datos['larvas'],
+                ':cantidadhembras'=>$datos['cantidadhembras'],
+                ':cantidadmachos'=>$datos['cantidadmachos'],
+                ':tiempoaclimatacionmin'=>$datos['tiempoaclimatacionmin'],
+                ':volumenagualitros'=>$datos['volumenagualitros'],
+                ':recolectarempacar'=>$datos['recolectarempacar'],
+                ':observaciones'=>$observaciones
+            ]);
+        }catch(\Throwable $error){
+            error_log("Error al registrar actividad de terreno: ".$error->getMessage());
+            $this->error("No fue posible guardar la actividad. Verifique los datos e intente nuevamente.",$tipo);
+        }
 
         $nuevo=$obj->select("SELECT codactividad FROM tblactividadterreno
         WHERE codusuario=:codusuario ORDER BY codactividad DESC LIMIT 1",[
@@ -233,7 +235,6 @@ class ActividadesTerController{
         ])->fetch(PDO::FETCH_ASSOC);
 
         $this->registrarBitacora($obj,'INSERT','ActividadesTer',$nuevo['codactividad']??null,null,$tipo.' — sitio #'.$deposito);
-
         $_SESSION['exito']="La actividad se registró exitosamente.";
         redirect(getUrl('ActividadesTer','ActividadesTer','listMisActividades'));
         exit();
@@ -336,6 +337,8 @@ class ActividadesTerController{
         }
 
         $tipo=$this->detectarTipo($actual['nombreactividad']);
+        if(!$tipo) $this->error("Tipo de actividad no válido.",'listMisActividades');
+
         $retorno=['id'=>$id];
         $fecha=$_POST['fecha_actividad']??null;
         $hora=$_POST['hora_actividad']??null;
@@ -345,30 +348,37 @@ class ActividadesTerController{
         $datos=$this->datosActividad($tipo,$_POST,'getUpdate',$retorno,$actual);
 
         $sql="UPDATE tblactividadterreno SET
-        fecha=:fecha,hora=:hora,ph=:ph,temperatura=:temperatura,larvasaedes=:larvasaedes,pupas=:pupas,
-        larvasculex=:larvasculex,peces=:peces,larvas=:larvas,cantidadhembras=:cantidadhembras,
+        fecha=:fecha,hora=:hora,ph=:ph,temperatura=:temperatura,
+        larvasaedes=:larvasaedes,pupas=:pupas,larvasculex=:larvasculex,
+        peces=:peces,larvas=:larvas,cantidadhembras=:cantidadhembras,
         cantidadmachos=:cantidadmachos,tiempoaclimatacionmin=:tiempoaclimatacionmin,
-        volumenagualitros=:volumenagualitros,recolectarempacar=:recolectarempacar,observaciones=:observaciones
+        volumenagualitros=:volumenagualitros,recolectarempacar=:recolectarempacar,
+        observaciones=:observaciones
         WHERE codactividad=:id";
 
-        $obj->update($sql,[
-            ':fecha'=>$fecha,
-            ':hora'=>$hora,
-            ':ph'=>$datos['ph'],
-            ':temperatura'=>$datos['temperatura'],
-            ':larvasaedes'=>$datos['larvasaedes'],
-            ':pupas'=>$datos['pupas'],
-            ':larvasculex'=>$datos['larvasculex'],
-            ':peces'=>$datos['peces'],
-            ':larvas'=>$datos['larvas'],
-            ':cantidadhembras'=>$datos['cantidadhembras'],
-            ':cantidadmachos'=>$datos['cantidadmachos'],
-            ':tiempoaclimatacionmin'=>$datos['tiempoaclimatacionmin'],
-            ':volumenagualitros'=>$datos['volumenagualitros'],
-            ':recolectarempacar'=>$datos['recolectarempacar'],
-            ':observaciones'=>$observaciones,
-            ':id'=>$id
-        ]);
+        try{
+            $obj->update($sql,[
+                ':fecha'=>$fecha,
+                ':hora'=>$hora,
+                ':ph'=>$datos['ph'],
+                ':temperatura'=>$datos['temperatura'],
+                ':larvasaedes'=>$datos['larvasaedes'],
+                ':pupas'=>$datos['pupas'],
+                ':larvasculex'=>$datos['larvasculex'],
+                ':peces'=>$datos['peces'],
+                ':larvas'=>$datos['larvas'],
+                ':cantidadhembras'=>$datos['cantidadhembras'],
+                ':cantidadmachos'=>$datos['cantidadmachos'],
+                ':tiempoaclimatacionmin'=>$datos['tiempoaclimatacionmin'],
+                ':volumenagualitros'=>$datos['volumenagualitros'],
+                ':recolectarempacar'=>$datos['recolectarempacar'],
+                ':observaciones'=>$observaciones,
+                ':id'=>$id
+            ]);
+        }catch(\Throwable $error){
+            error_log("Error al actualizar actividad de terreno: ".$error->getMessage());
+            $this->error("No fue posible actualizar la actividad. Verifique los datos e intente nuevamente.",'getUpdate',$retorno);
+        }
 
         $this->registrarBitacora($obj,'UPDATE','ActividadesTer',$id,null,'Actividad #'.$id.' editada');
         $_SESSION['exito']="El registro se actualizó correctamente.";

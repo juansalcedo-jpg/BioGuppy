@@ -9,7 +9,7 @@
                         <i class="bi bi-geo-alt fs-3"></i>
                     </div>
                     <div>
-                        <span class="badge bg-primary-subtle text-primary px-2.5 py-1 rounded-pill fs-7 fw-bold text-uppercase">Control de Campo</span>
+                        
                         <h3 class="fw-bold text-dark mb-0 mt-1">Reportes — Terreno</h3>
                         <p class="text-muted small mb-0">Genera y exporta reportes de inspecciones, sitios y actividades de terreno registradas.</p>
                     </div>
@@ -41,7 +41,7 @@
         </div>
 
         <div class="card-body p-4">
-            <form id="formGenerarReporteTerreno" action="<?php echo getUrl('ReportesTer', 'ReportesTer', 'generar', false, 'ajax'); ?>"
+            <form id="formGenerarReporteTerreno" action="<?php echo getUrl('ReportesTer', 'ReportesTer', 'generar', false, 'ajax'); ?>">
                 <div class="row g-4 align-items-end">
 
                     <!-- Tipo de Reporte (Terreno) -->
