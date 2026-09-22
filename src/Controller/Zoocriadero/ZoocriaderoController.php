@@ -56,7 +56,7 @@ class ZoocriaderoController
                             nombrecomuna
                        FROM tblcomuna
                        WHERE estado = 'A'
-                       ORDER BY codcomuna ASC";
+                       ORDER BY CAST(regexp_replace(nombrecomuna, '\D', '', 'g') AS INTEGER) ASC";
 
         $comunas = $obj->select($sqlComunas);
 
@@ -447,7 +447,7 @@ class ZoocriaderoController
                             nombrecomuna
                        FROM tblcomuna
                        WHERE estado = 'A'
-                       ORDER BY nombrecomuna ASC";
+                       ORDER BY CAST(regexp_replace(nombrecomuna, '\D', '', 'g') AS INTEGER) ASC";
 
         $comunas = $obj->select($sqlComunas);
 

@@ -116,42 +116,42 @@
         <?php endif; ?>
 
     </div>
-</div>
 
-<style>
-    /* Efecto al hacer foco en los contenedores de los inputs */
-    .input-group:focus-within {
-        border-color: var(--bs-primary) !important;
-        box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.15);
-    }
-</style>
-
-<script>
-    document.getElementById('codcomuna')?.addEventListener('change', function() {
-        var comunaId = this.value;
-        var selectBarrio = document.getElementById('codbarrio');
-        
-        selectBarrio.value = ""; 
-        
-        if (comunaId === "") {
-            selectBarrio.setAttribute('disabled', 'true');
-            selectBarrio.options[0].textContent = "Seleccione comuna...";
-        } else {
-            selectBarrio.removeAttribute('disabled');
-            selectBarrio.options[0].textContent = "Seleccione un barrio...";
+    <style>
+        /* Efecto al hacer foco en los contenedores de los inputs */
+        .input-group:focus-within {
+            border-color: var(--bs-primary) !important;
+            box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.15);
         }
-        
-        var opciones = selectBarrio.querySelectorAll('option');
-        opciones.forEach(function(opt) {
-            if (opt.value === "") return; 
-            var cBarrio = opt.getAttribute('data-comuna');
-            if (cBarrio === comunaId) {
-                opt.style.display = '';
-                opt.removeAttribute('disabled');
+    </style>
+
+    <script>
+        document.getElementById('codcomuna')?.addEventListener('change', function() {
+            var comunaId = this.value;
+            var selectBarrio = document.getElementById('codbarrio');
+
+            selectBarrio.value = "";
+
+            if (comunaId === "") {
+                selectBarrio.setAttribute('disabled', 'true');
+                selectBarrio.options[0].textContent = "Seleccione comuna...";
             } else {
-                opt.style.display = 'none';
-                opt.setAttribute('disabled', 'true');
+                selectBarrio.removeAttribute('disabled');
+                selectBarrio.options[0].textContent = "Seleccione un barrio...";
             }
+
+            var opciones = selectBarrio.querySelectorAll('option');
+            opciones.forEach(function(opt) {
+                if (opt.value === "") return;
+                var cBarrio = opt.getAttribute('data-comuna');
+                if (cBarrio === comunaId) {
+                    opt.style.display = '';
+                    opt.removeAttribute('disabled');
+                } else {
+                    opt.style.display = 'none';
+                    opt.setAttribute('disabled', 'true');
+                }
+            });
         });
-    });
-</script>
+    </script>
+</div>

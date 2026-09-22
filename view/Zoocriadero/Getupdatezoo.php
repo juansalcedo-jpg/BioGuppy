@@ -121,26 +121,26 @@
         <?php endif; ?>
 
     </div>
-</div>
 
-<script>
-    // Script dinámico opcional para actualizar barrios al cambiar la comuna en el formulario
-    document.getElementById('codcomuna')?.addEventListener('change', function() {
-        var comunaId = this.value;
-        var selectBarrio = document.getElementById('codbarrio');
-        selectBarrio.value = ""; // Resetear selección de barrio
-        
-        var opciones = selectBarrio.querySelectorAll('option');
-        opciones.forEach(function(opt) {
-            if (opt.value === "") return; // Ignorar la opción por defecto
-            var cBarrio = opt.getAttribute('data-comuna');
-            if (cBarrio === comunaId) {
-                opt.style.display = '';
-                opt.removeAttribute('disabled');
-            } else {
-                opt.style.display = 'none';
-                opt.setAttribute('disabled', 'true');
-            }
+    <script>
+        // Actualiza los barrios disponibles al cambiar la comuna en el formulario de edición
+        document.getElementById('codcomuna')?.addEventListener('change', function() {
+            var comunaId = this.value;
+            var selectBarrio = document.getElementById('codbarrio');
+            selectBarrio.value = ""; // Resetear selección de barrio
+
+            var opciones = selectBarrio.querySelectorAll('option');
+            opciones.forEach(function(opt) {
+                if (opt.value === "") return; // Ignorar la opción por defecto
+                var cBarrio = opt.getAttribute('data-comuna');
+                if (cBarrio === comunaId) {
+                    opt.style.display = '';
+                    opt.removeAttribute('disabled');
+                } else {
+                    opt.style.display = 'none';
+                    opt.setAttribute('disabled', 'true');
+                }
+            });
         });
-    });
-</script>
+    </script>
+</div>

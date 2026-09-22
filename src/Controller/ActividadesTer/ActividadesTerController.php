@@ -286,8 +286,43 @@ class ActividadesTerController
     public function listMisActividades()
     {
         $obj = new ActividadesTerModel();
-        $actividades = $this->consultarSeguro($obj, $this->sqlMisActividades(), [':codusuario' => $_SESSION['usu_id']]);
+
+        $desde = $_GET['fechaDesde'] ?? '';
+        $hasta = $_GET['fechaHasta'] ?? '';
+        $sitio = $_GET['codsitio'] ?? '';
+        $tipo  = $_GET['codtipoactividad'] ?? '';
+
+        $errorFechas = null;
+        if ($desde && $hasta && $desde > $hasta) {
+            $errorFechas = "La fecha desde no puede ser mayor que la fecha hasta.";
+        }
+
+        $extra = '';
+        $params = [':codusuario' => $_SESSION['usu_id']];
+
+        if ($desde && !$errorFechas) {
+            $extra .= " AND a.fecha >= :desde";
+            $params[':desde'] = $desde;
+        }
+        if ($hasta && !$errorFechas) {
+            $extra .= " AND a.fecha <= :hasta";
+            $params[':hasta'] = $hasta;
+        }
+        if ($sitio) {
+            $extra .= " AND a.codsitio = :sitio";
+            $params[':sitio'] = $sitio;
+        }
+        if ($tipo) {
+            $extra .= " AND a.codtipoactividad = :tipo";
+            $params[':tipo'] = $tipo;
+        }
+
+        $actividades = $this->consultarSeguro($obj, $this->sqlMisActividades($extra), $params);
         $depositos = $this->obtenerDepositosActivos($obj);
+
+        $sitios = $this->consultarSeguro($obj, "SELECT codsitio,nombresitio FROM tblsitio WHERE estado='A' ORDER BY nombresitio ASC");
+        $tiposActividad = $this->consultarSeguro($obj, "SELECT codtipoactividad,nombreactividad FROM tbltipoactividadterreno WHERE estado='A' ORDER BY nombreactividad ASC");
+
         include_once __DIR__ . '/../../../view/ActividadesTer/listMisActividades.php';
     }
 
