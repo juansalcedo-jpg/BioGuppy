@@ -1,4 +1,3 @@
-
 <div class="container-fluid py-2">
   <div class="row justify-content-center">
     <div class="col-xl-11">
@@ -32,15 +31,15 @@
               <div class="col-6 col-md-2">
                 <label for="fechaDesde" class="form-label small text-muted mb-1">Desde</label>
                 <input type="date" id="fechaDesde" name="fechaDesde" class="form-control form-control-sm"
-                       min="2026-09-10" max="<?php echo date('Y-m-d'); ?>"
-                       value="<?php echo htmlspecialchars($_GET['fechaDesde'] ?? ''); ?>" required>
+                  min="2026-09-10" max="<?php echo date('Y-m-d'); ?>"
+                  value="<?php echo htmlspecialchars($_GET['fechaDesde'] ?? ''); ?>" required>
               </div>
 
               <div class="col-6 col-md-2">
                 <label for="fechaHasta" class="form-label small text-muted mb-1">Hasta</label>
                 <input type="date" id="fechaHasta" name="fechaHasta" class="form-control form-control-sm"
-                       min="2026-09-10" max="<?php echo date('Y-m-d'); ?>"
-                       value="<?php echo htmlspecialchars($_GET['fechaHasta'] ?? ''); ?>" required>
+                  min="2026-09-10" max="<?php echo date('Y-m-d'); ?>"
+                  value="<?php echo htmlspecialchars($_GET['fechaHasta'] ?? ''); ?>" required>
               </div>
 
               <div class="col-12 col-md-3">
@@ -110,7 +109,8 @@
                       <?php echo htmlspecialchars($act['zoocriadero']); ?>
                     </td>
                     <td><?php echo htmlspecialchars($act['responsable']); ?></td>
-                    <td><small class="text-muted"><?php echo htmlspecialchars($act['observaciones']); ?></small></td>
+                    <td><small class="text-muted"><?php echo htmlspecialchars($act['observaciones'] ?? ''); ?>
+                      </small></td>
                     <td class="text-center">
                       <?php if ($act['estado'] === 'A'): ?>
                         <span class="badge bg-success">Activo</span>
@@ -155,32 +155,32 @@
 </div>
 
 <script>
-(function () {
+  (function() {
 
     var formulario = document.getElementById("formFiltroHistorial");
     var alerta = document.getElementById("alertaFiltroHistorial");
 
     if (!formulario) {
-        return;
+      return;
     }
 
-    formulario.addEventListener("submit", function (event) {
+    formulario.addEventListener("submit", function(event) {
 
-        var fechaDesde = document.getElementById("fechaDesde").value;
-        var fechaHasta = document.getElementById("fechaHasta").value;
+      var fechaDesde = document.getElementById("fechaDesde").value;
+      var fechaHasta = document.getElementById("fechaHasta").value;
 
-        if (fechaDesde && fechaHasta && fechaDesde > fechaHasta) {
+      if (fechaDesde && fechaHasta && fechaDesde > fechaHasta) {
 
-            event.preventDefault();
+        event.preventDefault();
 
-            alerta.innerHTML =
-                '<div class="alert alert-danger">' +
-                'La fecha desde no puede ser mayor que la fecha hasta.' +
-                '</div>';
+        alerta.innerHTML =
+          '<div class="alert alert-danger">' +
+          'La fecha desde no puede ser mayor que la fecha hasta.' +
+          '</div>';
 
-        }
+      }
 
     });
 
-})();
+  })();
 </script>

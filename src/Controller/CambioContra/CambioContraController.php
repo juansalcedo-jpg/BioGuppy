@@ -78,10 +78,23 @@ class CambioContraController{
             $mail->isHTML(true);
 
             $mail->Subject = "Recuperación de contraseña";
-            $mail->Body    = "<h1>Recuperación de contraseña</h1>
-                          <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
-                          <p><a href='$link'>$link</a></p>";
+            $mail->Body    = "
+                <h1>Recuperación de contraseña</h1>
+                <p>Haz clic en el siguiente botón para restablecer tu contraseña:</p>
+                <p>
+                    <a href='$link' 
+                    style='display:inline-block;
+                            padding:10px 18px;
+                            background-color:#159EE8;
+                            color:#fff;
+                            text-decoration:none;
+                            border-radius:4px;
+                            font-weight:bold;'>
+                    Restablecer contraseña
+                    </a>
+                </p>";
             $mail->AltBody = "Copia y pega este enlace en tu navegador: $link";
+
             $mail->send();
 
             echo '<div class="alert alert-success d-flex align-items-center" role="alert">
