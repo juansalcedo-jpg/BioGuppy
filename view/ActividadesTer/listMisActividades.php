@@ -89,21 +89,40 @@
 
                                 </label>
 
-                                <select id="mesFiltro" name="mes" class="form-select form-select-sm">
-                                    <option value="">Todos</option>
-                                    <option value="<?php echo date('Y'); ?>-01">Enero</option>
-                                    <option value="<?php echo date('Y'); ?>-02">Febrero</option>
-                                    <option value="<?php echo date('Y'); ?>-03">Marzo</option>
-                                    <option value="<?php echo date('Y'); ?>-04">Abril</option>
-                                    <option value="<?php echo date('Y'); ?>-05">Mayo</option>
-                                    <option value="<?php echo date('Y'); ?>-06">Junio</option>
-                                    <option value="<?php echo date('Y'); ?>-07">Julio</option>
-                                    <option value="<?php echo date('Y'); ?>-08">Agosto</option>
-                                    <option value="<?php echo date('Y'); ?>-09">Septiembre</option>
-                                    <option value="<?php echo date('Y'); ?>-10">Octubre</option>
-                                    <option value="<?php echo date('Y'); ?>-11">Noviembre</option>
-                                    <option value="<?php echo date('Y'); ?>-12">Diciembre</option>
-                                </select>
+                                <div class="position-relative">
+                                    <input type="hidden" id="mesFiltro" name="mes" value="">
+                                    <button type="button" id="btnMesFiltro"
+                                        class="form-control form-control-sm text-start d-flex justify-content-between align-items-center">
+                                        <span id="textoMesFiltro">Seleccionar mes</span>
+                                        <i class="bi bi-calendar3"></i>
+                                    </button>
+
+                                    <div id="selectorMesPersonalizado" class="selector-mes shadow-sm d-none">
+                                        <div class="selector-mes-anio"><?php echo date('Y'); ?></div>
+
+                                        <div class="selector-mes-grid">
+                                            <?php
+                                            $meses=[
+                                                '01'=>'Ene','02'=>'Feb','03'=>'Mar','04'=>'Abr',
+                                                '05'=>'May','06'=>'Jun','07'=>'Jul','08'=>'Ago',
+                                                '09'=>'Sept','10'=>'Oct','11'=>'Nov','12'=>'Dic'
+                                            ];
+                                            foreach($meses as $numero=>$nombre):
+                                            ?>
+                                                <button type="button"
+                                                    class="btn-mes"
+                                                    data-mes="<?php echo date('Y').'-'.$numero; ?>"
+                                                    data-texto="<?php echo $nombre; ?>">
+                                                    <?php echo $nombre; ?>
+                                                </button>
+                                            <?php endforeach; ?>
+                                        </div>
+
+                                        <button type="button" id="borrarMesFiltro" class="btn-borrar-mes">
+                                            Borrar
+                                        </button>
+                                    </div>
+                                </div>
 
                             </div>
 
@@ -392,7 +411,94 @@
 </div>
 
 
+<style>
+.selector-mes{
+    position:absolute;
+    top:100%;
+    left:0;
+    z-index:1050;
+    width:230px;
+    background:#fff;
+    border:1px solid #ced4da;
+    padding:10px;
+}
+.selector-mes-anio{
+    background:#f1f3f5;
+    padding:6px 8px;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:8px;
+}
+.selector-mes-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:4px;
+}
+.btn-mes{
+    border:0;
+    background:transparent;
+    padding:7px 4px;
+    font-size:12px;
+    border-radius:3px;
+}
+.btn-mes:hover{
+    background:#e9ecef;
+}
+.btn-mes.activo{
+    background:#0d6efd;
+    color:#fff;
+}
+.btn-borrar-mes{
+    border:0;
+    background:transparent;
+    color:#0d6efd;
+    font-size:12px;
+    margin-top:8px;
+    padding:4px 0;
+}
+</style>
+
 <script>
+
+    var btnMesFiltro=document.getElementById('btnMesFiltro');
+    var selectorMes=document.getElementById('selectorMesPersonalizado');
+    var inputMes=document.getElementById('mesFiltro');
+    var textoMes=document.getElementById('textoMesFiltro');
+    var borrarMes=document.getElementById('borrarMesFiltro');
+
+    if(btnMesFiltro&&selectorMes){
+        btnMesFiltro.addEventListener('click',function(){
+            selectorMes.classList.toggle('d-none');
+        });
+
+        document.querySelectorAll('.btn-mes').forEach(function(boton){
+            boton.addEventListener('click',function(){
+                document.querySelectorAll('.btn-mes').forEach(function(b){
+                    b.classList.remove('activo');
+                });
+                boton.classList.add('activo');
+                inputMes.value=boton.dataset.mes;
+                textoMes.textContent=boton.dataset.texto+' <?php echo date('Y'); ?>';
+                selectorMes.classList.add('d-none');
+            });
+        });
+
+        borrarMes.addEventListener('click',function(){
+            inputMes.value='';
+            textoMes.textContent='Seleccionar mes';
+            document.querySelectorAll('.btn-mes').forEach(function(b){
+                b.classList.remove('activo');
+            });
+            selectorMes.classList.add('d-none');
+        });
+
+        document.addEventListener('click',function(e){
+            if(!selectorMes.contains(e.target)&&!btnMesFiltro.contains(e.target)){
+                selectorMes.classList.add('d-none');
+            }
+        });
+    }
+
 
     var formFiltro =
         document.getElementById('formFiltroMisActividadesTer');
