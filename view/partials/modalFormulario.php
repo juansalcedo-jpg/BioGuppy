@@ -38,7 +38,7 @@
       var tituloEl = document.getElementById('modalFormularioAjaxTitulo');
       var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
 
-      tituloEl.textContent = titulo;
+      tituloEl. | = titulo;
       alerta.innerHTML = '';
       contenido.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status">' +
                              '<span class="visually-hidden">Cargando...</span></div></div>';

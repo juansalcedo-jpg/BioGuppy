@@ -93,24 +93,3 @@ if (isset($_SESSION['error'])) {
     unset($_SESSION['error']);
 }
 ?>
-<script>
-document.getElementById("formAjusteNivel").addEventListener("submit",function(e){
-e.preventDefault();
-
-const formulario=this;
-const datos=new FormData(formulario);
-
-fetch(formulario.action,{
-method:"POST",
-body:datos
-})
-.then(response=>response.text())
-.then(respuesta=>{
-alert("Actividad guardada correctamente");
-formulario.reset();
-})
-.catch(error=>{
-alert("Error al guardar la actividad");
-});
-});
-</script>

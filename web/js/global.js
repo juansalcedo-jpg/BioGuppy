@@ -588,3 +588,32 @@ $(document).on("submit", "#formGenerarReporte", function (event) {
     generarReporteZoo(event, this);
     return false;
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
