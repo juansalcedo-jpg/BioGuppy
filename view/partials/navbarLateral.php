@@ -44,6 +44,13 @@ $funcion = $_GET['funcion'] ?? '';
         color: #159EE8;
     }
 
+    /* [AGREGADO] Efecto al pasar el mouse sobre el bloque del usuario (ahora es un enlace al perfil) */
+    .sidebar-perfil:hover,
+    /* [AGREGADO] Mismo fondo cuando el usuario está en la página de su perfil */
+    .sidebar-perfil.active {
+        background-color: rgba(255,255,255,0.06); /* [AGREGADO] Fondo blanco muy transparente, igual al hover de .nav-link */
+    }
+
     @media (max-width: 991.98px) {
     .sidebar-biogu {
         transform: translateX(-100%);
@@ -86,14 +93,27 @@ $funcion = $_GET['funcion'] ?? '';
         </a>
     </div>
 
-    <div class="d-flex align-items-center gap-2 p-3 border-top border-secondary border-opacity-25">
-        <div class="bg-accent text-dark fw-bold rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:36px;height:36px;font-size:.85rem;">
-            <?php echo $primeraLetra = strtoupper(substr($_SESSION['usu_nombre'], 0, 1)); ?>
+    <?php
+    $fotoSidebar = fotoPerfilUrl($_SESSION['usu_id'] ?? null);
+    ?>
+
+    <a href="<?php echo getUrl('Perfil', 'Perfil', 'perfil') ?>"
+       class="sidebar-perfil d-flex align-items-center gap-2 p-3 border-top border-secondary border-opacity-25 text-decoration-none <?php echo (($_GET['modulo'] ?? '') == 'Perfil') ? 'active' : ''; ?>"
+       title="Ver mi perfil">
+        <div class="bg-accent text-dark fw-bold rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden" style="width:36px;height:36px;font-size:.85rem;">
+            <?php if ($fotoSidebar): ?>
+                <img src="<?php echo htmlspecialchars($fotoSidebar); ?>" alt="Foto de perfil" class="w-100 h-100" style="object-fit:cover;">
+            <?php else: ?>
+                <?php echo strtoupper(mb_substr($_SESSION['usu_nombre'], 0, 1)); ?>
+            <?php endif; ?>
         </div>
-        <div class="overflow-hidden">
-            <div class="text-white small fw-semibold text-truncate"><?php echo $_SESSION['usu_nombre']; ?></div>
+
+        <div class="overflow-hidden flex-grow-1">
+            <div class="text-white small fw-semibold text-truncate"><?php echo htmlspecialchars($_SESSION['usu_nombre']); ?></div>
+            <div class="text-white-50 text-truncate" style="font-size:.7rem;">Ver mi perfil</div>
         </div>
-    </div>
+        <i class="bi bi-chevron-right text-white-50 small"></i>
+    </a>
 
     <a href="<?php echo getUrl("Acceso", "Acceso","logout")?>" class="d-flex align-items-center gap-2 text-white-50 text-decoration-none px-3 pb-3 small">
         <i class="bi bi-box-arrow-right"></i> Cerrar sesión

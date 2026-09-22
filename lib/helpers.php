@@ -66,4 +66,23 @@
             echo "El controlador $controlador no existe en el modulo $modulo";
         }
     }
+
+     //agregar foto de perfil en el modulo de perfil
+    function fotoPerfilCarpeta(){
+        return __DIR__ . '/../web/uploads/perfiles/';
+    }
+
+    // agrega la url de la imagen cargada, si no hay devuelve null
+    function fotoPerfilUrl($codusuario){
+
+        if(empty($codusuario)){
+            return null;
+        }
+        // Busca jpg, .png, .webp).
+        $archivos = glob(fotoPerfilCarpeta() . "usuario_" . (int)$codusuario . ".*");
+        if(empty($archivos)){
+            return null;
+        }
+        return "uploads/perfiles/" . basename($archivos[0]) . "?v=" . filemtime($archivos[0]);
+    }
 ?>
