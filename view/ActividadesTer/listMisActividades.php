@@ -22,7 +22,7 @@
             </div>
 
 
-            <?php if(isset($_SESSION['error'])): ?>
+            <?php if (isset($_SESSION['error'])): ?>
 
                 <div class="alert alert-danger d-flex align-items-center mb-3" role="alert">
 
@@ -39,7 +39,7 @@
             <?php endif; ?>
 
 
-            <?php if(isset($_SESSION['exito'])): ?>
+            <?php if (isset($_SESSION['exito'])): ?>
 
                 <div class="alert alert-success d-flex align-items-center mb-3" role="alert">
 
@@ -73,9 +73,8 @@
                     </div>
 
 
-                    <form
-                        id="formFiltroMisActividadesTer"
-                        action="<?php echo getUrl('ActividadesTer','ActividadesTer','filtro',false,'ajax'); ?>"
+                    <form id="formFiltroMisActividadesTer"
+                        action="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'filtro', false, 'ajax'); ?>"
                         method="POST">
 
 
@@ -84,51 +83,54 @@
 
                             <div class="col-6 col-md-2">
 
-                                <label
-                                    for="mesFiltro"
-                                    class="form-label small text-muted mb-1">
+                                <label for="mesFiltro" class="form-label small text-muted mb-1">
 
                                     Mes
 
                                 </label>
 
-                                <input
-                                    type="month"
-                                    id="mesFiltro"
-                                    name="mes"
-                                    class="form-control form-control-sm">
+                                <select id="mesFiltro" name="mes" class="form-select form-select-sm">
+                                    <option value="">Todos</option>
+                                    <option value="<?php echo date('Y'); ?>-01">Enero</option>
+                                    <option value="<?php echo date('Y'); ?>-02">Febrero</option>
+                                    <option value="<?php echo date('Y'); ?>-03">Marzo</option>
+                                    <option value="<?php echo date('Y'); ?>-04">Abril</option>
+                                    <option value="<?php echo date('Y'); ?>-05">Mayo</option>
+                                    <option value="<?php echo date('Y'); ?>-06">Junio</option>
+                                    <option value="<?php echo date('Y'); ?>-07">Julio</option>
+                                    <option value="<?php echo date('Y'); ?>-08">Agosto</option>
+                                    <option value="<?php echo date('Y'); ?>-09">Septiembre</option>
+                                    <option value="<?php echo date('Y'); ?>-10">Octubre</option>
+                                    <option value="<?php echo date('Y'); ?>-11">Noviembre</option>
+                                    <option value="<?php echo date('Y'); ?>-12">Diciembre</option>
+                                </select>
 
                             </div>
 
 
                             <div class="col-12 col-md-3">
 
-                                <label
-                                    for="selectDeposito"
-                                    class="form-label small text-muted mb-1">
+                                <label for="selectDeposito" class="form-label small text-muted mb-1">
 
                                     Depósito
 
                                 </label>
 
-                                <select
-                                    id="selectDeposito"
-                                    name="coddeposito"
-                                    class="form-select form-select-sm">
+                                <select id="selectDeposito" name="coddeposito" class="form-select form-select-sm">
 
                                     <option value="">
                                         Todos
                                     </option>
 
-                                    <?php if(isset($depositos)&&$depositos): ?>
+                                    <?php if (isset($depositos) && $depositos): ?>
 
-                                        <?php while($dep=$depositos->fetch(PDO::FETCH_ASSOC)): ?>
+                                        <?php while ($dep = $depositos->fetch(PDO::FETCH_ASSOC)): ?>
 
                                             <option value="<?php echo $dep['id']; ?>">
 
                                                 <?php
                                                 echo htmlspecialchars(
-                                                    $dep['tipodeposito'].' — '.$dep['nombresitio']
+                                                    $dep['tipodeposito'] . ' — ' . $dep['nombresitio']
                                                 );
                                                 ?>
 
@@ -145,17 +147,13 @@
 
                             <div class="col-12 col-md-3">
 
-                                <label
-                                    for="selectTipoActividad"
-                                    class="form-label small text-muted mb-1">
+                                <label for="selectTipoActividad" class="form-label small text-muted mb-1">
 
                                     Tipo de actividad
 
                                 </label>
 
-                                <select
-                                    id="selectTipoActividad"
-                                    name="tipoactividad"
+                                <select id="selectTipoActividad" name="tipoactividad"
                                     class="form-select form-select-sm">
 
                                     <option value="">
@@ -185,9 +183,7 @@
 
                             <div class="col-12 col-md-2 d-grid">
 
-                                <button
-                                    type="submit"
-                                    class="btn btn-primary btn-sm">
+                                <button type="submit" class="btn btn-primary btn-sm">
 
                                     <i class="bi bi-funnel me-1"></i>
 
@@ -206,9 +202,7 @@
 
                 <div class="table-responsive">
 
-                    <table
-                        class="table table-striped align-middle mb-0"
-                        id="tablaMisActividadesTer">
+                    <table class="table table-striped align-middle mb-0" id="tablaMisActividadesTer">
 
 
                         <thead class="table-dark">
@@ -252,16 +246,16 @@
 
                             <?php
 
-                            $filasActividades=
-                            (isset($actividades)&&$actividades)
-                            ?$actividades->fetchAll(PDO::FETCH_ASSOC)
-                            :[];
+                            $filasActividades =
+                                (isset($actividades) && $actividades)
+                                ? $actividades->fetchAll(PDO::FETCH_ASSOC)
+                                : [];
 
                             ?>
 
-                            <?php if(!empty($filasActividades)): ?>
+                            <?php if (!empty($filasActividades)): ?>
 
-                                <?php foreach($filasActividades as $act): ?>
+                                <?php foreach ($filasActividades as $act): ?>
 
                                     <tr>
 
@@ -300,7 +294,7 @@
 
                                         <td class="text-center">
 
-                                            <?php if($act['estado']==='A'): ?>
+                                            <?php if ($act['estado'] === 'A'): ?>
 
                                                 <span class="badge bg-success">
                                                     Activo
@@ -319,15 +313,12 @@
 
                                         <td class="text-center">
 
-                                            <button
-                                                type="button"
-                                                class="btn btn-outline-primary btn-icon rounded-circle"
-                                                title="Editar"
-                                                onclick="cargarFormularioModal(
-                                                '<?php echo getUrl('ActividadesTer','ActividadesTer','getUpdate',array('id'=>$act['id'])); ?>',
+                                            <button type="button" class="btn btn-outline-primary btn-icon rounded-circle"
+                                                title="Editar" onclick="cargarFormularioModal(
+                                                '<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'getUpdate', array('id' => $act['id'])); ?>',
                                                 'Editar actividad',
                                                 'actividadTerFormEdicion',
-                                                '<?php echo getUrl('ActividadesTer','ActividadesTer','listMisActividades'); ?>',
+                                                '<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'listMisActividades'); ?>',
                                                 'tablaMisActividadesTer'
                                                 )">
 
@@ -340,12 +331,10 @@
 
                                         <td class="text-center">
 
-                                            <?php if($act['estado']==='A'): ?>
+                                            <?php if ($act['estado'] === 'A'): ?>
 
-                                                <a
-                                                    href="<?php echo getUrl('ActividadesTer','ActividadesTer','delete',array('id'=>$act['id'])); ?>"
-                                                    class="btn btn-outline-danger btn-icon rounded-circle"
-                                                    title="Inhabilitar">
+                                                <a href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'delete', array('id' => $act['id'])); ?>"
+                                                    class="btn btn-outline-danger btn-icon rounded-circle" title="Inhabilitar">
 
                                                     <i class="bi bi-slash-circle"></i>
 
@@ -353,10 +342,8 @@
 
                                             <?php else: ?>
 
-                                                <a
-                                                    href="<?php echo getUrl('ActividadesTer','ActividadesTer','delete',array('id'=>$act['id'])); ?>"
-                                                    class="btn btn-outline-success btn-icon rounded-circle"
-                                                    title="Activar">
+                                                <a href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'delete', array('id' => $act['id'])); ?>"
+                                                    class="btn btn-outline-success btn-icon rounded-circle" title="Activar">
 
                                                     <i class="bi bi-check-lg"></i>
 
@@ -377,9 +364,7 @@
 
                                 <tr>
 
-                                    <td
-                                        colspan="7"
-                                        class="text-center text-muted py-5">
+                                    <td colspan="7" class="text-center text-muted py-5">
 
                                         <i class="bi bi-inbox fs-3 d-block mb-2"></i>
 
@@ -409,58 +394,58 @@
 
 <script>
 
-var formFiltro=
-document.getElementById('formFiltroMisActividadesTer');
+    var formFiltro =
+        document.getElementById('formFiltroMisActividadesTer');
 
-if(formFiltro){
+    if (formFiltro) {
 
-    formFiltro.addEventListener('submit',function(evento){
+        formFiltro.addEventListener('submit', function (evento) {
 
-        evento.preventDefault();
+            evento.preventDefault();
 
-        var datos=
-        new FormData(formFiltro);
+            var datos =
+                new FormData(formFiltro);
 
-        var tbody=
-        document.querySelector(
-            '#tablaMisActividadesTer tbody'
-        );
+            var tbody =
+                document.querySelector(
+                    '#tablaMisActividadesTer tbody'
+                );
 
-        fetch(formFiltro.action,{
-            method:'POST',
-            body:datos
-        })
+            fetch(formFiltro.action, {
+                method: 'POST',
+                body: datos
+            })
 
-        .then(function(respuesta){
+                .then(function (respuesta) {
 
-            return respuesta.text();
+                    return respuesta.text();
 
-        })
+                })
 
-        .then(function(html){
+                .then(function (html) {
 
-            tbody.innerHTML=html;
+                    tbody.innerHTML = html;
 
-        })
+                })
 
-        .catch(function(){
+                .catch(function () {
 
-            tbody.innerHTML=
-            '<tr>'+
-            '<td colspan="7" class="text-center text-danger py-4">'+
-            'Ocurrió un error al filtrar. Intenta nuevamente.'+
-            '</td>'+
-            '</tr>';
+                    tbody.innerHTML =
+                        '<tr>' +
+                        '<td colspan="7" class="text-center text-danger py-4">' +
+                        'Ocurrió un error al filtrar. Intenta nuevamente.' +
+                        '</td>' +
+                        '</tr>';
+
+                });
 
         });
 
-    });
-
-}
+    }
 
 </script>
 
 
 <?php
-include_once __DIR__.'/../partials/modalFormulario.php';
+include_once __DIR__ . '/../partials/modalFormulario.php';
 ?>
