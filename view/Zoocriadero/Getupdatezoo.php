@@ -9,12 +9,12 @@
             <div class="row g-3">
 
                 <div class="col-md-6">
-                    <label for="nombre" class="form-label fw-semibold">Nombre *</label>
+                    <label for="nombre" class="form-label fw-semibold">Nombre del Zoocriadero *</label>
                     <input type="text" class="form-control" id="nombre" name="nombre" maxlength="80" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+" title="Solo letras y espacios (sin números ni símbolos)" value="<?php echo htmlspecialchars($zoocriadero['nombrezoocriadero']); ?>" required>
                 </div>
 
                 <div class="col-md-6">
-                    <label for="direccion" class="form-label fw-semibold">Dirección *</label>
+                    <label for="direccion" class="form-label fw-semibold">Dirección del Zoocriadero *</label>
                     <input type="text" class="form-control" id="direccion" name="direccion" pattern="^(Calle|Carrera|Avenida)\b.*" title="Debe iniciar con Calle, Carrera o Avenida" value="<?php echo htmlspecialchars($zoocriadero['direccion']); ?>" required>
                 </div>
 
@@ -62,7 +62,7 @@
                 </div>
 
                 <div class="col-md-4">
-                    <label for="encargado" class="form-label fw-semibold">Auxiliar Encargado *</label>
+                    <label for="encargado" class="form-label fw-semibold">Encargado del Zoocriadero *</label>
                     <select class="form-select" id="encargado" name="encargado" required>
                         <option value="">Seleccione un auxiliar...</option>
                         <?php
