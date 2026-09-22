@@ -2,7 +2,6 @@
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalFormularioAjaxTitulo">Formulario</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body">
@@ -31,14 +30,12 @@
 
 <script>
  
-  function cargarFormularioModal(url, titulo, contenedorId, urlExito, idTabla) {
+  function cargarFormularioModal(url, contenedorId, urlExito, idTabla) {
       var modalEl = document.getElementById('modalFormularioAjax');
       var contenido = document.getElementById('modalFormularioAjaxContenido');
       var alerta = document.getElementById('modalFormularioAjaxAlerta');
-      var tituloEl = document.getElementById('modalFormularioAjaxTitulo');
       var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
 
-      tituloEl.textContent = titulo;
       alerta.innerHTML = '';
       contenido.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status">' +
                              '<span class="visually-hidden">Cargando...</span></div></div>';
