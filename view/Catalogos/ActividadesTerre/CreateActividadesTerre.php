@@ -15,7 +15,6 @@
 
         <form action="<?php echo getUrl('Catalogos', 'ActividadesTerre', 'postCreateActTerre') ?>" method="post" novalidate class="needs-validation">
 
-            <!-- Campo del nombre de la actividad de terreno -->
             <div class="mb-3">
                 <label for="nombreactividad" class="form-label text-secondary fs-7 fw-bold text-uppercase tracking-wider mb-1">
                     Nombre de la actividad <span class="text-danger">*</span>
