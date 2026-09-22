@@ -6,6 +6,11 @@ use PDO;
 use PDOException;
 
 class Connection{
+    // Unica instancia de la clase (patron Singleton): garantiza que toda la
+    // aplicacion comparta la misma conexion PDO durante el request, en vez
+    // de abrir una conexion nueva cada vez que un Model necesita la BD.
+    private static $instance = null;
+
     private $server;
     private $user;
     private $password;
@@ -13,9 +18,26 @@ class Connection{
     private $port;
     private $link;
 
-    function __construct(){
+    // Constructor privado: evita que se haga "new Connection()" desde fuera
+    // de la clase. La unica forma de obtener la conexion es Connection::getInstance().
+    private function __construct(){
         $this->setConnection();
         $this->connect();
+    }
+
+    // Evita clonar la instancia (lo que crearia una segunda conexion).
+    private function __clone(){}
+
+    // Evita reconstruir la instancia al deserializarla (mismo motivo que __clone).
+    public function __wakeup(){
+        throw new \Exception("No se puede deserializar un Singleton.");
+    }
+
+    public static function getInstance(){
+        if(self::$instance === null){
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
     private function setConnection(){

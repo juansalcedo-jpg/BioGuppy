@@ -5,7 +5,7 @@ $depositosActivo = ($funcion == 'listDep');
 $histZooActivo  = ($funcion == 'listHistZoo');
 $repZooActivo   = ($funcion == 'listRepoZoo');
 $sitiosActivo   = ($funcion == 'createSit' || $funcion == 'listSit' || $funcion == 'editSit');
-$histTerActivo  = ($funcion == 'listActTer');
+$histTerActivo  = ($funcion == 'listHistTer');
 $repTerActivo   = ($funcion == 'listRepoTer');
 ?>
 
@@ -39,7 +39,7 @@ $repTerActivo   = ($funcion == 'listRepoTer');
 
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $histTerActivo ? 'active' : ''; ?>"
-    href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'listActTer') ?>">
+    href="<?php echo getUrl('HistorialTer', 'HistorialTer', 'listHistTer') ?>">
     <i class="bi bi-list-check me-2"></i> Historial Terreno
   </a>
 </li>

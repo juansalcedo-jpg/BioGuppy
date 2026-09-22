@@ -1,5 +1,5 @@
 <?php
-$tipo=strtoupper($actividad['nombreactividad']);
+$tipo = strtoupper($actividad['nombreactividad'] ?? '');
 
 $esInspeccion=(strpos($tipo,'INSPEC')!==false);
 $esSiembra=(strpos($tipo,'SIEMBRA')!==false);
@@ -18,7 +18,7 @@ $esResiembra=(strpos($tipo,'RESIEMBRA')!==false);
       <div class="mb-4">
 
         <h4 class="fw-semibold mb-1">
-          Editar actividad — <?php echo htmlspecialchars($actividad['nombreactividad']); ?>
+          Editar actividad — <?php $tipo = strtoupper($actividad['nombreactividad'] ?? ''); ?>
         </h4>
 
         <p class="text-muted small mb-0">
