@@ -11,7 +11,7 @@
         </div>
         <button type="button" class="btn btn-primary px-3"
                 onclick="cargarFormularioModal('<?php echo getUrl('Sitios','Sitios','createSit') ?>',
-                'Registrar sitio de terreno', 'sitioFormRegistro', '<?php echo getUrl('Sitios','Sitios','listSit') ?>', 'tablaSitios')">
+                'Registrar Sitio de Terreno', 'sitioFormRegistro', '<?php echo getUrl('Sitios','Sitios','listSit') ?>', 'tablaSitios')">
           <i class="bi bi-plus-lg me-1"></i>Nuevo sitio
         </button>
       </div>
@@ -63,7 +63,7 @@
                 </td>
                                 <td class="text-center">
                   <button type="button" class="btn btn-outline-primary btn-icon rounded-circle" title="Editar"
-                          onclick="cargarFormularioModal('<?php echo getUrl('Sitios','Sitios','editSit',array('id'=>$sitio['id'])) ?>', 'Editar sitio de terreno', 'sitioFormEdicion', '<?php echo getUrl('Sitios','Sitios','listSit') ?>', 'tablaSitios')">
+                          onclick="cargarFormularioModal('<?php echo getUrl('Sitios','Sitios','editSit',array('id'=>$sitio['id'])) ?>', 'Editar Sitio de Terreno', 'sitioFormEdicion', '<?php echo getUrl('Sitios','Sitios','listSit') ?>', 'tablaSitios')">
                     <i class="bi bi-pencil-fill"></i>
                   </button>
                 </td>

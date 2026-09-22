@@ -6,7 +6,6 @@
     <div class="col-xl-9">
 
       <div class="mb-4">
-        <h4 class="fw-semibold mb-1">Registrar Sitio de Terreno</h4>
         <p class="text-muted small mb-0">Agrega un nuevo sitio donde se realizarán actividades de terreno.</p>
       </div>
 

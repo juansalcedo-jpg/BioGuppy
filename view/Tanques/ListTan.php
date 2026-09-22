@@ -8,7 +8,7 @@
           <p class="text-muted small mb-0">Consulta y administra los tanques registrados en el sistema.</p>
         </div>
         <button type="button" class="btn btn-primary px-3"
-                onclick="cargarFormularioModal('<?php echo getUrl('Tanques','Tanques','create') ?>', 'Registrar tanque', 'tanqueFormRegistro', '<?php echo getUrl('Tanques','Tanques','listTan') ?>', 'tablaTanques')">
+                onclick="cargarFormularioModal('<?php echo getUrl('Tanques','Tanques','create') ?>', 'Registrar Tanque', 'tanqueFormRegistro', '<?php echo getUrl('Tanques','Tanques','listTan') ?>', 'tablaTanques')">
           <i class="bi bi-plus-lg me-1"></i>Nuevo Tanques
         </button>
       </div>
@@ -58,7 +58,7 @@
                 </td>
                 <td class="text-center">
                   <button type="button" class="btn btn-outline-primary btn-icon rounded-circle" title="Editar"
-                          onclick="cargarFormularioModal('<?php echo getUrl('Tanques','Tanques','getUpdate',array('id'=>$tanque['id'])) ?>', 'Editar tanque', 'tanqueFormEdicion', '<?php echo getUrl('Tanques','Tanques','listTan') ?>', 'tablaTanques')">
+                          onclick="cargarFormularioModal('<?php echo getUrl('Tanques','Tanques','getUpdate',array('id'=>$tanque['id'])) ?>', 'Editar Tanque', 'tanqueFormEdicion', '<?php echo getUrl('Tanques','Tanques','listTan') ?>', 'tablaTanques')">
                     <i class="bi bi-pencil-fill"></i>
                   </button>
                 </td>
