@@ -1,6 +1,6 @@
 <?php
 
-$GLOBALS['MODULOS_PUBLICOS'] = ['Acceso', 'CambioContra'];
+$GLOBALS['MODULOS_PUBLICOS'] = ['Acceso', 'CambioContra', 'Inicio'];
 
 
 function clasificarAccionPorFuncion($funcion)
