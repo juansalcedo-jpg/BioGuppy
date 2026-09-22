@@ -29,6 +29,24 @@
                             </div>
                         </div>
 
+                        <ul class="nav nav-tabs mb-4 border-bottom">
+                            <li class="nav-item">
+                                <a class="nav-link text-secondary fw-semibold" href="<?php echo getUrl('ActividadesZoo', 'Alimentacion', 'Alimentacion'); ?>">Alimentación</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active fw-semibold text-primary border-0 border-bottom border-primary border-3" href="<?php echo getUrl('ActividadesZoo', 'NacidosMuertos', 'NacidosMuertos'); ?>">Nacidos / Muertos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-secondary fw-semibold" href="<?php echo getUrl('ActividadesZoo', 'Limpieza', 'Limpieza'); ?>">Limpieza</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-secondary fw-semibold" href="<?php echo getUrl('ActividadesZoo', 'AjusteNivel', 'AjusteNivel'); ?>">Ajuste de nivel</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-secondary fw-semibold" href="<?php echo getUrl('ActividadesZoo', 'Lavado', 'Lavado'); ?>">Lavado</a>
+                            </li>
+                        </ul>
+
                         <h5 class="fw-bold mb-4 text-dark">Nacidos / Muertos</h5>
 
                         <div class="row g-3 mb-4">
