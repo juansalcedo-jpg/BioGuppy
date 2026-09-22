@@ -3,9 +3,6 @@
 $GLOBALS['MODULOS_PUBLICOS'] = ['Acceso', 'CambioContra'];
 
 
-$GLOBALS['MODULOS_CON_SESION'] = ['SobreNosotros'];
-
-
 function clasificarAccionPorFuncion($funcion)
 {
     $f = strtolower($funcion);
@@ -38,10 +35,6 @@ function usuarioTienePermiso($modulo, $controlador, $funcion)
 
     if (empty($codrol)) {
         return false;
-    }
-
-    if (in_array($modulo, $GLOBALS['MODULOS_CON_SESION'] ?? [])) {
-        return true;
     }
 
     $par = "$modulo:$controlador";

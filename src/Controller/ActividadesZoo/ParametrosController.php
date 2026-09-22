@@ -32,6 +32,24 @@ class ParametrosController{
             exit();
         }
 
+        if(!is_numeric($ph) || $ph < 0 || $ph > 14){
+            $_SESSION['error'] = "El pH debe ser un número entre 0 y 14.";
+            redirect(getUrl('ActividadesZoo','Parametros','Parametros'));
+            exit();
+        }
+
+        if(!is_numeric($temperatura) || $temperatura < 0 || $temperatura > 40){
+            $_SESSION['error'] = "La temperatura debe ser un número entre 0°C y 40°C.";
+            redirect(getUrl('ActividadesZoo','Parametros','Parametros'));
+            exit();
+        }
+
+        if($fecha < '2026-09-10' || $fecha > date('Y-m-d')){
+            $_SESSION['error'] = "La fecha debe estar entre el 10 de septiembre de 2026 y hoy.";
+            redirect(getUrl('ActividadesZoo','Parametros','Parametros'));
+            exit();
+        }
+
         $codTipo = $this->obtenerCodTipoActividadZoo($obj, 'PARAMETROS FISICOQUIMICOS');
 
         $sql = "INSERT INTO public.tblactividadzoo

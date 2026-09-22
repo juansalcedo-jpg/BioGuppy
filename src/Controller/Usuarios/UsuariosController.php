@@ -52,6 +52,16 @@ class UsuariosController{
 
 
         //Validando nombre y apellido
+        if(mb_strlen(trim($nombre)) > 100){
+            $_SESSION['error'] = "El nombre no puede tener más de 100 caracteres.";
+            redirect(getUrl('Usuarios','Usuarios','createUsu'));
+            exit();
+        }
+        if(mb_strlen(trim($apellido)) > 100){
+            $_SESSION['error'] = "El apellido no puede tener más de 100 caracteres.";
+            redirect(getUrl('Usuarios','Usuarios','createUsu'));
+            exit();
+        }
         $regexNombre = "/^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+(\s[a-zA-ZáéíóúÁÉÍÓÚñÑ]+)*$/";
         if(!preg_match($regexNombre, $nombre)){
             $_SESSION['error'] = "El nombre no es válido.";
@@ -270,6 +280,16 @@ class UsuariosController{
         }
 
         //Validando nombre y apellido
+        if(mb_strlen(trim($nombre)) > 100){
+            $_SESSION['error'] = "El nombre no puede tener más de 100 caracteres.";
+            redirect(getUrl('Usuarios','Usuarios','getUpdateUsu',['id'=>$codusuario]));
+            exit();
+        }
+        if(mb_strlen(trim($apellido)) > 100){
+            $_SESSION['error'] = "El apellido no puede tener más de 100 caracteres.";
+            redirect(getUrl('Usuarios','Usuarios','getUpdateUsu',['id'=>$codusuario]));
+            exit();
+        }
         $regexNombre = "/^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+(\s[a-zA-ZáéíóúÁÉÍÓÚñÑ]+)*$/";
         if(!preg_match($regexNombre, $nombre)){
             $_SESSION['error'] = "El nombre no es válido.";

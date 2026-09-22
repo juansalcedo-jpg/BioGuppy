@@ -31,6 +31,18 @@ class LavadoController{
             exit();
         }
 
+        if(!is_numeric($porcentajeAgua) || $porcentajeAgua <= 0 || $porcentajeAgua > 100){
+            $_SESSION['error'] = "El porcentaje de agua cambiada debe ser un número entre 1 y 100.";
+            redirect(getUrl('ActividadesZoo','Lavado','Lavado'));
+            exit();
+        }
+
+        if($fecha < '2026-09-10' || $fecha > date('Y-m-d')){
+            $_SESSION['error'] = "La fecha debe estar entre el 10 de septiembre de 2026 y hoy.";
+            redirect(getUrl('ActividadesZoo','Lavado','Lavado'));
+            exit();
+        }
+
         $codTipo = $this->obtenerCodTipoActividadZoo($obj, 'LAVADO');
 
         $sql = "INSERT INTO public.tblactividadzoo

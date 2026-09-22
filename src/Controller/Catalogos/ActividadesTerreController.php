@@ -44,6 +44,18 @@ class ActividadesTerreController
             exit();
         }
 
+        if (mb_strlen(trim($nombre)) > 100) {
+            $_SESSION['error'] = "El nombre no puede tener más de 100 caracteres.";
+            redirect(getUrl('Catalogos', 'ActividadesTerre', 'createActTerre'));
+            exit();
+        }
+
+        if (!preg_match('/^[\p{L} ]+$/u', trim($nombre))) {
+            $_SESSION['error'] = "El nombre solo puede contener letras y espacios (sin números, símbolos ni puntuación).";
+            redirect(getUrl('Catalogos', 'ActividadesTerre', 'createActTerre'));
+            exit();
+        }
+
         // valida que no exista ya una actividad de terreno con ese nombre
         $sqlValidar = "SELECT codtipoactividad FROM tbltipoactividadterreno WHERE nombreactividad ILIKE :nombre";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre])->fetch(PDO::FETCH_ASSOC);
@@ -114,6 +126,18 @@ class ActividadesTerreController
             exit();
         }
 
+        if (mb_strlen(trim($nombre)) > 100) {
+            $_SESSION['error'] = "El nombre no puede tener más de 100 caracteres.";
+            redirect(getUrl('Catalogos', 'ActividadesTerre', 'getUpdateActTerre', ['id' => $id]));
+            exit();
+        }
+
+        if (!preg_match('/^[\p{L} ]+$/u', trim($nombre))) {
+            $_SESSION['error'] = "El nombre solo puede contener letras y espacios (sin números, símbolos ni puntuación).";
+            redirect(getUrl('Catalogos', 'ActividadesTerre', 'getUpdateActTerre', ['id' => $id]));
+            exit();
+        }
+
         // valida que no exista otra actividad de terreno distinta a esta con el mismo nombre
         $sqlValidar = "SELECT codtipoactividad FROM tbltipoactividadterreno WHERE nombreactividad ILIKE :nombre AND codtipoactividad != :id";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre, ':id' => $id])->fetch(PDO::FETCH_ASSOC);
@@ -165,6 +189,19 @@ class ActividadesTerreController
         $actual = $obj->select("SELECT estado FROM tbltipoactividadterreno WHERE codtipoactividad = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
         $estadoAnterior = $actual['estado'] ?? null;
         $nuevoEstado = ($estadoAnterior === 'A') ? 'I' : 'A';
+
+        if ($nuevoEstado === 'I') {
+            $enUso = $obj->select(
+                "SELECT COUNT(*) AS total FROM tblactividadterreno WHERE codtipoactividad = :id",
+                [':id' => $id]
+            )->fetch(PDO::FETCH_ASSOC);
+
+            if (($enUso['total'] ?? 0) > 0) {
+                $_SESSION['error'] = "No se puede inhabilitar esta actividad de terreno porque tiene " . $enUso['total'] . " actividad(es) registrada(s) asociada(s).";
+                redirect(getUrl('Catalogos', 'ActividadesTerre', 'listActTerre'));
+                exit();
+            }
+        }
 
         $execute = $obj->update("UPDATE tbltipoactividadterreno SET estado = :estado WHERE codtipoactividad = :id", [
             ':estado' => $nuevoEstado,

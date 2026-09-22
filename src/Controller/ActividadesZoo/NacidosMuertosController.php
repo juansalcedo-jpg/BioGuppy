@@ -32,6 +32,18 @@ class NacidosMuertosController{
             exit();
         }
 
+        if(!is_numeric($pecesNacidos) || !is_numeric($pecesMuertos) || $pecesNacidos < 0 || $pecesMuertos < 0){
+            $_SESSION['error'] = "La cantidad de peces nacidos y muertos debe ser un número no negativo.";
+            redirect(getUrl('ActividadesZoo','NacidosMuertos','NacidosMuertos'));
+            exit();
+        }
+
+        if($fecha < '2026-09-10' || $fecha > date('Y-m-d')){
+            $_SESSION['error'] = "La fecha debe estar entre el 10 de septiembre de 2026 y hoy.";
+            redirect(getUrl('ActividadesZoo','NacidosMuertos','NacidosMuertos'));
+            exit();
+        }
+
         $codTipo = $this->obtenerCodTipoActividadZoo($obj, 'RECOLECCION');
 
         $sql = "INSERT INTO public.tblactividadzoo

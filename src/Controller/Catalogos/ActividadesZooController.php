@@ -44,6 +44,18 @@ class ActividadesZooController
             exit();
         }
 
+        if (mb_strlen(trim($nombre)) > 100) {
+            $_SESSION['error'] = "El nombre no puede tener más de 100 caracteres.";
+            redirect(getUrl('Catalogos', 'ActividadesZoo', 'createActZoo'));
+            exit();
+        }
+
+        if (!preg_match('/^[\p{L} ]+$/u', trim($nombre))) {
+            $_SESSION['error'] = "El nombre solo puede contener letras y espacios (sin números, símbolos ni puntuación).";
+            redirect(getUrl('Catalogos', 'ActividadesZoo', 'createActZoo'));
+            exit();
+        }
+
         // valida que no exista ya una actividad de zoocriadero con ese nombre
         $sqlValidar = "SELECT codtipoactividad FROM tbltipoactividadzoo WHERE nombreactividad ILIKE :nombre";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre])->fetch(PDO::FETCH_ASSOC);
@@ -114,6 +126,18 @@ class ActividadesZooController
             exit();
         }
 
+        if (mb_strlen(trim($nombre)) > 100) {
+            $_SESSION['error'] = "El nombre no puede tener más de 100 caracteres.";
+            redirect(getUrl('Catalogos', 'ActividadesZoo', 'getUpdateActZoo', ['id' => $id]));
+            exit();
+        }
+
+        if (!preg_match('/^[\p{L} ]+$/u', trim($nombre))) {
+            $_SESSION['error'] = "El nombre solo puede contener letras y espacios (sin números, símbolos ni puntuación).";
+            redirect(getUrl('Catalogos', 'ActividadesZoo', 'getUpdateActZoo', ['id' => $id]));
+            exit();
+        }
+
         // valida que no exista otra actividad de zoocriadero distinta a esta con el mismo nombre
         $sqlValidar = "SELECT codtipoactividad FROM tbltipoactividadzoo WHERE nombreactividad ILIKE :nombre AND codtipoactividad != :id";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre, ':id' => $id])->fetch(PDO::FETCH_ASSOC);
@@ -165,6 +189,19 @@ class ActividadesZooController
         $actual = $obj->select("SELECT estado FROM tbltipoactividadzoo WHERE codtipoactividad = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
         $estadoAnterior = $actual['estado'] ?? null;
         $nuevoEstado = ($estadoAnterior === 'A') ? 'I' : 'A';
+
+        if ($nuevoEstado === 'I') {
+            $enUso = $obj->select(
+                "SELECT COUNT(*) AS total FROM tblactividadzoo WHERE codtipoactividad = :id",
+                [':id' => $id]
+            )->fetch(PDO::FETCH_ASSOC);
+
+            if (($enUso['total'] ?? 0) > 0) {
+                $_SESSION['error'] = "No se puede inhabilitar esta actividad de zoocriadero porque tiene " . $enUso['total'] . " actividad(es) registrada(s) asociada(s).";
+                redirect(getUrl('Catalogos', 'ActividadesZoo', 'listActZoo'));
+                exit();
+            }
+        }
 
         $execute = $obj->update("UPDATE tbltipoactividadzoo SET estado = :estado WHERE codtipoactividad = :id", [
             ':estado' => $nuevoEstado,

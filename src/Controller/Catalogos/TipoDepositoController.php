@@ -44,6 +44,18 @@ class TipoDepositoController
             exit();
         }
 
+        if (mb_strlen(trim($nombre)) > 100) {
+            $_SESSION['error'] = "El nombre no puede tener más de 100 caracteres.";
+            redirect(getUrl('Catalogos', 'TipoDeposito', 'createTipoDeposito'));
+            exit();
+        }
+
+        if (!preg_match('/^[\p{L}0-9 ]+$/u', trim($nombre))) {
+            $_SESSION['error'] = "El nombre solo puede contener letras, números y espacios (sin símbolos ni puntuación).";
+            redirect(getUrl('Catalogos', 'TipoDeposito', 'createTipoDeposito'));
+            exit();
+        }
+
         // valida que no exista ya un tipo de deposito con ese nombre
         $sqlValidar = "SELECT codtipodeposito FROM tbltipodeposito WHERE nombretipodeposito ILIKE :nombre";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre])->fetch(PDO::FETCH_ASSOC);
@@ -114,6 +126,18 @@ class TipoDepositoController
             exit();
         }
 
+        if (mb_strlen(trim($nombre)) > 100) {
+            $_SESSION['error'] = "El nombre no puede tener más de 100 caracteres.";
+            redirect(getUrl('Catalogos', 'TipoDeposito', 'getUpdateTipoDeposito', ['id' => $id]));
+            exit();
+        }
+
+        if (!preg_match('/^[\p{L}0-9 ]+$/u', trim($nombre))) {
+            $_SESSION['error'] = "El nombre solo puede contener letras, números y espacios (sin símbolos ni puntuación).";
+            redirect(getUrl('Catalogos', 'TipoDeposito', 'getUpdateTipoDeposito', ['id' => $id]));
+            exit();
+        }
+
         // valida que no exista otro tipo de deposito distinto a este con el mismo nombre
         $sqlValidar = "SELECT codtipodeposito FROM tbltipodeposito WHERE nombretipodeposito ILIKE :nombre AND codtipodeposito != :id";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombre, ':id' => $id])->fetch(PDO::FETCH_ASSOC);
@@ -165,6 +189,20 @@ class TipoDepositoController
         $actual = $obj->select("SELECT estado FROM tbltipodeposito WHERE codtipodeposito = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
         $estadoAnterior = $actual['estado'] ?? null;
         $nuevoEstado = ($estadoAnterior === 'A') ? 'I' : 'A';
+
+        // INTEGRIDAD: no permitir inhabilitar si hay sitios activos usando este tipo de depósito
+        if ($nuevoEstado === 'I') {
+            $sitiosActivos = $obj->select(
+                "SELECT COUNT(*) AS total FROM tblsitio WHERE codtipodeposito = :id AND estado = 'A'",
+                [':id' => $id]
+            )->fetch(PDO::FETCH_ASSOC);
+
+            if (($sitiosActivos['total'] ?? 0) > 0) {
+                $_SESSION['error'] = "No se puede inhabilitar este tipo de depósito porque " . $sitiosActivos['total'] . " sitio(s) activo(s) lo están usando.";
+                redirect(getUrl('Catalogos', 'TipoDeposito', 'listTipoDepo'));
+                exit();
+            }
+        }
 
         $execute = $obj->update("UPDATE tbltipodeposito SET estado = :estado WHERE codtipodeposito = :id", [
             ':estado' => $nuevoEstado,

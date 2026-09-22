@@ -135,6 +135,40 @@ class ActividadesListZooController{
             exit();
         }
 
+        if($fecha < '2026-09-10' || $fecha > date('Y-m-d')){
+            $_SESSION['error'] = "La fecha debe estar entre el 10 de septiembre de 2026 y hoy.";
+            redirect(getUrl('ActividadesListZoo','ActividadesListZoo','getUpdate',['id'=>$codactividad]));
+            exit();
+        }
+
+        // Los mismos rangos logicos que se validan al crear cada actividad
+        // se validan tambien al editar, ya que este endpoint es compartido
+        // por todos los tipos de actividad de zoocriadero.
+        if(isset($_POST['ph']) && $_POST['ph'] !== '' && (!is_numeric($_POST['ph']) || $_POST['ph'] < 0 || $_POST['ph'] > 14)){
+            $_SESSION['error'] = "El pH debe ser un número entre 0 y 14.";
+            redirect(getUrl('ActividadesListZoo','ActividadesListZoo','getUpdate',['id'=>$codactividad]));
+            exit();
+        }
+
+        if(isset($_POST['temperatura']) && $_POST['temperatura'] !== '' && (!is_numeric($_POST['temperatura']) || $_POST['temperatura'] < 0 || $_POST['temperatura'] > 40)){
+            $_SESSION['error'] = "La temperatura debe ser un número entre 0°C y 40°C.";
+            redirect(getUrl('ActividadesListZoo','ActividadesListZoo','getUpdate',['id'=>$codactividad]));
+            exit();
+        }
+
+        if(isset($_POST['porcentaje_agua']) && $_POST['porcentaje_agua'] !== '' && (!is_numeric($_POST['porcentaje_agua']) || $_POST['porcentaje_agua'] <= 0 || $_POST['porcentaje_agua'] > 100)){
+            $_SESSION['error'] = "El porcentaje de agua cambiada debe ser un número entre 1 y 100.";
+            redirect(getUrl('ActividadesListZoo','ActividadesListZoo','getUpdate',['id'=>$codactividad]));
+            exit();
+        }
+
+        if((isset($_POST['peces_nacidos']) && $_POST['peces_nacidos'] !== '' && (!is_numeric($_POST['peces_nacidos']) || $_POST['peces_nacidos'] < 0))
+           || (isset($_POST['peces_muertos']) && $_POST['peces_muertos'] !== '' && (!is_numeric($_POST['peces_muertos']) || $_POST['peces_muertos'] < 0))){
+            $_SESSION['error'] = "La cantidad de peces nacidos y muertos debe ser un número no negativo.";
+            redirect(getUrl('ActividadesListZoo','ActividadesListZoo','getUpdate',['id'=>$codactividad]));
+            exit();
+        }
+
         $sql = "UPDATE tblactividadzoo SET
                     fecha = :fecha,
                     horadia = :horadia,

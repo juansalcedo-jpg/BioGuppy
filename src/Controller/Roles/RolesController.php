@@ -27,6 +27,22 @@ class RolesController{
             exit();
         }
 
+        // -----------------------------------------------------------
+        // VALIDAR FORMATO DE NOMBRE
+        // Solo letras y espacios, máximo 50 caracteres.
+        // -----------------------------------------------------------
+        if(mb_strlen(trim($nombreRol)) > 50){
+            $_SESSION['error'] = "El nombre del rol no puede tener más de 50 caracteres.";
+            redirect(getUrl('Roles','Roles','createRol'));
+            exit();
+        }
+
+        if(!preg_match('/^[\p{L} ]+$/u', trim($nombreRol))){
+            $_SESSION['error'] = "El nombre del rol solo puede contener letras y espacios (sin números, símbolos ni puntuación).";
+            redirect(getUrl('Roles','Roles','createRol'));
+            exit();
+        }
+
         $sqlValidar = "SELECT codrol FROM tblrol WHERE nombrerol ILIKE :nombre";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombreRol])->fetch(PDO::FETCH_ASSOC);
 
@@ -104,6 +120,18 @@ class RolesController{
             exit();
         }
 
+        if(mb_strlen(trim($nombreRol)) > 50){
+            $_SESSION['error'] = "El nombre del rol no puede tener más de 50 caracteres.";
+            redirect(getUrl('Roles','Roles','editRol', ['id' => $codrol]));
+            exit();
+        }
+
+        if(!preg_match('/^[\p{L} ]+$/u', trim($nombreRol))){
+            $_SESSION['error'] = "El nombre del rol solo puede contener letras y espacios (sin números, símbolos ni puntuación).";
+            redirect(getUrl('Roles','Roles','editRol', ['id' => $codrol]));
+            exit();
+        }
+
         $sqlValidar = "SELECT codrol FROM tblrol WHERE nombrerol ILIKE :nombre AND codrol != :codrol";
         $existe = $obj->select($sqlValidar, [':nombre' => $nombreRol, ':codrol' => $codrol])->fetch(PDO::FETCH_ASSOC);
 
@@ -142,6 +170,23 @@ class RolesController{
 
         $id = $_GET['id'];
         $estado = $_GET['estado'];
+
+        // -----------------------------------------------------------
+        // INTEGRIDAD: no permitir inhabilitar un rol si todavía tiene
+        // usuarios activos asignados (quedarían con un rol "fantasma").
+        // -----------------------------------------------------------
+        if ($estado === 'A') {
+            $usuariosActivos = $obj->select(
+                "SELECT COUNT(*) AS total FROM tblusuario WHERE codrol = :id AND estado = 'A'",
+                [':id' => $id]
+            )->fetch(PDO::FETCH_ASSOC);
+
+            if (($usuariosActivos['total'] ?? 0) > 0) {
+                $_SESSION['error'] = "No se puede inhabilitar este rol porque tiene " . $usuariosActivos['total'] . " usuario(s) activo(s) asignado(s). Reasígnalos a otro rol primero.";
+                redirect(getUrl('Roles', 'Roles', 'listRol'));
+                exit();
+            }
+        }
 
         $sql = "";
         if ($estado === 'A') {
