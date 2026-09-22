@@ -3,9 +3,10 @@
     background-color: #10254a;
     color: #c9d4e6;
     margin-left: var(--sidebar-width);
-    padding: 8px 6px;
+    padding: 6px 10px;
     transition: margin-left .25s ease;
     font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: .65rem;
     text-align: center;
   }
 
@@ -13,28 +14,16 @@
     margin-left: 0;
   }
 
-  .pie-bioguppy .pie-titulo {
-    color: #fff;
-    font-weight: 600;
-    font-size: .65rem;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: .02em;
-  }
-
-  .pie-bioguppy ul {
+  .pie-bioguppy .pie-contenido {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
+    gap: 16px;
     flex-wrap: wrap;
-    margin: 0;
-    padding: 0;
-    list-style: none;
   }
 
-  .pie-bioguppy li {
-    font-size: .65rem;
+  .pie-bioguppy i {
+    margin-right: 4px;
   }
 
   .pie-bioguppy a {
@@ -46,39 +35,26 @@
     color: #159EE8;
   }
 
-  .pie-bioguppy hr {
-    border: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
-    margin: 6px auto 4px;
-    max-width: 160px;
-  }
-
-  .pie-bioguppy .pie-copy {
-    font-size: .6rem;
-    color: rgba(255, 255, 255, 0.5);
-  }
-
   @media (max-width: 768px) {
     .pie-bioguppy {
       margin-left: 0;
-      padding: 6px 4px;
+      padding: 6px 8px;
+      font-size: .6rem;
     }
 
-    .pie-bioguppy ul {
+    .pie-bioguppy .pie-contenido {
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
     }
   }
 </style>
 
 <footer class="pie-bioguppy">
-  <div class="pie-titulo">Contacto</div>
-  <ul>
-    <li><i class="bi bi-envelope me-1"></i> bioguppy@gmail.com</li>
-    <li><i class="bi bi-geo-alt me-1"></i> Santiago de Cali, Colombia</li>
-  </ul>
-  <hr>
-  <div class="pie-copy">© <?php echo date('Y'); ?> BioGuppy — Todos los derechos reservados.</div>
+  <div class="pie-contenido">
+    <span><i class="bi bi-envelope me-1"></i> bioguppy@gmail.com</span>
+    <span><i class="bi bi-geo-alt me-1"></i> Santiago de Cali, Colombia</span>
+    <span>© <?php echo date('Y'); ?> BioGuppy — Todos los derechos reservados.</span>
+  </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
