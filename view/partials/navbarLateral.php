@@ -46,7 +46,8 @@ $funcion = $_GET['funcion'] ?? '';
 </style>
 <aside class="sidebar-biogu d-flex flex-column vh-100 position-fixed top-0 start-0">
 
-    <div class="d-flex align-items-center gap-2 p-3 border-bottom border-secondary border-opacity-25">
+    <a href="<?php echo getUrl('Inicio', 'Inicio', 'index') ?>"
+       class="d-flex align-items-center gap-2 p-3 border-bottom border-secondary border-opacity-25 text-decoration-none">
         <div class="rounded-3 overflow-hidden" style="width:50px;height:50px;">
             <img src="/BioGuppy/Img/logo.png" alt="BioGuppy" class="w-100 h-100" style="object-fit:cover;">
         </div>
@@ -54,7 +55,7 @@ $funcion = $_GET['funcion'] ?? '';
             <h1 class="h6 text-white mb-0"><strong>Bio</strong><span class="otro">Guppy</span></h1>
             
         </div>
-    </div>
+    </a>
 
     <div class="text-accent text-uppercase small fw-semibold px-3 pt-3 pb-2" style="letter-spacing:.05em; font-size:.7rem;">
         <?php echo $_SESSION['nombre_rol']; ?>

@@ -9,14 +9,14 @@
         </div>
         <button type="button" class="btn btn-primary px-3"
                 onclick="cargarFormularioModal('<?php echo getUrl('Tanques','Tanques','create') ?>', 'Registrar tanque', 'tanqueFormRegistro', '<?php echo getUrl('Tanques','Tanques','listTan') ?>', 'tablaTanques')">
-          <i class="bi bi-plus-lg me-1"></i>Nuevo tanque
+          <i class="bi bi-plus-lg me-1"></i>Nuevo Tanques
         </button>
       </div>
 
       <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
           <span class="fw-semibold">
-            <i class="bi bi-droplet-fill me-2 text-primary"></i>Tanques registrados
+            <i class="bi bi-droplet-fill me-2 text-primary"></i>Tanques Registrados
           </span>
           <div class="input-group input-group-sm" style="max-width: 260px;">
             <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
@@ -29,7 +29,7 @@
           <table class="table table-striped align-middle mb-0" id="tablaTanques">
             <thead class="table-dark">
               <tr>
-                <th class="ps-4">N° Tanque</th>
+                <th class="ps-4">Tanque</th>
                 <th>Tipo</th>
                 <th>Capacidad (L)</th>
                 <th>Zoocriadero</th>

@@ -1,75 +1,77 @@
 <div id="rolFormRegistro">
-<div class="container-fluid py-2">
-  <div class="row justify-content-center">
-    <div class="col-xl-9">
+  <div class="container-fluid px-1 py-1">
 
-      <div class="mb-4">
-        <h4 class="fw-semibold mb-1">Registrar rol</h4>
-        <p class="text-muted small mb-0">Define un nuevo rol, su descripción y los permisos por módulo.</p>
+    <!-- Alerta de error superior (si existe) -->
+    <?php if(isset($_SESSION['error'])): ?>
+      <div class="alert alert-danger alert-dismissible fade show py-2 px-3 mb-3 border-0 shadow-sm rounded-3 bg-danger-subtle text-danger-emphasis" role="alert">
+        <div class="d-flex align-items-center">
+          <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
+          <div><?php echo $_SESSION['error']; ?></div>
+        </div>
+        <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+
+    <form action="<?php echo getUrl('Roles','Roles','postcreateRol')?>" method="post" novalidate class="needs-validation">
+
+      <div class="row g-3 mb-3">
+        
+        <!-- Nombre del rol -->
+        <div class="col-md-5">
+          <label for="nombreRol" class="form-label text-secondary fs-7 fw-bold text-uppercase tracking-wider mb-1">Nombre del rol <span class="text-danger">*</span></label>
+          <div class="input-group shadow-sm rounded-3 overflow-hidden border bg-white">
+            <span class="input-group-text bg-white border-0 text-muted ps-3"><i class="bi bi-tag fs-6"></i></span>
+            <input type="text" class="form-control border-0 bg-white py-2 ps-2 shadow-none" id="nombreRol" name="nombreRol"
+                   placeholder="Ej: Coordinador de campo" maxlength="100" required>
+          </div>
+          <div class="form-text text-muted small mt-1">Nombre corto y descriptivo.</div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="col-md-7">
+          <label for="descripcionRol" class="form-label text-secondary fs-7 fw-bold text-uppercase tracking-wider mb-1">Descripción</label>
+          <div class="shadow-sm rounded-3 overflow-hidden border bg-white">
+            <textarea class="form-control border-0 bg-white p-2 shadow-none" id="descripcionRol" name="descripcionRol" rows="3"
+                      placeholder="Describa brevemente las funciones y alcance de este rol..." maxlength="255"></textarea>
+          </div>
+          <div class="form-text text-muted small mt-1">Opcional. Máximo 255 caracteres.</div>
+        </div>
+
       </div>
 
-      <form action="<?php echo getUrl('Roles','Roles','postcreateRol')?>" method="post" novalidate>
-
-        <div class="card border-0 shadow-sm mb-4">
-          <div class="card-header bg-white border-bottom py-3">
-            <span class="fw-semibold">
-              <i class="bi bi-person-badge-fill me-2 text-primary"></i>Información del rol
-            </span>
-          </div>
-          <div class="card-body p-4">
-            <div class="row">
-              <div class="col-md-5 mb-4 mb-md-0">
-                <label for="nombreRol" class="form-label fw-semibold">Nombre del rol</label>
-                <div class="input-group">
-                  <span class="input-group-text bg-light"><i class="bi bi-tag"></i></span>
-                  <input type="text" class="form-control" id="nombreRol" name="nombreRol"
-                         placeholder="Ej: Coordinador de campo" maxlength="100" required>
-                </div>
-                <div class="form-text">Nombre corto y descriptivo del rol.</div>
-              </div>
-              <div class="col-md-7">
-                <label for="descripcionRol" class="form-label fw-semibold">Descripción</label>
-                <textarea class="form-control" id="descripcionRol" name="descripcionRol" rows="2"
-                          placeholder="Describa brevemente las funciones y alcance de este rol" maxlength="255"></textarea>
-                <div class="form-text">Opcional. Máximo 255 caracteres.</div>
-              </div>
-            </div>
-          </div>
+      <!-- Alerta informativa moderna -->
+      <div class="alert alert-info border-0 shadow-sm rounded-3 py-2 px-3 d-flex align-items-center mb-3 bg-info-subtle text-info-emphasis">
+        <i class="bi bi-info-circle-fill fs-5 me-2 flex-shrink-0"></i>
+        <div class="small">
+          Después de registrar el rol, podrás asignarle sus permisos desde el botón <strong class="fw-bold">"Permisos"</strong>.
         </div>
+      </div>
 
-        <div class="alert alert-info d-flex align-items-center mb-4">
-          <i class="bi bi-info-circle-fill me-2"></i>
-          <div>Después de registrar el rol, podrás asignarle sus permisos por módulo desde el botón <strong>"Permisos"</strong> en el listado.</div>
-        </div>
+      <!-- Botones de acción alineados y estilizados -->
+      <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+        <button type="button" class="btn btn-light px-4 py-2 rounded-3 fw-semibold text-secondary border" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary px-4 py-2 rounded-3 fw-semibold shadow-sm">
+          <i class="bi bi-check-lg me-1"></i> Registrar rol
+        </button>
+      </div>
 
-        <div class="d-flex justify-content-end gap-2 mb-4">
-          <a href="<?php echo getUrl('Roles','Roles','listRol')?>" class="btn btn-outline-secondary px-4">
-            Cancelar
-          </a>
-          <button type="submit" class="btn btn-primary px-4">
-            <i class="bi bi-check-lg me-1"></i>Registrar
-          </button>
-        </div>
+    </form>
 
-      </form>
-
-    </div>
   </div>
 </div>
-</div>
-<?php
-  if(isset($_SESSION['error'])){
-?>
-<div class="row justify-content-center">
-  <div class="col-xl-9">
-    <div class="alert alert-danger d-flex align-items-center mt-3 mb-0" role="alert">
-      <i class="bi bi-exclamation-triangle-fill me-2"></i>
-      <div><?php echo $_SESSION['error']; ?></div>
-    </div>
-  </div>
-</div>
-<?php
-      unset($_SESSION['error']);
+
+<style>
+  .input-group:focus-within, .border:focus-within {
+    border-color: var(--bs-primary) !important;
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.15) !important;
   }
-?>
-</div>
+  .input-group:focus-within .input-group-text {
+    color: var(--bs-primary) !important;
+  }
+  .fs-7 {
+    font-size: 0.75rem;
+  }
+</style>

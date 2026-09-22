@@ -37,32 +37,33 @@ class CambioContraController{
         if (!$usuario){
             echo '<div class="alert alert-danger d-flex align-items-center" role="alert">
                     <div>
-                    No existe una cuenta asociada a ese correo.
+                    Si el correo está registrado, recibirás un mensaje con instrucciones.
                     </div>
                 </div>';
             return;
         }
 
         $codusuario = $usuario['codusuario'];
-        $_SESSION['correoRecuperar'] = $correo;
 
+        //Generar token seguro
+        $token = bin2hex(random_bytes(32));
+        $tokenHash = hash_hmac('sha256', $token, HASH_KEY_RECUPERACION);
 
-        do {
-            $codigo = random_int(100000, 999999);
-            $codigoHash = hash_hmac('sha256', (string) $codigo, HASH_KEY_RECUPERACION);
-
-            $sqlCheck = "SELECT COUNT(*) as total FROM tblcodigorecuperacion WHERE codigo = :codigo";
-            $resultCheck = $obj->select($sqlCheck, [':codigo' => $codigoHash]);
-            $row = $resultCheck->fetch(PDO::FETCH_ASSOC);
-        } while ($row['total'] > 0);
-
+        //Guardar en BD con expiración
         $sql = "INSERT INTO tblcodigorecuperacion (codusuario, codigo, fechaexpiracion)
-                        VALUES (:codusuario, :codigo, NOW() + INTERVAL '10 minutes')";
-        $execute = $obj->insert($sql, [
+        VALUES (:codusuario, :codigo, NOW() + INTERVAL '15 minutes')";
+
+        $obj->insert($sql, [
             ':codusuario' => $codusuario,
-            ':codigo'     => $codigoHash,
+            ':codigo'     => $tokenHash
         ]);
 
+        //Crear link con token: apunta al login, que valida el token
+        //automáticamente y abre el modal de nueva contraseña.
+        $link = "http://localhost/BioGuppy/Web/inicio/login.php?token=" . urlencode($token);
+
+
+        //Enviar correo
         $mail = new PHPMailer(true);
 
         try {
@@ -76,15 +77,16 @@ class CambioContraController{
             $mail->Encoding = 'base64';
             $mail->isHTML(true);
 
-            $mail->Subject = "Código de recuperación de contraseña";
+            $mail->Subject = "Recuperación de contraseña";
             $mail->Body    = "<h1>Recuperación de contraseña</h1>
-                            <p>Tu código de verificación es: <b>$codigo</b></p>";
-            $mail->AltBody = "Tu código de verificación es: $codigo";
+                          <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
+                          <p><a href='$link'>$link</a></p>";
+            $mail->AltBody = "Copia y pega este enlace en tu navegador: $link";
             $mail->send();
 
             echo '<div class="alert alert-success d-flex align-items-center" role="alert">
                     <div>
-                    Hemos enviado un código de recuperación a tu correo.
+                    Hemos enviado un enlace de recuperación a tu correo. Revisa tu bandeja de entrada y haz clic en él para continuar.
                     </div>
                 </div>';
         }catch (Exception $e) {
@@ -96,54 +98,53 @@ class CambioContraController{
         }
     }
 
-    public function validar_codigo(){
-
+    public function validar_codigo()
+    {
         $obj = new CambioContraModel();
 
-        $codigoIngresado = trim($_POST['codigo'] ?? '');
-        $correo = $_SESSION['correoRecuperar'] ?? '';
+        // Token recibido por GET
+        $token = trim($_GET['token'] ?? '');
 
-        $sqlUsuario = "SELECT codusuario FROM tblusuario WHERE correo = :correo AND estado = 'A'";
-        $resultUsuario = $obj->select($sqlUsuario, [':correo' => $correo]);
-        $usuario = $resultUsuario->fetch(PDO::FETCH_ASSOC);
-
-        $codusuario = $usuario['codusuario'];
-        $codigoHash = hash_hmac('sha256', $codigoIngresado, HASH_KEY_RECUPERACION);
-
-        $sql = "SELECT codrecuperacion FROM tblcodigorecuperacion
-                WHERE codusuario = :codusuario
-                    AND codigo = :codigo
-                    AND estado = 'A'
-                    AND fechaexpiracion > CURRENT_TIMESTAMP";
-
-        $codigo_validado = $obj->select($sql, [
-            ':codusuario' => $codusuario,
-            ':codigo'     => $codigoHash,
-        ]);
-        $fila = $codigo_validado->fetch(PDO::FETCH_ASSOC);
-
-        if($fila){
-            echo '<div class="alert alert-success d-flex align-items-center" role="alert">
-                    <div>
-                    Código validado exitosamente.
-                    </div>
-                </div>';
-        }else{
+        if (empty($token)) {
             echo '<div class="alert alert-danger d-flex align-items-center" role="alert">
-                    <div>
-                    Código no válido.
-                    </div>
-                </div>';
+                <div>Token inválido.</div>
+              </div>';
+            return;
         }
 
-        $sql2 = "UPDATE tblcodigorecuperacion SET estado = 'I' WHERE codusuario = :codusuario AND codigo = :codigo";
+        // Hashear el token con tu clave secreta
+        $tokenHash = hash_hmac('sha256', $token, HASH_KEY_RECUPERACION);
 
-        $exe = $obj->update($sql2, [
-            ':codusuario' => $codusuario,
-            ':codigo'     => $codigoHash,
-        ]);
+        // Buscar en BD
+        $sql = "SELECT codusuario, codrecuperacion 
+            FROM tblcodigorecuperacion
+            WHERE codigo = :codigo
+              AND estado = 'A'
+              AND fechaexpiracion > CURRENT_TIMESTAMP";
 
+        $result = $obj->select($sql, [':codigo' => $tokenHash]);
+        $fila = $result->fetch(PDO::FETCH_ASSOC);
+
+        if ($fila) {
+            //Token válido
+            $_SESSION['codusuarioReset'] = $fila['codusuario'];
+
+            // Inhabilitar token para que no se reutilice
+            $sql2 = "UPDATE tblcodigorecuperacion 
+                 SET estado = 'I' 
+                 WHERE codrecuperacion = :codrecuperacion";
+            $obj->update($sql2, [':codrecuperacion' => $fila['codrecuperacion']]);
+
+            echo '<div class="alert alert-success d-flex align-items-center" role="alert">
+                <div>Token validado. Ahora puedes cambiar tu contraseña.</div>
+              </div>';
+        } else {
+            echo '<div class="alert alert-danger d-flex align-items-center" role="alert">
+                <div>El enlace ha expirado o es inválido.</div>
+              </div>';
+        }
     }
+
 
     public function cambiar_contraseña(){
         $obj = new CambioContraModel();
@@ -166,10 +167,21 @@ class CambioContraController{
                     </div>
                 </div>';
             }else{
-                $correo = $_SESSION['correoRecuperar'];
+                // El usuario se identifica por el token ya validado en
+                // validar_codigo(), no por un correo guardado en sesión.
+                $codusuario = $_SESSION['codusuarioReset'] ?? null;
 
-                $sqlActual = "SELECT contrasena FROM tblusuario WHERE correo = :correo";
-                $resultActual = $obj->select($sqlActual, [':correo' => $correo]);
+                if (empty($codusuario)) {
+                    echo '<div class="alert alert-danger d-flex align-items-center" role="alert">
+                            <div>
+                            Tu sesión de recuperación expiró o no es válida. Solicita un nuevo enlace.
+                            </div>
+                        </div>';
+                    return;
+                }
+
+                $sqlActual = "SELECT contrasena FROM tblusuario WHERE codusuario = :codusuario";
+                $resultActual = $obj->select($sqlActual, [':codusuario' => $codusuario]);
                 $usuarioActual = $resultActual->fetch(PDO::FETCH_ASSOC);
 
                 if($usuarioActual && password_verify($contra, $usuarioActual['contrasena'])){
@@ -182,20 +194,20 @@ class CambioContraController{
                 }
 
                 $contraEncriptada = password_hash($contra, PASSWORD_DEFAULT);
-                $sql = "UPDATE tblusuario SET contrasena = :contrasena WHERE correo = :correo";
+                $sql = "UPDATE tblusuario SET contrasena = :contrasena WHERE codusuario = :codusuario";
 
                 $execu = $obj->update($sql, [
                     ':contrasena' => $contraEncriptada,
-                    ':correo'     => $correo,
+                    ':codusuario' => $codusuario,
                 ]);
 
                 if($execu){
                     echo '<div class="alert alert-success d-flex align-items-center" role="alert">
                             <div>
-                            Contraseña cambiada exitosamente.
+                            Contraseña cambiada exitosamente. Ya puedes iniciar sesión con tu nueva contraseña.
                             </div>
                         </div>';
-                    unset($_SESSION['correoRecuperar']);
+                    unset($_SESSION['codusuarioReset']);
                 }else{
                     echo '<div class="alert alert-danger d-flex align-items-center" role="alert">
                             <div>
