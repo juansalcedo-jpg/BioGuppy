@@ -15,31 +15,54 @@
         * {
             box-sizing: border-box;
         }
+        html, body {
+            height: 100%;
+        }
         body {
             margin: 0;
             background-color: #eaf1fb;
             font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* la página en sí nunca hace scroll */
         }
         .app-layout {
             display: flex;
-            min-height: 100vh;
+            flex: 1 1 auto;
+            min-height: 0; /* permite que el contenido interno se encoja y scrollee en vez de crecer */
         }
+
+        
         .main-content {
             margin-left: var(--sidebar-width);
             flex: 1;
             display: flex;
             flex-direction: column;
             min-width: 0;
-            min-height: 100vh;
+            min-height: 0;
             transition: margin-left .25s ease;
         }
         .page-content {
-            flex: 1;
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto; /* único punto de scroll de toda la app */
             padding: 24px;
         }
 
         .app-layout.sidebar-collapsed .main-content {
             margin-left: 0;
         }
+
+        body.modo-protanopia {
+    filter: url(#filtro-protanopia);
+}
+
+body.modo-deuteranopia {
+    filter: url(#filtro-deuteranopia);
+}
+
+body.modo-tritanopia {
+    filter: url(#filtro-tritanopia);
+}
     </style>
 </head>

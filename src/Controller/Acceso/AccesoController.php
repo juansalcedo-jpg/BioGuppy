@@ -68,38 +68,38 @@ class AccesoController{
                     if($datosRol['nombrerol'] == 'Super Admin'){
 
                         $_SESSION['menu_file'] = "../view/funcionesLateral/FuncSuperAdmin.php";
-                        $_SESSION['modulo'] = 'Usuarios';
-                        $_SESSION['controlador'] = 'Usuarios';
-                        $_SESSION['funcion'] = 'listUsu';
+                        $_SESSION['modulo'] = 'Inicio';
+                        $_SESSION['controlador'] = 'Inicio';
+                        $_SESSION['funcion'] = 'index';
 
                     } else if ($datosRol['nombrerol'] == 'Administrador') {
 
                         $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAdmin.php";
-                        $_SESSION['modulo'] = 'Dashboard';
-                        $_SESSION['controlador'] = 'Dashboard';
-                        $_SESSION['funcion'] = 'listDashboard';
+                        $_SESSION['modulo'] = 'Inicio';
+                        $_SESSION['controlador'] = 'Inicio';
+                        $_SESSION['funcion'] = 'index';
 
                     }else if($datosRol['nombrerol'] == 'Coordinador Control Biologico'){
 
                         $_SESSION['menu_file'] = "../view/funcionesLateral/FuncCoordinador.php";
-                        $_SESSION['modulo'] = 'Zoocriadero';
-                        $_SESSION['controlador'] = 'Zoocriadero';
-                        $_SESSION['funcion'] = 'listZoo';
+                        $_SESSION['modulo'] = 'Inicio';
+                        $_SESSION['controlador'] = 'Inicio';
+                        $_SESSION['funcion'] = 'index';
 
                     }else if($datosRol['nombrerol'] == 'Auxiliar Terreno'){
 
                         $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAuxTerreno.php";
-                        $_SESSION['modulo'] = 'ActividadesTer';
-                        $_SESSION['controlador'] = 'ActividadesTer';
-                        $_SESSION['funcion'] = 'listMisActividades';
+                        $_SESSION['modulo'] = 'Inicio';
+                        $_SESSION['controlador'] = 'Inicio';
+                        $_SESSION['funcion'] = 'index';
 
                     }else if($datosRol['nombrerol'] == 'Auxiliar Zoocriadero'){
 
                         $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAuxZoocriadero.php";
-                        $_SESSION['modulo'] = 'ActividadesListZoo';
-                        $_SESSION['controlador'] = 'ActividadesListZoo';
-                        $_SESSION['funcion'] = 'ActividadesListZoo';
-                        
+                        $_SESSION['modulo'] = 'Inicio';
+                        $_SESSION['controlador'] = 'Inicio';
+                        $_SESSION['funcion'] = 'index';
+
                     }
                 }else{
                     $_SESSION['ErrorLogin'] = "La cuenta esta inactiva";

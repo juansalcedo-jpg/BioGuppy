@@ -3,9 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
   activarOndaAlHacerClic();
   activarFormularioDeAcceso();
   activarModalRecuperarContrasena();
-  activarCasillasDelCodigo();
-  activarModalVerificarCodigo();
   activarModalNuevaContrasena();
+  activarValidacionTokenPorLink();
 });
 
 
@@ -255,113 +254,19 @@ function activarModalRecuperarContrasena() {
 
     enviarFormularioPorAjax(formRecuperar, {
       alHaberExito: () => {
-        const modalVerificar = document.getElementById('modalVerificarCodigo');
-        if (!modalVerificar) return;
-
+        // Ya no se abre un modal de código: el usuario recibe el enlace
+        // por correo y, al hacer clic en él, el propio link valida el
+        // token y abre directamente el modal de nueva contraseña
+        // (ver activarValidacionTokenPorLink).
         bootstrap.Modal.getInstance(modalRecuperarPass)?.hide();
-        bootstrap.Modal.getOrCreateInstance(modalVerificar).show();
+        formRecuperar.reset();
       },
     });
   });
 }
 
 
-// --- 5. Casillas del código ---
-const otpInputs = Array.from(document.querySelectorAll('#otpInputs .otp-digit'));
-const codigoCompleto = document.getElementById('codigoCompleto');
-
-function actualizarCodigoCompleto() {
-  if (codigoCompleto) {
-    codigoCompleto.value = otpInputs.map((input) => input.value).join('');
-  }
-}
-
-function activarCasillasDelCodigo() {
-  otpInputs.forEach((input, indice) => {
-    input.addEventListener('input', () => {
-      input.value = input.value.replace(/\D/g, '').slice(0, 1);
-
-      if (input.value && indice < otpInputs.length - 1) {
-        otpInputs[indice + 1].focus();
-      }
-      actualizarCodigoCompleto();
-    });
-
-    input.addEventListener('keydown', (evento) => {
-      if (evento.key === 'Backspace' && !input.value && indice > 0) {
-        otpInputs[indice - 1].focus();
-        otpInputs[indice - 1].value = '';
-        actualizarCodigoCompleto();
-      } else if (evento.key === 'ArrowLeft' && indice > 0) {
-        otpInputs[indice - 1].focus();
-      } else if (evento.key === 'ArrowRight' && indice < otpInputs.length - 1) {
-        otpInputs[indice + 1].focus();
-      }
-    });
-
-    input.addEventListener('paste', (evento) => {
-      evento.preventDefault();
-      const textoPegado = (evento.clipboardData || window.clipboardData)
-        .getData('text')
-        .replace(/\D/g, '')
-        .slice(0, otpInputs.length);
-
-      textoPegado.split('').forEach((digito, posicion) => {
-        if (otpInputs[posicion]) otpInputs[posicion].value = digito;
-      });
-
-      const siguienteVacio = otpInputs.findIndex((campo) => !campo.value);
-      (siguienteVacio === -1 ? otpInputs[otpInputs.length - 1] : otpInputs[siguienteVacio]).focus();
-      actualizarCodigoCompleto();
-    });
-  });
-
-  const modalVerificarCodigo = document.getElementById('modalVerificarCodigo');
-  if (modalVerificarCodigo) {
-    modalVerificarCodigo.addEventListener('shown.bs.modal', () => {
-      otpInputs.forEach((input) => { input.value = ''; });
-      actualizarCodigoCompleto();
-      if (otpInputs[0]) otpInputs[0].focus();
-    });
-  }
-}
-
-
-// --- 6. Modal: verificar código ---
-function activarModalVerificarCodigo() {
-  const formVerificarCodigo = document.getElementById('formVerificarCodigo');
-  const modalVerificarCodigo = document.getElementById('modalVerificarCodigo');
-  if (!formVerificarCodigo || !alertaGlobal) return;
-
-  formVerificarCodigo.addEventListener('submit', (evento) => {
-    evento.preventDefault();
-    actualizarCodigoCompleto();
-
-    if (!codigoCompleto || codigoCompleto.value.length < otpInputs.length) {
-      mostrarAlertaGlobal('<div class="alert alert-danger d-flex align-items-center" role="alert">'
-        + '<div>Debes ingresar el código completo.</div></div>');
-      return;
-    }
-
-    enviarFormularioPorAjax(formVerificarCodigo, {
-      alHaberExito: () => {
-        const modalNuevaContrasena = document.getElementById('modalNuevaContrasena');
-        if (!modalNuevaContrasena) return;
-
-        bootstrap.Modal.getInstance(modalVerificarCodigo)?.hide();
-        bootstrap.Modal.getOrCreateInstance(modalNuevaContrasena).show();
-      },
-      alHaberError: () => {
-        otpInputs.forEach((input) => { input.value = ''; });
-        actualizarCodigoCompleto();
-        if (otpInputs[0]) otpInputs[0].focus();
-      },
-    });
-  });
-}
-
-
-// --- 7. Modal: nueva contraseña ---
+// --- 5. Modal: nueva contraseña ---
 function activarModalNuevaContrasena() {
   const formNuevaContrasena = document.getElementById('formNuevaContrasena');
   const modalNuevaContrasena = document.getElementById('modalNuevaContrasena');
@@ -377,4 +282,42 @@ function activarModalNuevaContrasena() {
       },
     });
   });
+}
+
+
+// --- 6. Validar el token que llega por el link del correo ---
+function activarValidacionTokenPorLink() {
+  const parametros = new URLSearchParams(window.location.search);
+  const token = parametros.get('token');
+  if (!token) return;
+
+  const modalNuevaContrasena = document.getElementById('modalNuevaContrasena');
+  if (!modalNuevaContrasena) return;
+
+  const urlBase = modalNuevaContrasena.dataset.urlValidarToken;
+  if (!urlBase) return;
+
+  const separador = urlBase.includes('?') ? '&' : '?';
+  const urlValidar = `${urlBase}${separador}token=${encodeURIComponent(token)}`;
+
+  // Quitar el token de la barra de direcciones para que no se reutilice
+  // si el usuario recarga la página.
+  const limpiarUrl = () => {
+    window.history.replaceState({}, document.title, window.location.pathname);
+  };
+
+  fetch(urlValidar)
+    .then((respuesta) => respuesta.text())
+    .then((html) => {
+      mostrarAlertaGlobal(html);
+      limpiarUrl();
+
+      if (html.includes('alert-success')) {
+        bootstrap.Modal.getOrCreateInstance(modalNuevaContrasena).show();
+      }
+    })
+    .catch(() => {
+      mostrarAlertaGlobal(alertaDeErrorDeConexion());
+      limpiarUrl();
+    });
 }
