@@ -5,11 +5,13 @@ namespace BioGuppy\Controller\Zoocriadero;
 use BioGuppy\Model\ZoocriaderoCor\Zoocriaderocor;
 use PDO;
 use BioGuppy\Controller\Traits\BitacoraTrait;
+use BioGuppy\Controller\Traits\DireccionTrait;
 
 class ZoocriaderoController
 {
 
     use BitacoraTrait;
+    use DireccionTrait;
 
             public function listZoo()
     {
@@ -176,10 +178,12 @@ class ZoocriaderoController
         }
 
         //Validar formato
-        if (!preg_match('/^(Calle|Carrera|Avenida)\b/iu', $direccion)) {
+        $direccion = $this->normalizarDireccion($direccion);
+
+        if (!$this->direccionValida($direccion)) {
 
             $_SESSION['error'] =
-                "La dirección debe iniciar con Calle, Carrera o Avenida.";
+                $this->mensajeDireccionInvalida();
 
             redirect(
                 getUrl(
@@ -574,10 +578,12 @@ class ZoocriaderoController
             exit();
         }
 
-        if (!preg_match('/^(Calle|Carrera|Avenida)\b/iu', $direccion)) {
+        $direccion = $this->normalizarDireccion($direccion);
+
+        if (!$this->direccionValida($direccion)) {
 
             $_SESSION['error'] =
-                "La dirección debe iniciar con Calle, Carrera o Avenida.";
+                $this->mensajeDireccionInvalida();
 
             redirect(
                 getUrl(

@@ -18,8 +18,13 @@
                     <label for="direccion" class="form-label fw-semibold text-secondary small text-uppercase">Dirección del Zoocriadero *</label>
                     <div class="input-group shadow-sm rounded-3 overflow-hidden border bg-white">
                         <span class="input-group-text bg-white border-0 text-muted ps-3"><i class="bi bi-geo-alt"></i></span>
-                        <input type="text" class="form-control border-0 bg-white py-2 shadow-none" id="direccion" name="direccion" pattern="^(Calle|Carrera|Avenida)\b.*" title="Debe iniciar con Calle, Carrera o Avenida" value="<?php echo htmlspecialchars($zoocriadero['direccion']); ?>" required>
+                        <input type="text" class="form-control border-0 bg-white py-2 shadow-none input-direccion" id="direccion" name="direccion" autocomplete="off" maxlength="100"
+                                       data-url="<?php echo getUrl('Zoocriadero', 'Zoocriadero', 'buscarDireccion', false, 'ajax'); ?>"
+                                       data-sugerencias="sugerenciasDireccionEdicion" data-error="errorDireccionEdicion" value="<?php echo htmlspecialchars($zoocriadero['direccion']); ?>" required>
                     </div>
+                    <div class="list-group shadow-sm rounded-3 mt-1 d-none sugerencias-direccion" id="sugerenciasDireccionEdicion" style="max-height: 240px; overflow-y: auto;"></div>
+                    <div class="text-danger small ms-1 mt-1 d-none" id="errorDireccionEdicion"></div>
+                    <div class="form-text text-muted small ms-1 mt-1">Escribe la vía (ej: Calle 5), elige una opción y completa la placa: Calle 5 # 36-05.</div>
                 </div>
             </div>
 

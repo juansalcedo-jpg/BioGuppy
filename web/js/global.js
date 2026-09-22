@@ -590,30 +590,131 @@ $(document).on("submit", "#formGenerarReporte", function (event) {
 });
 
 
+// ======================================================
+// AUTOCOMPLETADO DE DIRECCIONES (Nominatim / OpenStreetMap)
+//
+// FUNCIONA PARA:
+// - CREAR / EDITAR ZOOCRIADERO
+// - CREAR / EDITAR SITIO DE TERRENO
+//
+// El input necesita la clase "input-direccion" y:
+//   data-url          -> ajax.php?...&funcion=buscarDireccion
+//   data-sugerencias  -> id del div donde se pintan las opciones
+//   data-error        -> id del div donde se muestra el error
+// El servidor devuelve las opciones ya en HTML.
+// ======================================================
+const PATRON_DIRECCION = /^(Calle|Carrera|Avenida)\s+(\d{1,3}\s?[A-Z]?(\s?Bis)?(\s?[A-Z])?|[A-ZÁÉÍÓÚÑ]{3,}(\s[A-ZÁÉÍÓÚÑ]{2,}){0,3})(\s(Norte|Sur|Este|Oeste))?\s*#\s*\d{1,3}\s?[A-Z]?(\s?Bis)?\s*-\s*\d{1,3}(\s(Norte|Sur|Este|Oeste))?$/iu;
 
+let temporizadorDireccion = null;
+let peticionDireccion = null;
 
+function ocultarSugerenciasDireccion() {
+    $(".sugerencias-direccion").addClass("d-none").html("");
+}
 
+function mostrarErrorDireccion(input, mensaje) {
+    const error = $("#" + input.attr("data-error"));
+    const grupo = input.closest(".input-group");
 
+    if (mensaje) {
+        error.text(mensaje).removeClass("d-none");
+        grupo.addClass("border-danger");
+    } else {
+        error.text("").addClass("d-none");
+        grupo.removeClass("border-danger");
+    }
+}
 
+// Mientras escribe: espera 700 ms sin teclear y consulta
+$(document).on("input", ".input-direccion", function () {
+    const input = $(this);
+    const lista = $("#" + input.attr("data-sugerencias"));
+    const texto = input.val().trim();
+    const via = texto.split("#")[0].trim();
 
+    mostrarErrorDireccion(input, null);
+    clearTimeout(temporizadorDireccion);
 
+    if (peticionDireccion) {
+        peticionDireccion.abort();
+    }
 
+    // Si ya está escribiendo la placa (después del #) o escribió muy poco, no se busca
+    if (texto.indexOf("#") !== -1 || via.length < 4) {
+        lista.addClass("d-none").html("");
+        return;
+    }
 
+    temporizadorDireccion = setTimeout(function () {
+        lista.removeClass("d-none").html(
+            '<div class="list-group-item small text-muted py-2">' +
+            '<span class="spinner-border spinner-border-sm me-2"></span>Buscando direcciones...' +
+            "</div>"
+        );
 
+        peticionDireccion = $.ajax({
+            url: input.attr("data-url"),
+            type: "GET",
+            data: { direccion: via },
+            success: function (html) {
+                lista.html(html);
+            },
+            error: function (xhr, estado) {
+                if (estado !== "abort") {
+                    lista.html('<div class="list-group-item small text-danger py-2">No se pudo consultar las direcciones.</div>');
+                }
+            }
+        });
+    }, 700);
+});
 
+// Al elegir una opción: se pone en el input y el cursor queda listo para la placa
+$(document).on("click", ".opcion-direccion", function () {
+    const lista = $(this).closest(".sugerencias-direccion");
+    const input = $('.input-direccion[data-sugerencias="' + lista.attr("id") + '"]');
+    const valor = $(this).attr("data-direccion");
 
+    input.val(valor).trigger("focus");
+    input[0].setSelectionRange(valor.length, valor.length);
 
+    ocultarSugerenciasDireccion();
+    mostrarErrorDireccion(input, null);
+});
 
+// Cerrar la lista al hacer clic afuera o con Escape
+$(document).on("click", function (event) {
+    if (!$(event.target).closest(".input-direccion, .sugerencias-direccion").length) {
+        ocultarSugerenciasDireccion();
+    }
+});
 
+$(document).on("keydown", ".input-direccion", function (event) {
+    if (event.key === "Escape") {
+        ocultarSugerenciasDireccion();
+    }
+});
 
+// Validar antes de enviar. Se registra en fase de captura para que corra
+// antes del envío por AJAX del modal y lo pueda detener si hay error.
+document.addEventListener("submit", function (event) {
+    const campo = event.target.querySelector(".input-direccion");
 
+    if (!campo) {
+        return;
+    }
 
+    const input = $(campo);
+    campo.value = campo.value.replace(/\s+/g, " ").trim();
 
+    if (!PATRON_DIRECCION.test(campo.value)) {
+        event.preventDefault();
+        event.stopPropagation();
 
+        const mensaje = campo.value.indexOf("#") !== -1
+            ? "Completa la placa, por ejemplo: " + campo.value.split("#")[0].trim() + " # 36-05"
+            : "Formato no válido. Ejemplo: Calle 5 # 36-05, Carrera 8A # 3-15 o Avenida Roosevelt # 38-20";
 
-
-
-
-
-
-
+        mostrarErrorDireccion(input, mensaje);
+        campo.focus();
+    }
+}, true);

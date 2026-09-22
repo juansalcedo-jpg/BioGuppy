@@ -80,12 +80,14 @@
                             <label for="direccion" class="form-label text-dark fw-bold small mb-1">Dirección <span class="text-danger">*</span></label>
                             <div class="input-group input-group-lg rounded-4 overflow-hidden border bg-white shadow-xs">
                                 <span class="input-group-text bg-transparent border-0 text-muted ps-3"><i class="bi bi-geo-alt fs-5"></i></span>
-                                <input type="text" class="form-control border-0 bg-transparent py-2 fs-6 shadow-none" id="direccion" name="direccion"
-                                       pattern="^(Calle|Carrera|Avenida)\b.*"
-                                       title="Debe iniciar con Calle, Carrera o Avenida"
+                                <input type="text" class="form-control border-0 bg-transparent py-2 fs-6 shadow-none input-direccion" id="direccion" name="direccion" autocomplete="off" maxlength="100"
+                                       data-url="<?php echo getUrl('Sitios', 'Sitios', 'buscarDireccion', false, 'ajax'); ?>"
+                                       data-sugerencias="sugerenciasDireccionEdicion" data-error="errorDireccionEdicion"
                                        value="<?php echo htmlspecialchars($sitio['direccion']); ?>" required>
                             </div>
-                            <div class="form-text text-muted small ms-1 mt-1">Debe iniciar con Calle, Carrera o Avenida.</div>
+                            <div class="list-group shadow-sm rounded-3 mt-1 d-none sugerencias-direccion" id="sugerenciasDireccionEdicion" style="max-height: 240px; overflow-y: auto;"></div>
+                            <div class="text-danger small ms-1 mt-1 d-none" id="errorDireccionEdicion"></div>
+                            <div class="form-text text-muted small ms-1 mt-1">Escribe la vía (ej: Calle 5), elige una opción y completa la placa: Calle 5 # 36-05.</div>
                         </div>
 
                     </div>

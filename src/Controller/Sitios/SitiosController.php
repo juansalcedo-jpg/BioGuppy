@@ -5,6 +5,7 @@ namespace BioGuppy\Controller\Sitios;
 use BioGuppy\Model\Sitios\SitiosModel;
 use PDO;
 use BioGuppy\Controller\Traits\BitacoraTrait;
+use BioGuppy\Controller\Traits\DireccionTrait;
 class SitiosController{
 
         private function consultarSeguro($obj, $sql, $params = []){
@@ -17,6 +18,7 @@ class SitiosController{
     }
 
     use BitacoraTrait;
+    use DireccionTrait;
 
             public function listSit(){
 
@@ -89,8 +91,10 @@ class SitiosController{
             exit();
         }
 
-        if(!preg_match('/^(Calle|Carrera|Avenida)\b/iu', $direccion)){
-            $_SESSION['error'] = "La dirección debe iniciar con Calle, Carrera o Avenida.";
+        $direccion = $this->normalizarDireccion($direccion);
+
+        if(!$this->direccionValida($direccion)){
+            $_SESSION['error'] = $this->mensajeDireccionInvalida();
             redirect(getUrl('Sitios','Sitios','createSit'));
             exit();
         }
@@ -197,8 +201,10 @@ class SitiosController{
             exit();
         }
 
-        if(!preg_match('/^(Calle|Carrera|Avenida)\b/iu', $direccion)){
-            $_SESSION['error'] = "La dirección debe iniciar con Calle, Carrera o Avenida.";
+        $direccion = $this->normalizarDireccion($direccion);
+
+        if(!$this->direccionValida($direccion)){
+            $_SESSION['error'] = $this->mensajeDireccionInvalida();
             redirect(getUrl('Sitios','Sitios','editSit',['id'=>$id]));
             exit();
         }
