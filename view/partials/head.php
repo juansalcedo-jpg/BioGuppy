@@ -83,5 +83,93 @@ body.modo-deuteranopia {
 body.modo-tritanopia {
     filter: url(#filtro-tritanopia);
 }
+
+body {
+    transition: background-color .2s ease, color .2s ease;
+}
+
+body.tema-oscuro {
+    background-color: #0f172a;
+    color: #e2e8f0;
+}
+
+body.tema-oscuro .topbar {
+    background-color: #16213a !important;
+    border-bottom-color: #263354 !important;
+}
+
+body.tema-oscuro .topbar-date,
+body.tema-oscuro .menu-icon,
+body.tema-oscuro .btn-accesibilidad {
+    color: #c9d4e6 !important;
+}
+
+body.tema-oscuro .dropdown-menu {
+    background-color: #16213a;
+    border-color: #263354;
+}
+
+body.tema-oscuro .dropdown-item {
+    color: #e2e8f0;
+}
+
+body.tema-oscuro .dropdown-item:hover,
+body.tema-oscuro .dropdown-item:focus {
+    background-color: #263354;
+    color: #fff;
+}
+
+body.tema-oscuro .card,
+body.tema-oscuro .modal-content,
+body.tema-oscuro .bg-white {
+    background-color: #16213a !important;
+    color: #e2e8f0 !important;
+    border-color: #263354 !important;
+}
+
+body.tema-oscuro .table {
+    color: #e2e8f0;
+}
+
+body.tema-oscuro .table > :not(caption) > * > * {
+    background-color: #16213a;
+    color: #e2e8f0;
+    border-bottom-color: #263354;
+}
+
+body.tema-oscuro .table-dark {
+    --bs-table-bg: #10254a;
+}
+
+body.tema-oscuro .table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: #1b2942;
+}
+
+body.tema-oscuro .form-control,
+body.tema-oscuro .form-select {
+    background-color: #16213a;
+    color: #e2e8f0;
+    border-color: #263354;
+}
+
+body.tema-oscuro .form-control::placeholder {
+    color: #7d8aa3;
+}
+
+body.tema-oscuro .text-dark,
+body.tema-oscuro .text-body,
+body.tema-oscuro .text-secondary {
+    color: #ffffff !important;
+}
+
+body.tema-oscuro .text-muted {
+    color: #93a3bf !important;
+}
+
+body.tema-oscuro .border,
+body.tema-oscuro .border-bottom,
+body.tema-oscuro .border-top {
+    border-color: #263354 !important;
+}
     </style>
 </head>
