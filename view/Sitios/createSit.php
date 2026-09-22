@@ -6,7 +6,7 @@
     <div class="col-xl-9">
 
       <div class="mb-4">
-        <h4 class="fw-semibold mb-1">Registrar sitio de terreno</h4>
+        <h4 class="fw-semibold mb-1">Registrar Sitio de Terreno</h4>
         <p class="text-muted small mb-0">Agrega un nuevo sitio donde se realizarán actividades de terreno.</p>
       </div>
 
@@ -22,7 +22,7 @@
 
             <div class="row g-3">
               <div class="col-md-12">
-                <label for="nombresitio" class="form-label fw-semibold">Nombre del sitio</label>
+                <label for="nombresitio" class="form-label fw-semibold">Nombre del Sitio</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light"><i class="bi bi-signpost"></i></span>
                   <input type="text" class="form-control" id="nombresitio" name="nombresitio"

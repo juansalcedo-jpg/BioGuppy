@@ -32,7 +32,7 @@
           </div>
 
           <div class="col-md-6">
-            <label for="codtipotanque" class="form-label fw-semibold">Tipo de tanque</label>
+            <label for="codtipotanque" class="form-label fw-semibold">Tipo de Tanques</label>
             <select class="form-select" id="codtipotanque" name="codtipotanque">
               <?php
                 $hayTipos = isset($tiposTanque) && $tiposTanque && $tiposTanque->rowCount() > 0;
@@ -68,7 +68,7 @@
           </div>
 
           <div class="col-md-6">
-            <label for="numero_tanque" class="form-label fw-semibold">Número de tanque</label>
+            <label for="numero_tanque" class="form-label fw-semibold">Número de Tanques</label>
             <div class="input-group">
               <span class="input-group-text bg-light"><i class="bi bi-hash"></i></span>
               <input type="text" class="form-control" id="numero_tanque" name="numero_tanque_preview"
