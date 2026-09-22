@@ -5,6 +5,7 @@ include_once '../view/partials/head.php';
 
 echo "<body>";
 echo "<div class='app-layout'>";
+echo "<div class='sidebar-backdrop'></div>"; 
 
     if(!isset($_GET['modulo'])){
         $_GET['modulo']      = $_SESSION['modulo']      ?? null;

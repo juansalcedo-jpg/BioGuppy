@@ -43,6 +43,16 @@ $funcion = $_GET['funcion'] ?? '';
     .sn-menu-link.active {
         color: #159EE8;
     }
+
+    @media (max-width: 991.98px) {
+    .sidebar-biogu {
+        transform: translateX(-100%);
+        z-index: 1050;
+    }
+    .app-layout.sidebar-collapsed .sidebar-biogu {
+        transform: translateX(0);
+    }
+}
 </style>
 <aside class="sidebar-biogu d-flex flex-column vh-100 position-fixed top-0 start-0">
 

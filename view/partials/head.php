@@ -24,12 +24,12 @@
             font-family: 'Segoe UI', Arial, sans-serif;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* la página en sí nunca hace scroll */
+            overflow: hidden; 
         }
         .app-layout {
             display: flex;
             flex: 1 1 auto;
-            min-height: 0; /* permite que el contenido interno se encoja y scrollee en vez de crecer */
+            min-height: 0; 
         }
 
         
@@ -42,10 +42,29 @@
             min-height: 0;
             transition: margin-left .25s ease;
         }
+        @media (max-width: 991.98px) {
+    .main-content {
+        margin-left: 0 !important;
+    }
+}
+
+.sidebar-backdrop {
+    display: none;
+}
+
+@media (max-width: 991.98px) {
+    .app-layout.sidebar-collapsed .sidebar-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1040;
+    }
+}
         .page-content {
             flex: 1 1 auto;
             min-height: 0;
-            overflow-y: auto; /* único punto de scroll de toda la app */
+            overflow-y: auto; 
             padding: 24px;
         }
 
