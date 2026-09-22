@@ -1,31 +1,76 @@
-<div class="container-fluid py-4 bg-light min-vh-100">
-    <div class="row justify-content-center">
-        <div class="col-xl-12">
+<div class="container-fluid py-2">
 
+    <div class="row justify-content-center">
+
+<<<<<<< HEAD
             <!-- Alertas de Sesión o Errores -->
             <?php if(isset($_SESSION['error'])): ?>
                 <div class="alert alert-danger d-flex align-items-center mb-4 shadow-sm border-0 rounded-4">
                     <i class="bi bi-exclamation-triangle-fill me-3 fs-4 text-danger"></i>
                     <div><?php echo htmlspecialchars($_SESSION['error']); ?></div>
+=======
+        <div class="col-xl-11">
+
+            <div class="d-flex flex-wrap align-items-end justify-content-between mb-4 gap-2">
+
+                <div>
+
+                    <h4 class="fw-semibold mb-1">
+                        Mis actividades — Terreno
+                    </h4>
+
+                    <p class="text-muted small mb-0">
+                        Consulta y filtra las actividades de terreno que has registrado.
+                    </p>
+
                 </div>
+
+            </div>
+
+
+            <?php if(isset($_SESSION['error'])): ?>
+
+                <div class="alert alert-danger d-flex align-items-center mb-3" role="alert">
+
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+                    <div>
+                        <?php echo htmlspecialchars($_SESSION['error']); ?>
+                    </div>
+
+>>>>>>> f9469daa2251999c245857af06840f7437ecb8e3
+                </div>
+
                 <?php unset($_SESSION['error']); ?>
+
             <?php endif; ?>
 
+<<<<<<< HEAD
             <?php if(isset($_SESSION['exito'])): ?>
                 <div class="alert alert-success d-flex align-items-center mb-4 shadow-sm border-0 rounded-4">
                     <i class="bi bi-check-circle-fill me-3 fs-4 text-success"></i>
                     <div><?php echo htmlspecialchars($_SESSION['exito']); ?></div>
+=======
+
+            <?php if(isset($_SESSION['exito'])): ?>
+
+                <div class="alert alert-success d-flex align-items-center mb-3" role="alert">
+
+                    <i class="bi bi-check-circle-fill me-2"></i>
+
+                    <div>
+                        <?php echo htmlspecialchars($_SESSION['exito']); ?>
+                    </div>
+
+>>>>>>> f9469daa2251999c245857af06840f7437ecb8e3
                 </div>
+
                 <?php unset($_SESSION['exito']); ?>
+
             <?php endif; ?>
 
-            <?php if(!empty($errorFechas)): ?>
-                <div class="alert alert-danger d-flex align-items-center mb-4 shadow-sm border-0 rounded-4">
-                    <i class="bi bi-exclamation-triangle-fill me-3 fs-4 text-danger"></i>
-                    <div><?php echo htmlspecialchars($errorFechas); ?></div>
-                </div>
-            <?php endif; ?>
 
+<<<<<<< HEAD
             <!-- Encabezado de la Sección -->
             <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
                 <div>
@@ -42,75 +87,237 @@
                     </span>
                 </div>
             </div>
+=======
+            <div class="card border-0 shadow-sm">
 
-            <div class="row g-4">
-                
-                <!-- Panel Lateral de Filtros -->
-                <div class="col-lg-3">
-                    <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 20px;">
-                        <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
-                            <span class="fw-bold text-dark"><i class="bi bi-sliders me-2 text-primary"></i>Filtros</span>
-                            <a href="index.php?modulo=ActividadesTer&controlador=ActividadesTer&funcion=listActTer" class="text-decoration-none small text-muted">Limpiar</a>
+                <div class="card-header bg-white border-bottom py-3">
+
+                    <div class="d-flex align-items-center mb-3">
+
+                        <i class="bi bi-file-earmark-text text-primary me-2 fs-5"></i>
+
+                        <span class="fw-semibold">
+                            Actividades registradas por mí
+                        </span>
+
+                    </div>
+
+
+                    <form
+                        id="formFiltroMisActividadesTer"
+                        action="<?php echo getUrl('ActividadesTer','ActividadesTer','filtro',false,'ajax'); ?>"
+                        method="POST">
+
+                        <div class="row g-2 align-items-end">
+
+
+                            <div class="col-6 col-md-2">
+
+                                <label
+                                    for="btnMesFiltro"
+                                    class="form-label small text-muted mb-1">
+
+                                    Mes
+
+                                </label>
+
+                                <div class="dropdown">
+
+                                    <input
+                                        type="hidden"
+                                        id="mesFiltro"
+                                        name="mes"
+                                        value="">
+
+                                    <button
+                                        class="form-select form-select-sm text-start"
+                                        type="button"
+                                        id="btnMesFiltro"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+
+                                        Todos
+
+                                    </button>
+
+
+                                    <div class="dropdown-menu p-2">
+
+                                        <div class="fw-semibold bg-light px-2 py-1 mb-2">
+
+                                            <?php echo date('Y'); ?>
+
+                                        </div>
+
+
+                                        <div class="row row-cols-4 g-1">
+
+                                            <?php
+
+                                            $meses=[
+                                                '01'=>'Ene',
+                                                '02'=>'Feb',
+                                                '03'=>'Mar',
+                                                '04'=>'Abr',
+                                                '05'=>'May',
+                                                '06'=>'Jun',
+                                                '07'=>'Jul',
+                                                '08'=>'Ago',
+                                                '09'=>'Sept',
+                                                '10'=>'Oct',
+                                                '11'=>'Nov',
+                                                '12'=>'Dic'
+                                            ];
+
+                                            foreach($meses as $numero=>$nombre):
+
+                                            ?>
+
+                                                <div class="col">
+
+                                                    <button
+                                                        type="button"
+                                                        class="dropdown-item text-center px-2"
+                                                        onclick="seleccionarMes(
+                                                            '<?php echo date('Y').'-'.$numero; ?>',
+                                                            '<?php echo $nombre; ?>'
+                                                        )">
+
+                                                        <?php echo $nombre; ?>
+
+                                                    </button>
+
+                                                </div>
+
+                                            <?php endforeach; ?>
+
+                                        </div>
+
+
+                                        <div class="border-top mt-2 pt-2">
+
+                                            <button
+                                                type="button"
+                                                class="btn btn-link btn-sm text-decoration-none p-0"
+                                                onclick="seleccionarMes('','Todos')">
+
+                                                Borrar
+
+                                            </button>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-12 col-md-3">
+
+                                <label
+                                    for="selectDeposito"
+                                    class="form-label small text-muted mb-1">
+
+                                    Depósito
+
+                                </label>
+
+                                <select
+                                    id="selectDeposito"
+                                    name="coddeposito"
+                                    class="form-select form-select-sm">
+
+                                    <option value="">
+                                        Todos
+                                    </option>
+
+                                    <?php if(isset($depositos)&&$depositos): ?>
+
+                                        <?php while($dep=$depositos->fetch(PDO::FETCH_ASSOC)): ?>
+
+                                            <option value="<?php echo $dep['id']; ?>">
+
+                                                <?php
+                                                echo htmlspecialchars(
+                                                    $dep['tipodeposito'].' — '.$dep['nombresitio']
+                                                );
+                                                ?>
+
+                                            </option>
+
+                                        <?php endwhile; ?>
+
+                                    <?php endif; ?>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="col-12 col-md-3">
+
+                                <label
+                                    for="selectTipoActividad"
+                                    class="form-label small text-muted mb-1">
+
+                                    Tipo de actividad
+
+                                </label>
+
+                                <select
+                                    id="selectTipoActividad"
+                                    name="tipoactividad"
+                                    class="form-select form-select-sm">
+
+                                    <option value="">
+                                        Todos
+                                    </option>
+
+                                    <option value="Inspección">
+                                        Inspección
+                                    </option>
+
+                                    <option value="Siembra">
+                                        Siembra
+                                    </option>
+
+                                    <option value="Seguimiento">
+                                        Seguimiento
+                                    </option>
+
+                                    <option value="Resiembra">
+                                        Resiembra
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="col-12 col-md-2 d-grid">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary btn-sm">
+
+                                    <i class="bi bi-funnel me-1"></i>
+
+                                    Filtrar
+
+                                </button>
+
+                            </div>
+>>>>>>> f9469daa2251999c245857af06840f7437ecb8e3
+
                         </div>
 
-                        <form action="index.php" method="GET">
-                            <input type="hidden" name="modulo" value="ActividadesTer">
-                            <input type="hidden" name="controlador" value="ActividadesTer">
-                            <input type="hidden" name="funcion" value="listActTer">
+                    </form>
 
-                            <div class="mb-3">
-                                <label for="fechaDesde" class="form-label small fw-semibold text-secondary">Fecha Desde</label>
-                                <input type="date" id="fechaDesde" name="fechaDesde" class="form-control bg-light border-0 rounded-3 py-2"
-                                    max="<?php echo date('Y-m-d'); ?>"
-                                    value="<?php echo htmlspecialchars($_GET['fechaDesde']??''); ?>">
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="fechaHasta" class="form-label small fw-semibold text-secondary">Fecha Hasta</label>
-                                <input type="date" id="fechaHasta" name="fechaHasta" class="form-control bg-light border-0 rounded-3 py-2"
-                                    max="<?php echo date('Y-m-d'); ?>"
-                                    value="<?php echo htmlspecialchars($_GET['fechaHasta']??''); ?>">
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="codsitio" class="form-label small fw-semibold text-secondary">Sitio</label>
-                                <select id="codsitio" name="codsitio" class="form-select bg-light border-0 rounded-3 py-2">
-                                    <option value="">Todos los sitios</option>
-                                    <?php if(isset($sitios)&&$sitios): ?>
-                                        <?php while($sitio=$sitios->fetch(PDO::FETCH_ASSOC)): ?>
-                                            <option value="<?php echo $sitio['codsitio']; ?>"
-                                                <?php echo (($_GET['codsitio']??'')==$sitio['codsitio'])?'selected':''; ?>>
-                                                <?php echo htmlspecialchars($sitio['nombresitio']); ?>
-                                            </option>
-                                        <?php endwhile; ?>
-                                    <?php endif; ?>
-                                </select>
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="codtipoactividad" class="form-label small fw-semibold text-secondary">Tipo de Actividad</label>
-                                <select id="codtipoactividad" name="codtipoactividad" class="form-select bg-light border-0 rounded-3 py-2">
-                                    <option value="">Todas las actividades</option>
-                                    <?php if(isset($tiposActividad)&&$tiposActividad): ?>
-                                        <?php while($tipo=$tiposActividad->fetch(PDO::FETCH_ASSOC)): ?>
-                                            <option value="<?php echo $tipo['codtipoactividad']; ?>"
-                                                <?php echo (($_GET['codtipoactividad']??'')==$tipo['codtipoactividad'])?'selected':''; ?>>
-                                                <?php echo htmlspecialchars($tipo['nombreactividad']); ?>
-                                            </option>
-                                        <?php endwhile; ?>
-                                    <?php endif; ?>
-                                </select>
-                            </div>
-
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-dark rounded-pill py-2 fw-semibold shadow-sm">
-                                    <i class="bi bi-search me-1"></i> Aplicar Filtros
-                                </button>
-                            </div>
-                        </form>
-                    </div>
                 </div>
 
+<<<<<<< HEAD
                 <!-- Contenido Principal / Tabla Estilo Tarjeta Moderna -->
                 <div class="col-lg-9">
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
@@ -227,10 +434,282 @@
                         </div>
 
                     </div>
+=======
+
+                <div class="table-responsive">
+
+                    <table
+                        class="table table-striped align-middle mb-0"
+                        id="tablaMisActividadesTer">
+
+                        <thead class="table-dark">
+
+                            <tr>
+
+                                <th class="ps-4">
+                                    Fecha
+                                </th>
+
+                                <th>
+                                    Tipo de actividad
+                                </th>
+
+                                <th>
+                                    Depósito
+                                </th>
+
+                                <th>
+                                    Sitio
+                                </th>
+
+                                <th class="text-center">
+                                    Estado
+                                </th>
+
+                                <th class="text-center">
+                                    Editar
+                                </th>
+
+                                <th class="text-center">
+                                    Inhabilitar
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            <?php
+
+                            $filasActividades=
+                            (isset($actividades)&&$actividades)
+                            ?$actividades->fetchAll(PDO::FETCH_ASSOC)
+                            :[];
+
+                            ?>
+
+
+                            <?php if(!empty($filasActividades)): ?>
+
+                                <?php foreach($filasActividades as $act): ?>
+
+                                    <tr>
+
+                                        <td class="ps-4">
+
+                                            <?php echo htmlspecialchars($act['fecha']); ?>
+
+                                        </td>
+
+
+                                        <td class="fw-semibold">
+
+                                            <?php echo htmlspecialchars($act['tipo_actividad']); ?>
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <?php echo htmlspecialchars($act['deposito']); ?>
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <span class="text-muted small">
+
+                                                <?php echo htmlspecialchars($act['sitio']); ?>
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <td class="text-center">
+
+                                            <?php if($act['estado']==='A'): ?>
+
+                                                <span class="badge bg-success">
+                                                    Activo
+                                                </span>
+
+                                            <?php else: ?>
+
+                                                <span class="badge bg-danger">
+                                                    Inactivo
+                                                </span>
+
+                                            <?php endif; ?>
+
+                                        </td>
+
+
+                                        <td class="text-center">
+
+                                            <button
+                                                type="button"
+                                                class="btn btn-outline-primary btn-icon rounded-circle"
+                                                title="Editar"
+                                                onclick="cargarFormularioModal(
+                                                '<?php echo getUrl('ActividadesTer','ActividadesTer','getUpdate',array('id'=>$act['id'])); ?>',
+                                                'Editar actividad',
+                                                'actividadTerFormEdicion',
+                                                '<?php echo getUrl('ActividadesTer','ActividadesTer','listMisActividades'); ?>',
+                                                'tablaMisActividadesTer'
+                                                )">
+
+                                                <i class="bi bi-pencil-fill"></i>
+
+                                            </button>
+
+                                        </td>
+
+
+                                        <td class="text-center">
+
+                                            <?php if($act['estado']==='A'): ?>
+
+                                                <a
+                                                    href="<?php echo getUrl('ActividadesTer','ActividadesTer','delete',array('id'=>$act['id'])); ?>"
+                                                    class="btn btn-outline-danger btn-icon rounded-circle"
+                                                    title="Inhabilitar">
+
+                                                    <i class="bi bi-slash-circle"></i>
+
+                                                </a>
+
+                                            <?php else: ?>
+
+                                                <a
+                                                    href="<?php echo getUrl('ActividadesTer','ActividadesTer','delete',array('id'=>$act['id'])); ?>"
+                                                    class="btn btn-outline-success btn-icon rounded-circle"
+                                                    title="Activar">
+
+                                                    <i class="bi bi-check-lg"></i>
+
+                                                </a>
+
+                                            <?php endif; ?>
+
+                                        </td>
+
+                                    </tr>
+
+                                <?php endforeach; ?>
+
+
+                            <?php else: ?>
+
+                                <tr>
+
+                                    <td
+                                        colspan="7"
+                                        class="text-center text-muted py-5">
+
+                                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+
+                                        No has registrado actividades en este rango.
+
+                                    </td>
+
+                                </tr>
+
+                            <?php endif; ?>
+
+                        </tbody>
+
+                    </table>
+
+>>>>>>> f9469daa2251999c245857af06840f7437ecb8e3
                 </div>
 
             </div>
 
         </div>
+
     </div>
+<<<<<<< HEAD
 </div>
+=======
+
+</div>
+
+
+<script>
+
+function seleccionarMes(valor,texto){
+
+    document.getElementById('mesFiltro').value=valor;
+
+    document.getElementById('btnMesFiltro').textContent=texto;
+
+}
+
+
+var formFiltro=
+document.getElementById('formFiltroMisActividadesTer');
+
+
+if(formFiltro){
+
+    formFiltro.addEventListener('submit',function(evento){
+
+        evento.preventDefault();
+
+
+        var datos=
+        new FormData(formFiltro);
+
+
+        var tbody=
+        document.querySelector(
+            '#tablaMisActividadesTer tbody'
+        );
+
+
+        fetch(formFiltro.action,{
+
+            method:'POST',
+
+            body:datos
+
+        })
+
+        .then(function(respuesta){
+
+            return respuesta.text();
+
+        })
+
+        .then(function(html){
+
+            tbody.innerHTML=html;
+
+        })
+
+        .catch(function(){
+
+            tbody.innerHTML=
+            '<tr>'+
+            '<td colspan="7" class="text-center text-danger py-4">'+
+            'Ocurrió un error al filtrar. Intenta nuevamente.'+
+            '</td>'+
+            '</tr>';
+
+        });
+
+    });
+
+}
+
+</script>
+
+
+<?php
+include_once __DIR__.'/../partials/modalFormulario.php';
+?>
+>>>>>>> f9469daa2251999c245857af06840f7437ecb8e3
