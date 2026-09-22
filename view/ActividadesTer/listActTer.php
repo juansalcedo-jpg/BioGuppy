@@ -1,15 +1,10 @@
-<<<<<<< HEAD
 <?php
 $tipo = strtoupper($actividad['nombreactividad'] ?? '');
 ?>
-=======
-<div class="container-fluid py-3">
->>>>>>> 94f42b717d18a572b6069ed88a642a7a31c03a6e
 
 <div class="row justify-content-center">
   <div class="col-xl-11">
 
-<<<<<<< HEAD
     <?php if (isset($_SESSION['error'])): ?>
       <div class="alert alert-danger d-flex align-items-center mb-3">
         <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -19,20 +14,6 @@ $tipo = strtoupper($actividad['nombreactividad'] ?? '');
       </div>
       <?php unset($_SESSION['error']); ?>
     <?php endif; ?>
-=======
-        <div class="col-xl-11">
-
-
-            <?php if(isset($_SESSION['error'])): ?>
-
-                <div class="alert alert-danger d-flex align-items-center mb-3">
-
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-
-                    <div>
-                        <?php echo htmlspecialchars($_SESSION['error']); ?>
-                    </div>
->>>>>>> 94f42b717d18a572b6069ed88a642a7a31c03a6e
 
     <?php if (isset($_SESSION['exito'])): ?>
       <div class="alert alert-success d-flex align-items-center mb-3">
