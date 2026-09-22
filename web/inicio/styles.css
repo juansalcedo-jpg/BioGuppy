@@ -414,7 +414,7 @@ background: var(--gov-azul-claro-suave);
   line-height: 1.65;
   color: rgba(255,255,255,0.85);
 }
-.contenido-informativo em{ color: var(--gov-naranja); font-style: normal; font-weight: 600; }
+.contenido-informativo em{font-style:oblique; font-weight: 600; }
 
 
 .contenedor-acceso.saliendo{
@@ -611,9 +611,20 @@ background: var(--gov-azul-claro-suave);
 
 
 @media (max-width: 980px){
-  .contenedor-acceso{ grid-template-columns: 1fr; } 
-  .panel-informativo{ order: -1; padding: 44px clamp(24px, 6vw, 60px) 40px; } 
-  .radar{ width: 200px; margin-bottom: 24px; }
+  .contenedor-acceso{
+    grid-template-columns: 1fr;
+    background: #ffffff;
+  }
+  .panel{
+    width: 100%;
+    background: #ffffff;
+    padding: 40px clamp(24px, 6vw, 60px) 32px;
+  }
+  .panel-informativo{
+    padding: 40px clamp(24px, 6vw, 60px) 48px;
+    background: linear-gradient(160deg, var(--gov-azul-oscuro), var(--gov-marine));
+  }
+  .radar{ width: 180px; margin-bottom: 20px; }
 }
 
 @media (max-width: 560px){
