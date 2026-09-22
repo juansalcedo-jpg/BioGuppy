@@ -35,7 +35,7 @@
                             <div class="col-md-6">
                                 <label for="porcentaje_agua" class="form-label fw-semibold">Porcentaje de agua cambiada (%) *</label>
                                 <div class="input-group input-group-lg">
-                                    <input type="number" step="0.01" min="0" max="100" class="form-control fs-6" id="porcentaje_agua" name="porcentaje_agua" required>
+                                    <input type="number" step="1" min="0" max="100" class="form-control fs-6" id="porcentaje_agua" name="porcentaje_agua" required>
                                     <span class="input-group-text bg-light text-secondary fs-6">%</span>
                                 </div>
                             </div>
