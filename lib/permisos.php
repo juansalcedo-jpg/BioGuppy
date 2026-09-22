@@ -1,10 +1,6 @@
 <?php
 
-<<<<<<< HEAD
-$GLOBALS['MODULOS_PUBLICOS'] = ['Acceso', 'CambioContra', 'Inicio'];
-=======
 $GLOBALS['MODULOS_PUBLICOS'] = ['Acceso', 'CambioContra', 'index', 'SobreNosotros'];  
->>>>>>> 39ada9713aacf2e61f028ab7acbf1ef4974df8fb
 
 
 function clasificarAccionPorFuncion($funcion)
