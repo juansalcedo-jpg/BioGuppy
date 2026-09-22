@@ -36,26 +36,24 @@
     color: #374151;
 }
 
-.notification-wrapper {
-    position: relative;
+.btn-accesibilidad {
+    background: none;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
     cursor: pointer;
-}
-
-.notification-icon {
-    width: 20px;
-    height: 20px;
     color: #4b5563;
+    font-size: 20px;
 }
 
-.notification-dot {
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    width: 8px;
-    height: 8px;
-    background-color: #f59e0b;
-    border-radius: 50%;
-    border: 2px solid #ffffff;
+.btn-accesibilidad:hover {
+    color: #159EE8;
+}
+
+.accesibilidad-wrapper .dropdown-item.filtro-activo {
+    font-weight: 600;
+    color: #159EE8;
 }
 
 </style>
@@ -84,13 +82,19 @@
             echo $formatter->format(new DateTime());
         ?>
     </span>
+ <div class="dropdown accesibilidad-wrapper">
+    <button class="btn-accesibilidad" id="btnDaltonismo" type="button"
+            data-bs-toggle="dropdown" aria-expanded="false" title="Modo para daltonismo">
+        <i class="bi bi-eye"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="btnDaltonismo">
+        <li><a class="dropdown-item" href="#" data-filtro="ninguno">Sin filtro</a></li>
+        <li><a class="dropdown-item" href="#" data-filtro="protanopia">Protanopia</a></li>
+        <li><a class="dropdown-item" href="#" data-filtro="deuteranopia">Deuteranopia</a></li>
+        <li><a class="dropdown-item" href="#" data-filtro="tritanopia">Tritanopia</a></li>
+    </ul>
+</div>
+    
+    </div>
 
-    <div class="notification-wrapper">
-        <svg class="notification-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
-        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-        </svg>
-        <span class="notification-dot"></span>
-    </div>
-    </div>
 </div>

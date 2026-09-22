@@ -24,6 +24,8 @@
             display: flex;
             min-height: 100vh;
         }
+
+        
         .main-content {
             margin-left: var(--sidebar-width);
             flex: 1;
@@ -41,5 +43,17 @@
         .app-layout.sidebar-collapsed .main-content {
             margin-left: 0;
         }
+
+        body.modo-protanopia {
+    filter: url(#filtro-protanopia);
+}
+
+body.modo-deuteranopia {
+    filter: url(#filtro-deuteranopia);
+}
+
+body.modo-tritanopia {
+    filter: url(#filtro-tritanopia);
+}
     </style>
 </head>
