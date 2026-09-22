@@ -24,13 +24,6 @@ $repTerActivo   = ($funcion == 'listRepoTer');
 </li>
 
 <li class="nav-item">
-  <a class="nav-link fw-semibold d-flex align-items-center <?php echo $depositosActivo ? 'active' : ''; ?>"
-    href="<?php echo getUrl('Depositos', 'Depositos', 'listDep') ?>">
-    <i class="bi bi-bucket me-2"></i> Depósitos
-  </a>
-</li>
-
-<li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $sitiosActivo ? 'active' : ''; ?>"
     href="<?php echo getUrl('Sitios', 'Sitios', 'listSit') ?>">
     <i class="bi bi-house-door me-2"></i> Sitios de Terreno
