@@ -13,9 +13,9 @@ class PerfilController{
 
     private const FOTO_MAX_BYTES = 2 * 1024 * 1024;
     private const FOTO_TIPOS = [
-        'image/jpeg' => 'jpg',   // Fotos .jpg / .jpeg
-        'image/png'  => 'png',   // Imágenes .png
-        'image/webp' => 'webp',  // Imágenes .webp
+        'image/jpeg' => 'jpg',   
+        'image/png'  => 'png',  
+        'image/webp' => 'webp',  
     ];
 
     private function codUsuarioSesion(){
