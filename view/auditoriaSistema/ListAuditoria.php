@@ -35,7 +35,7 @@
         </div>
 
         <div class="col-md-2">
-          <button type="submit" class="btn btn-sm btn-primary w-100">
+          <button type="submit" class="btn btn-sm w-100 style="background-color: #fd0d0d; border-color: #0d6efd;">
             <i class="bi bi-funnel me-1"></i>Filtrar
           </button>
         </div>
