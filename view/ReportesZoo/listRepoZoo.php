@@ -15,7 +15,7 @@
                     </div>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-outline-secondary btn-sm px-3 rounded-pill fw-semibold" onclick="location.reload();">
+                    <button type="button" class="btn btn-outline-secondary btn-sm px-3 rounded-pill fw-semibold" style="color: #ce1a1a;   " onclick="location.reload();">
                         <i class="bi bi-arrow-clockwise me-1"></i> Restablecer
                     </button>
                 </div>

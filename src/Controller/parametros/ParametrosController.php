@@ -25,14 +25,14 @@ class ParametrosController{
 
         $sqlComunas = "SELECT codcomuna AS id, nombrecomuna, estado
                         FROM tblcomuna
-                        ORDER BY nombrecomuna ASC";
+                        ORDER BY codcomuna ASC";
         $resultComunas = $this->consultarSeguro($obj, $sqlComunas);
 
         $sqlBarrios = "SELECT b.codbarrio AS id, b.nombrebarrio, b.estado,
                               c.codcomuna, c.nombrecomuna
                         FROM tblbarrio b
                         INNER JOIN tblcomuna c ON c.codcomuna = b.codcomuna
-                        ORDER BY b.nombrebarrio ASC";
+                        ORDER BY c.codcomuna ASC";
         $resultBarrios = $this->consultarSeguro($obj, $sqlBarrios);
 
         include_once __DIR__ . '/../../../view/parametrosSistema/listParametros.php';

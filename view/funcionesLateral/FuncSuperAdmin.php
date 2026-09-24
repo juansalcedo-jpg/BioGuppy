@@ -1,20 +1,20 @@
 <?php
-$usuariosActivo = in_array($funcion, ['createUsu','listUsu','getUpdateUsu','postcreateUsu','postUpdateUsu','activacion']);
-$rolesActivo    = in_array($funcion, ['createRol','listRol','editRol','deleteRol','postcreateRol']);
+$usuariosActivo = in_array($funcion, ['createUsu', 'listUsu', 'getUpdateUsu', 'postcreateUsu', 'postUpdateUsu', 'activacion']);
+$rolesActivo    = in_array($funcion, ['createRol', 'listRol', 'editRol', 'deleteRol', 'postcreateRol']);
 $auditoriaActivo  = in_array($funcion, ['listAuditoria']);
 $parametrosActivo = in_array($funcion, ['listParametros']);
 ?>
 
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $usuariosActivo ? 'active' : ''; ?>"
-     href="<?php echo getUrl('Usuarios','Usuarios','listUsu') ?>">
+    href="<?php echo getUrl('Usuarios', 'Usuarios', 'listUsu') ?>">
     <i class="bi bi-people-fill me-2"></i> Usuarios
   </a>
 </li>
 
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $rolesActivo ? 'active' : ''; ?>"
-     href="<?php echo getUrl('Roles','Roles','listRol') ?>">
+    href="<?php echo getUrl('Roles', 'Roles', 'listRol') ?>">
     <i class="bi bi-shield-lock-fill me-2"></i> Roles
   </a>
 </li>
@@ -24,14 +24,14 @@ $parametrosActivo = in_array($funcion, ['listParametros']);
 
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $auditoriaActivo ? 'active' : ''; ?>"
-     href="<?php echo getUrl('Auditoria','Auditoria','listAuditoria') ?>">
+    href="<?php echo getUrl('Auditoria', 'Auditoria', 'listAuditoria') ?>">
     <i class="bi bi-activity me-2"></i> Auditoría del sistema
   </a>
 </li>
 
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $parametrosActivo ? 'active' : ''; ?>"
-     href="<?php echo getUrl('Parametros','Parametros','listParametros') ?>">
-    <i class="bi bi-gear-fill me-2"></i> Parámetros del sistema
+    href="<?php echo getUrl('Parametros', 'Parametros', 'listParametros') ?>">
+    <i class="bi bi-gear-fill me-2"></i> Gestión territorial
   </a>
 </li>

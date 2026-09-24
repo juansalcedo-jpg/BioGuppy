@@ -1,4 +1,4 @@
-<div class="container-fluid py-4">
+<!-- <div class="container-fluid py-4">
     <div class="row justify-content-center">
         <div class="col-12 col-xl-10">
 
@@ -71,4 +71,4 @@ if (isset($_SESSION['error'])) {
 <?php
     unset($_SESSION['error']);
 }
-?>
+?> -->
