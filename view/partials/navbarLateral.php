@@ -174,7 +174,14 @@ function enlaceActivoDelModulo($enlaces, $controladorActual, $funcion)
         <?php endforeach; ?>
     </ul>
 
-        <div class="px-3 pb-2 pt-1 border-top border-secondary border-opacity-25">
+    <div class="px-3 pb-2 pt-1 border-top border-secondary border-opacity-25">
+        <a href="<?php echo getUrl('Manuales', 'Manuales', 'video') ?>"
+           class="d-flex align-items-center gap-2 text-decoration-none sn-menu-link <?php echo ($_GET['modulo'] == 'Manuales') ? 'active' : ''; ?>">
+            <i class="bi bi-info-circle"></i> Manuales
+        </a>
+    </div>
+
+    <div class="px-3 pb-2 pt-1 border-top border-secondary border-opacity-25">
         <a href="<?php echo getUrl('SobreNosotros', 'SobreNosotros', 'index') ?>"
            class="d-flex align-items-center gap-2 text-decoration-none sn-menu-link <?php echo ($moduloActual === 'sobrenosotros') ? 'active' : ''; ?>">
             <i class="bi bi-info-circle"></i> Sobre nosotros
