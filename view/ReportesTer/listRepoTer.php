@@ -285,7 +285,8 @@
                             <th class="ps-4 py-3">Fecha Registro</th>
                             <th class="py-3">Nombre del Sitio</th>
                             <th class="py-3">Ubicación</th>
-                            <th class="py-3">Capacidad / Límite</th>
+                            <th class="py-3">Tipo de depósito</th>
+                            <th class="text-center py-3">Actividades</th>
                             <th class="text-center py-3">Estado</th>
                         </tr>
                     </thead>
@@ -293,7 +294,7 @@
         `;
 
         if (datos.length === 0) {
-            html += sinResultados(5);
+            html += sinResultados(6);
         } else {
             datos.forEach(function (fila) {
                 html += `
@@ -301,7 +302,8 @@
                         <td class="ps-4 py-3 text-muted">${escapar(fila.fecha)}</td>
                         <td class="py-3 fw-semibold text-dark">${escapar(fila.nombre_sitio)}</td>
                         <td class="py-3 text-muted">${escapar(fila.ubicacion)}</td>
-                        <td class="py-3 text-muted">${escapar(fila.capacidad)}</td>
+                        <td class="py-3 text-muted">${escapar(fila.tipodeposito)}</td>
+                        <td class="text-center py-3"><span class="badge bg-primary-subtle text-primary-emphasis rounded-pill px-3">${escapar(fila.actividades)}</span></td>
                         <td class="text-center py-3">${mostrarEstado(fila.estado)}</td>
                     </tr>
                 `;

@@ -62,6 +62,15 @@ $(document).ready(function () {
         $(".accesibilidad-wrapper [data-filtro='ninguno']").addClass("filtro-activo");
     }
 
+    // Activa o desactiva el tema oscuro en toda la aplicación.
+    // data-bs-theme="dark" hace que Bootstrap adapte sus componentes
+    // y activa las reglas de web/css/tema-oscuro.css.
+    function aplicarTema(esOscuro) {
+        document.documentElement.setAttribute("data-bs-theme", esOscuro ? "dark" : "light");
+        $("body").toggleClass("tema-oscuro", esOscuro);
+        actualizarIconoTema(esOscuro);
+    }
+
     function actualizarIconoTema(esOscuro) {
         $("#iconoTema")
             .toggleClass("bi-moon-stars", !esOscuro)
@@ -73,19 +82,15 @@ $(document).ready(function () {
     }
 
     $(document).on("click", "#botonTema", function () {
-        $("body").toggleClass("tema-oscuro");
+        let esOscuro = !$("body").hasClass("tema-oscuro");
 
-        let esOscuro = $("body").hasClass("tema-oscuro");
+        aplicarTema(esOscuro);
         localStorage.setItem("tema", esOscuro ? "oscuro" : "claro");
-        actualizarIconoTema(esOscuro);
     });
 
     let temaGuardado = localStorage.getItem("tema") === "oscuro";
 
-    if (temaGuardado) {
-        $("body").addClass("tema-oscuro");
-    }
-    actualizarIconoTema(temaGuardado);
+    aplicarTema(temaGuardado);
 
 });
 

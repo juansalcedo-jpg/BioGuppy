@@ -2,10 +2,18 @@
 ?>
 <style>
   :root {
-    --gov-azul-oscuro:       #10254a;
-    --gov-marine:            #3366CC;
-    --gov-azul-claro:        #159EE8;
-}
+    --gov-azul-oscuro: #10254a;
+    --gov-marine: #3366CC;
+    --gov-azul-claro: #159EE8;
+  }
+
+  .cifra-destacada {
+    color: var(--gov-azul-oscuro);
+  }
+
+  html[data-bs-theme="dark"] .cifra-destacada {
+    color: #60a5fa;
+  }
 </style>
 <div class="container-fluid py-2">
   <div class="row justify-content-center">
@@ -36,7 +44,7 @@
             <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2 text-white" style="width:48px;height:48px;background-color:var(--gov-marine);font-size:1.3rem;">
               <i class="bi bi-calendar-check-fill"></i>
             </div>
-            <div class="fs-2 fw-bold" style="color:var(--gov-azul-oscuro);">2026</div>
+            <div class="fs-2 fw-bold cifra-destacada">2026</div>
             <div class="text-muted small">Año de inicio del programa</div>
           </div>
         </div>
@@ -45,7 +53,7 @@
             <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2 text-white" style="width:48px;height:48px;background-color:var(--gov-marine);font-size:1.3rem;">
               <i class="bi bi-droplet-fill"></i>
             </div>
-            <div class="fs-2 fw-bold" style="color:var(--gov-azul-oscuro);"><?php echo $zoocriaderosActivos; ?></div>
+            <div class="fs-2 fw-bold cifra-destacada"><?php echo $zoocriaderosActivos; ?></div>
             <div class="text-muted small">Zoocriaderos activos</div>
           </div>
         </div>
@@ -54,7 +62,7 @@
             <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2 text-white" style="width:48px;height:48px;background-color:var(--gov-marine);font-size:1.3rem;">
               <i class="bi bi-geo-alt-fill"></i>
             </div>
-            <div class="fs-2 fw-bold" style="color:var(--gov-azul-oscuro);"><?php echo $sitiosActivos; ?></div>
+            <div class="fs-2 fw-bold cifra-destacada"><?php echo $sitiosActivos; ?></div>
             <div class="text-muted small">Sitios activos</div>
           </div>
         </div>
@@ -73,17 +81,17 @@
           ];
           foreach ($equipo as $integrante):
           ?>
-          <div class="col-md-6 col-lg-4">
-            <div class="d-flex align-items-center gap-2 p-2">
-              <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 text-white" style="width:40px;height:40px;background-color:var(--gov-azul-claro);font-size:.9rem;">
-                <i class="bi bi-person-fill"></i>
-              </div>
-              <div>
-                <div class="small fw-semibold"><?php echo $integrante["nombre"]; ?></div>
-                <div class="text-muted" style="font-size:.75rem;"><?php echo $integrante["rol"]; ?></div>
+            <div class="col-md-6 col-lg-4">
+              <div class="d-flex align-items-center gap-2 p-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 text-white" style="width:40px;height:40px;background-color:var(--gov-azul-claro);font-size:.9rem;">
+                  <i class="bi bi-person-fill"></i>
+                </div>
+                <div>
+                  <div class="small fw-semibold"><?php echo $integrante["nombre"]; ?></div>
+                  <div class="text-muted" style="font-size:.75rem;"><?php echo $integrante["rol"]; ?></div>
+                </div>
               </div>
             </div>
-          </div>
           <?php endforeach; ?>
         </div>
       </div>

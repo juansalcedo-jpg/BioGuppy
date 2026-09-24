@@ -3,10 +3,9 @@
 namespace BioGuppy\Controller\ReportesTer;
 
 use BioGuppy\Model\ReporteTer\ReporteTer;
+use BioGuppy\Controller\ReportesTer\Strategies\InspeccionesStrategy;
 use BioGuppy\Controller\ReportesTer\Strategies\SitiosStrategy;
-use BioGuppy\Controller\ReportesTer\Strategies\ActividadStrategy;
-use BioGuppy\Controller\ReportesTer\Strategies\AuxiliarStrategy;
-use BioGuppy\Controller\ReportesTer\Strategies\DepositoStrategy;
+use BioGuppy\Controller\ReportesTer\Strategies\ActividadesStrategy;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use PDO;
@@ -48,10 +47,9 @@ class ReportesTerController
     private function obtenerDatosReporte($obj, $tipoReporte, $fechaDesde, $fechaHasta)
     {
         $strategies = [
-            'sitios'    => SitiosStrategy::class,
-            'actividad' => ActividadStrategy::class,
-            'auxiliar'  => AuxiliarStrategy::class,
-            'deposito'  => DepositoStrategy::class
+            'inspecciones' => InspeccionesStrategy::class,
+            'sitios'       => SitiosStrategy::class,
+            'actividades'  => ActividadesStrategy::class
         ];
 
         $strategyClass = $strategies[$tipoReporte] ?? null;
@@ -85,7 +83,7 @@ class ReportesTerController
             return false;
         }
 
-        $regexTipo = '/^(sitios|actividad|auxiliar|deposito)$/';
+        $regexTipo = '/^(inspecciones|sitios|actividades)$/';
 
         if (!preg_match($regexTipo, $tipoReporte)) {
             $mensajeError = 'El tipo de reporte no es válido.';
@@ -294,8 +292,8 @@ class ReportesTerController
             </footer>
         ';
 
-        $html .= '<h2>Reportes Terreno — ' . htmlspecialchars($reporte['titulo']) . '</h2>';
-        $html .= '<p class="rango">Del ' . htmlspecialchars($fechaDesde) . ' al ' . htmlspecialchars($fechaHasta) . '</p>';
+        $html .= '<h2>Reporte de Terreno — ' . htmlspecialchars($reporte['titulo']) . '</h2>';
+        $html .= '<p class="rango">Del ' . date('d/m/Y', strtotime($fechaDesde)) . ' al ' . date('d/m/Y', strtotime($fechaHasta)) . '</p>';
 
         $html .= '<table class="datos"><thead><tr>';
         foreach ($reporte['columnas'] as $columna) {
