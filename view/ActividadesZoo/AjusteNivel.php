@@ -2,6 +2,10 @@
     <div class="row justify-content-center">
         <div class="col-12 col-xl-10">
             <h2 class="text-center fw-bold mb-4 text-dark">Actividad Ajuste de nivel</h2>
+
+            <p class="text-muted small">
+                Los campos marcados con <span>*</span> son obligatorios y deben ser diligenciados.
+            </p>
             <div class="card border-0 shadow-sm rounded-3">
                 <div class="card-body p-4">
                     <form id="formAjusteNivel"
@@ -61,13 +65,36 @@
                         <p class="text-muted small mt-n3 mb-4">Completa el nivel del tanque hasta la mitad y mide los
                             parámetros fisicoquímicos (pH y temperatura). Realizar una vez a la semana.</p>
                         <div class="row g-3 mb-4">
+                            <!-- Campo pH -->
                             <div class="col-md-6">
-                                <label for="ph" class="form-label fw-semibold">pH *</label>
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <label for="ph" class="form-label fw-semibold mb-0">pH *</label>
+                                    <button type="button"
+                                        class="btn btn-sm btn-outline-secondary rounded-circle p-0 d-inline-flex align-items-center justify-content-center"
+                                        style="width: 20px; height: 20px; font-size: 11px;"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
+                                        title="Escala de 0 a 14. Lo ideal para los guppies es mantenerlo entre 7.0 y 8.0 (neutro a ligeramente alcalino).">
+                                        ?
+                                    </button>
+                                </div>
                                 <input type="number" step="0.1" class="form-control form-control-lg fs-6" id="ph"
                                     name="ph" placeholder="Ej. 7.2" required>
                             </div>
+
+                            <!-- Campo Temperatura -->
                             <div class="col-md-6">
-                                <label for="temperatura" class="form-label fw-semibold">Temperatura (°C) *</label>
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <label for="temperatura" class="form-label fw-semibold mb-0">Temperatura (°C) *</label>
+                                    <button type="button"
+                                        class="btn btn-sm btn-outline-secondary rounded-circle p-0 d-inline-flex align-items-center justify-content-center"
+                                        style="width: 20px; height: 20px; font-size: 11px;"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
+                                        title="Rango general de 0 a 40 °C. Para la supervivencia y desarrollo óptimo del guppy, se recomienda entre 22°C y 28°C.">
+                                        ?
+                                    </button>
+                                </div>
                                 <input type="number" step="0.1" class="form-control form-control-lg fs-6"
                                     id="temperatura" name="temperatura" placeholder="Ej. 24" required>
                             </div>
@@ -86,7 +113,7 @@
 </div>
 <?php
 if (isset($_SESSION['error'])) {
-    ?>
+?>
     <div class="row justify-content-center">
         <div class="col-12 col-xl-10">
             <div class="alert alert-danger d-flex align-items-center mt-3 mb-0" role="alert">
@@ -97,7 +124,7 @@ if (isset($_SESSION['error'])) {
             </div>
         </div>
     </div>
-    <?php
+<?php
     unset($_SESSION['error']);
 }
 ?>

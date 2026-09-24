@@ -4,6 +4,10 @@
 
             <h2 class="text-center fw-bold mb-4 text-dark">Actividad Alimentación</h2>
 
+            <p class="text-muted small">
+                Los campos marcados con <span>*</span> son obligatorios y deben ser diligenciados.
+            </p>
+
             <div class="card border-0 shadow-sm rounded-3">
                 <div class="card-body p-4">
                     <form action="<?php echo getUrl('ActividadesZoo', 'Alimentacion', 'postCreateAlimentacion'); ?>" method="POST">
@@ -54,24 +58,28 @@
                                 <label for="tipo_pez" class="form-label fw-semibold">Tipo de pez *</label>
                                 <select class="form-select form-select-lg fs-6" id="tipo_pez" name="tipo_pez" required>
                                     <option value="" selected disabled>Selecciona...</option>
-                                    <option value="REPRODUCTOR">Reproductores y adultos</option>
+                                    <option value="REPRODUCTOR">Reproductores</option>
+                                    <option value="ADULTOS">Adultos</option>
                                     <option value="ALEVIN">Alevines</option>
                                 </select>
                             </div>
 
                             <div class="col-md-4">
-                                <label for="tipo_alimentacion" class="form-label fw-semibold">Tipo de alimentación</label>
+                                <label for="tipo_alimentacion" class="form-label fw-semibold">Tipo de alimentación *</label>
                                 <select class="form-select form-select-lg fs-6" id="tipo_alimentacion" name="tipo_alimentacion">
-                                    <option value="Mojarra molida" selected>Mojarra molida</option>
+                                    <option value="" selected disabled>Selecciona...</option>
+                                    <option value="Mojarra molida">Mojarra molida</option>
                                     <option value="Tabillas">Tabillas</option>
                                 </select>
                             </div>
 
                             <div class="col-md-4">
-                                <label for="horario" class="form-label fw-semibold">Horario</label>
+                                <label for="horario" class="form-label fw-semibold">Horario *</label>
                                 <select class="form-select form-select-lg fs-6" id="horario" name="horario">
-                                    <option value="MAÑANA" selected>Mañana</option>
+                                    <option value="" selected disabled>Selecciona...</option>
+                                    <option value="MAÑANA">Mañana</option>
                                     <option value="TARDE">Tarde</option>
+                                    <option value="NOCHE">Noche</option>
                                 </select>
                             </div>
                         </div>

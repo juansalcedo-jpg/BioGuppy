@@ -157,7 +157,7 @@ class DashBoardController
                     $total = (int)$row['total'];
                     if ($total > 0) {
                         // Nombre de la actividad que aparecerá en la gráfica
-                        $etiquetas[] = trim($row['nombreactividad']) . "\n(%.1f%%)";
+                        $etiquetas[] = trim($row['nombreactividad']) . "\n(" . $total . ")";
                         $valores[]   = $total;
                     }
                 }

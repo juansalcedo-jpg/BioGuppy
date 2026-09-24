@@ -4,6 +4,10 @@
 
             <h2 class="text-center fw-bold mb-4 text-dark">Actividad Lavado</h2>
 
+            <p class="text-muted small">
+                Los campos marcados con <span>*</span> son obligatorios y deben ser diligenciados.
+            </p>
+
             <div class="card border-0 shadow-sm rounded-3">
                 <div class="card-body p-4">
                     <form action="<?php echo getUrl('ActividadesZoo', 'Lavado', 'postCreateLavado'); ?>" method="POST">

@@ -6,7 +6,7 @@ $catalogosActivo  = in_array($funcion, ['listTipoTanq', 'listTipoDepo', 'listAct
 <li class="nav-item">
   <a class="nav-link fw-semibold d-flex align-items-center <?php echo $dashboardActivo ? 'active' : ''; ?>"
     href="<?php echo getUrl('Dashboard', 'Dashboard', 'listDashboard') ?>">
-    <i class="bi bi-bar-chart-line me-2"></i> Dashboard consolidado
+    <i class="bi bi-bar-chart-line me-2"></i> Dashboard
   </a>
 </li>
 
@@ -15,7 +15,7 @@ $catalogosActivo  = in_array($funcion, ['listTipoTanq', 'listTipoDepo', 'listAct
     data-bs-toggle="collapse" href="#submenuCatalogos" role="button"
     aria-expanded="<?php echo $catalogosActivo ? 'true' : 'false'; ?>"
     aria-controls="submenuCatalogos">
-    <i class="bi bi-database-gear me-2"></i> Catálogos de configuración
+    <i class="bi bi-database-gear me-2"></i> Administración de tipos y actividades
     <i class="bi bi-caret-down-fill ms-auto"></i>
   </a>
   <div class="collapse <?php echo $catalogosActivo ? 'show' : ''; ?>" id="submenuCatalogos">

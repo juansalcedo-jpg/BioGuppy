@@ -27,17 +27,21 @@ class AlimentacionController{
         $horario        = $_POST['horario'] ?: null;
         $tipoAlimento   = $_POST['tipo_alimentacion'] ?: null;
 
-        if(empty($tanqueId) || empty($fecha) || empty($tipoPez)){
-            $_SESSION['error'] = "El tanque, la fecha y el tipo de pez son obligatorios.";
+        if(empty($tanqueId) || empty($fecha) || empty($tipoPez) || empty($horario) || empty($tipoAlimento)){
+            $_SESSION['error'] = "Ningun campo puede quedar vacío.";
             redirect(getUrl('ActividadesZoo','Alimentacion','Alimentacion'));
             exit();
         }
 
-        if($fecha < '2026-09-10' || $fecha > date('Y-m-d')){
-            $_SESSION['error'] = "La fecha debe estar entre el 10 de septiembre de 2026 y hoy.";
-            redirect(getUrl('ActividadesZoo','Alimentacion','Alimentacion'));
+        $fechaMin = date('Y-m-d', strtotime('-2 days'));
+        $fechaMax = date('Y-m-d');
+
+        if ($fecha < $fechaMin || $fecha > $fechaMax) {
+            $_SESSION['error'] = "La fecha debe estar entre $fechaMin y $fechaMax.";
+            redirect(getUrl('ActividadesZoo', 'Alimentacion', 'Alimentacion'));
             exit();
         }
+
 
         $codTipo = $this->obtenerCodTipoActividadZoo($obj, 'ALIMENTACION');
 
