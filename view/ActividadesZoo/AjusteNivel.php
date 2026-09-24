@@ -27,25 +27,33 @@
                             <div class="col-md-6">
                                 <label for="fecha_actividad" class="form-label fw-semibold">Fecha *</label>
                                 <input type="date" class="form-control form-control-lg fs-6" id="fecha_actividad"
-                                    name="fecha_actividad" value="<?php echo date('Y-m-d'); ?>" min="2026-09-10"
+                                    name="fecha_actividad" value="<?php echo date('Y-m-d'); ?>"
+                                    min="<?php echo date('Y-m-d', strtotime('-2 days')); ?>"
                                     max="<?php echo date('Y-m-d'); ?>" required>
                             </div>
                         </div>
                         <ul class="nav nav-tabs mb-4 border-bottom">
                             <li class="nav-item">
-                                <a class="nav-link text-secondary fw-semibold" href="<?php echo getUrl('ActividadesZoo', 'Alimentacion', 'Alimentacion'); ?>">Alimentación</a>
+                                <a class="nav-link text-secondary fw-semibold"
+                                    href="<?php echo getUrl('ActividadesZoo', 'Alimentacion', 'Alimentacion'); ?>">Alimentación</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-secondary fw-semibold" href="<?php echo getUrl('ActividadesZoo', 'NacidosMuertos', 'NacidosMuertos'); ?>">Nacidos / Muertos</a>
+                                <a class="nav-link text-secondary fw-semibold"
+                                    href="<?php echo getUrl('ActividadesZoo', 'NacidosMuertos', 'NacidosMuertos'); ?>">Nacidos
+                                    / Muertos</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-secondary fw-semibold" href="<?php echo getUrl('ActividadesZoo', 'Limpieza', 'Limpieza'); ?>">Limpieza</a>
+                                <a class="nav-link text-secondary fw-semibold"
+                                    href="<?php echo getUrl('ActividadesZoo', 'Limpieza', 'Limpieza'); ?>">Limpieza</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active fw-semibold text-primary border-0 border-bottom border-primary border-3" href="<?php echo getUrl('ActividadesZoo', 'AjusteNivel', 'AjusteNivel'); ?>">Ajuste de nivel</a>
+                                <a class="nav-link active fw-semibold text-primary border-0 border-bottom border-primary border-3"
+                                    href="<?php echo getUrl('ActividadesZoo', 'AjusteNivel', 'AjusteNivel'); ?>">Ajuste
+                                    de nivel</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-secondary fw-semibold" href="<?php echo getUrl('ActividadesZoo', 'Lavado', 'Lavado'); ?>">Lavado</a>
+                                <a class="nav-link text-secondary fw-semibold"
+                                    href="<?php echo getUrl('ActividadesZoo', 'Lavado', 'Lavado'); ?>">Lavado</a>
                             </li>
                         </ul>
 
