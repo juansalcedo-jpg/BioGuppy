@@ -3,15 +3,6 @@
 namespace BioGuppy\Controller\ActividadesTer;
 
 use PDO;
-
-/*
- * Funciones compartidas por:
- *  - ActividadesTer\ActividadesTerController         (Registrar actividad)
- *  - ActividadesListTer\ActividadesListTerController (Mis actividades)
- *
- * Cada controlador define RUTA_MODULO y RUTA_CONTROLADOR para que error()
- * lo devuelva a su propio módulo.
- */
 trait ActividadTerHelpersTrait
 {
     private function consultarSeguro($obj, $sql, $params = [])

@@ -7,12 +7,6 @@ use BioGuppy\Controller\Traits\BitacoraTrait;
 use BioGuppy\Controller\ActividadesTer\ActividadTerHelpersTrait;
 use PDO;
 
-/*
- * Módulo "Mis actividades de terreno": consultar, filtrar, editar e
- * inhabilitar las actividades que registró el usuario en sesión.
- * Igual que ActividadesListZoo en el lado de zoocriadero.
- * Las vistas se siguen usando desde view/ActividadesTer/.
- */
 class ActividadesListTerController
 {
     use BitacoraTrait;

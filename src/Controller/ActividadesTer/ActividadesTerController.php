@@ -6,10 +6,6 @@ use BioGuppy\Model\ActividadesTer\ActividadesTerModel;
 use BioGuppy\Controller\Traits\BitacoraTrait;
 use PDO;
 
-/*
- * Módulo "Registrar actividad de terreno".
- * "Mis actividades" (listar, editar, inhabilitar) quedó en ActividadesListTer.
- */
 class ActividadesTerController
 {
     use BitacoraTrait;

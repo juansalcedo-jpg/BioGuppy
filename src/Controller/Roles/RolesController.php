@@ -27,10 +27,6 @@ class RolesController{
             exit();
         }
 
-        // -----------------------------------------------------------
-        // VALIDAR FORMATO DE NOMBRE
-        // Solo letras y espacios, máximo 50 caracteres.
-        // -----------------------------------------------------------
         if(mb_strlen(trim($nombreRol)) > 50){
             $_SESSION['error'] = "El nombre del rol no puede tener más de 50 caracteres.";
             redirect(getUrl('Roles','Roles','createRol'));
