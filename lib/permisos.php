@@ -16,7 +16,7 @@
 const MODULOS_SIN_SESION = ['acceso', 'cambiocontra'];
 
 // Cualquier usuario con sesión iniciada los puede usar, sin importar su rol.
-const MODULOS_COMUNES = ['index', 'inicio', 'perfil', 'sobrenosotros'];
+const MODULOS_COMUNES = ['index', 'inicio', 'perfil', 'sobrenosotros', 'manuales'];
 
 
 function haySesionActiva()

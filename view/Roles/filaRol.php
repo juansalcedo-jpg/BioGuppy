@@ -1,8 +1,4 @@
 <?php
-/*
- * Una fila de la tabla de roles. La usan listRol.php y filtro.php.
- * Espera: $rol (codrol, nombrerol, estado, totalmodulos) y $totalModulosSistema.
- */
 $totalMods = (int) ($rol['totalmodulos'] ?? 0);
 ?>
 <tr class="border-bottom">
