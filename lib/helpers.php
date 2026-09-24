@@ -36,20 +36,8 @@
         $controlador = ucwords($_GET['controlador']); //Clase ej: UsuariosController
         $funcion = $_GET['funcion']; //Metodo en la clase: getUsers
 
-        if (!usuarioTienePermiso($modulo, $controlador, $funcion)) {
-
-            if (!isset($_SESSION['nombre_rol'])) {
-                redirect("inicio/login.php");
-            } else {
-                $_SESSION['error'] = "No tienes permisos para acceder a esa función.";
-                redirect(getUrl(
-                    $_SESSION['modulo'] ?? 'Usuarios',
-                    $_SESSION['controlador'] ?? 'Usuarios',
-                    $_SESSION['funcion'] ?? 'listUsu'
-                ));
-            }
-            exit();
-        }
+        // Si el rol no tiene el módulo, se corta aquí (vale para index.php y ajax.php).
+        verificarAccesoRuta($modulo);
 
         $nombreClase = "BioGuppy\\Controller\\$modulo\\{$controlador}Controller";
 

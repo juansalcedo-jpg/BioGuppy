@@ -349,7 +349,7 @@ $tipo = strtoupper($actividad['nombreactividad'] ?? '');
                     <?php if ($act['estado'] === 'A'): ?>
 
                       <a
-                        href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'delete', array('id' => $act['codactividad'])); ?>"
+                        href="<?php echo getUrl('ActividadesListTer', 'ActividadesListTer', 'delete', array('id' => $act['codactividad'])); ?>"
                         class="btn btn-outline-danger btn-icon rounded-circle"
                         title="Inhabilitar">
 
@@ -360,7 +360,7 @@ $tipo = strtoupper($actividad['nombreactividad'] ?? '');
                     <?php else: ?>
 
                       <a
-                        href="<?php echo getUrl('ActividadesTer', 'ActividadesTer', 'delete', array('id' => $act['codactividad'])); ?>"
+                        href="<?php echo getUrl('ActividadesListTer', 'ActividadesListTer', 'delete', array('id' => $act['codactividad'])); ?>"
                         class="btn btn-outline-success btn-icon rounded-circle"
                         title="Activar">
 

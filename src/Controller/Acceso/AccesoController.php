@@ -33,7 +33,7 @@ class AccesoController{
 
         if($usuario->rowCount() > 0 && password_verify($usu_clave, $contrasenaBD)){
 
-            $sqlrol = "SELECT r.codrol, r.nombrerol
+            $sqlrol = "SELECT r.codrol, r.nombrerol, r.estado
                     FROM tblusuario u
                     INNER JOIN tblrol r
                     ON u.codrol = r.codrol
@@ -45,69 +45,37 @@ class AccesoController{
 
             if($rol->rowCount() > 0){
 
-                $sqlestado = "SELECT *
-                        FROM tblusuario
-                        WHERE correo = :correo
-                        AND estado = 'A'";
+                $datosRol = $rol->fetch(PDO::FETCH_ASSOC);
 
-                $estado = $obj->select($sqlestado, [
-                    ':correo' => $usu_correo
-                ]);
-
-                if($estado->rowCount() > 0){
-                    $_SESSION['usu_nombre'] = $usu['nombreusuario'];
-                    $_SESSION['usu_correo'] = $usu['correo'];
-                    $_SESSION['usu_id'] = $usu['codusuario'];
-                    $_SESSION['auth'] = "ok";
-
-                    $datosRol = $rol->fetch(PDO::FETCH_ASSOC);
-
-                    $_SESSION['nombre_rol'] = $datosRol['nombrerol'];
-                    $_SESSION['codrol'] = $datosRol['codrol'];
-
-                    if($datosRol['nombrerol'] == 'Super Admin'){
-
-                        $_SESSION['menu_file'] = "../view/funcionesLateral/FuncSuperAdmin.php";
-                        $_SESSION['modulo'] = 'Inicio';
-                        $_SESSION['controlador'] = 'Inicio';
-                        $_SESSION['funcion'] = 'index';
-
-                    } else if ($datosRol['nombrerol'] == 'Administrador') {
-
-                        $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAdmin.php";
-                        $_SESSION['modulo'] = 'Inicio';
-                        $_SESSION['controlador'] = 'Inicio';
-                        $_SESSION['funcion'] = 'index';
-
-                    }else if($datosRol['nombrerol'] == 'Coordinador Control Biologico'){
-
-                        $_SESSION['menu_file'] = "../view/funcionesLateral/FuncCoordinador.php";
-                        $_SESSION['modulo'] = 'Inicio';
-                        $_SESSION['controlador'] = 'Inicio';
-                        $_SESSION['funcion'] = 'index';
-
-                    }else if($datosRol['nombrerol'] == 'Auxiliar Terreno'){
-
-                        $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAuxTerreno.php";
-                        $_SESSION['modulo'] = 'Inicio';
-                        $_SESSION['controlador'] = 'Inicio';
-                        $_SESSION['funcion'] = 'index';
-
-                    }else if($datosRol['nombrerol'] == 'Auxiliar Zoocriadero'){
-
-                        $_SESSION['menu_file'] = "../view/funcionesLateral/FuncAuxZoocriadero.php";
-                        $_SESSION['modulo'] = 'Inicio';
-                        $_SESSION['controlador'] = 'Inicio';
-                        $_SESSION['funcion'] = 'index';
-
-                    }
-                }else{
+                if(($usu['estado'] ?? '') !== 'A'){
                     $_SESSION['ErrorLogin'] = "La cuenta esta inactiva";
                     redirect("inicio/login.php");
+                    return;
                 }
 
-                redirect("index.php");
+                if(($datosRol['estado'] ?? 'A') !== 'A'){
+                    $_SESSION['ErrorLogin'] = "El rol asignado a tu cuenta está inactivo. Comunícate con el administrador.";
+                    redirect("inicio/login.php");
+                    return;
                 }
+
+                $_SESSION['usu_nombre'] = $usu['nombreusuario'];
+                $_SESSION['usu_correo'] = $usu['correo'];
+                $_SESSION['usu_id']     = $usu['codusuario'];
+                $_SESSION['auth']       = "ok";
+
+                $_SESSION['nombre_rol'] = $datosRol['nombrerol'];
+                $_SESSION['codrol']     = $datosRol['codrol'];
+
+                // Ya no hay un menú fijo por nombre de rol: la barra lateral se
+                // arma sola con los módulos que el rol tenga en tblrolmodulo.
+                // Todos los roles llegan primero a Inicio.
+                $_SESSION['modulo']      = 'Inicio';
+                $_SESSION['controlador'] = 'Inicio';
+                $_SESSION['funcion']     = 'index';
+
+                redirect("index.php");
+            }
         }else{
 
             $_SESSION['ErrorLogin'] = "Correo o contraseña incorrectos";

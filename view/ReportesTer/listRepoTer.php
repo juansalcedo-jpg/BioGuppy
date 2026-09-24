@@ -354,7 +354,7 @@
         const fechaDesde = inputDesde.value;
         const fechaHasta = inputHasta.value;
 
-        return "<?php echo getUrl('ReportesTerreno', 'ReportesTerreno', 'exportarPdf', false, 'ajax'); ?>" +
+        return "<?php echo getUrl('ReportesTer', 'ReportesTer', 'exportarPdf', false, 'ajax'); ?>" +
             "&tipoReporte=" + encodeURIComponent(tipo) +
             "&fechaDesde=" + encodeURIComponent(fechaDesde) +
             "&fechaHasta=" + encodeURIComponent(fechaHasta);

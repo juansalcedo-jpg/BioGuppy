@@ -31,7 +31,7 @@
             <tr>
               <th class="py-3 ps-4">Nombre del rol</th>
               <th class="py-3 text-center">Estado</th>
-              <th class="py-3 text-center">Permisos</th>
+              <th class="py-3 text-center">Módulos permitidos</th>
               <th class="py-3 text-end pe-4">Acciones</th>
             </tr>
           </thead>
@@ -40,54 +40,7 @@
             $hayRoles = isset($resultrol) && $resultrol && $resultrol->rowCount() > 0;
             if ($hayRoles):
               while ($rol = $resultrol->fetch(PDO::FETCH_ASSOC)):
-            ?>
-                <tr class="border-bottom">
-                  <td class="ps-4 py-3">
-                    <span class="fw-bold text-dark d-block"><?php echo htmlspecialchars($rol['nombrerol']); ?></span>
-                  </td>
-                  
-                  <td class="text-center py-3">
-                    <?php if ($rol['estado'] === 'A'): ?>
-                      <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1">● Activo</span>
-                    <?php else: ?>
-                      <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3 py-1">● Inactivo</span>
-                    <?php endif; ?>
-                  </td>
-
-                  <!-- Columna separada para Permisos con azul primario/oscuro -->
-                  <td class="text-center py-3">
-                    <a href="<?php echo getUrl('Roles', 'Roles', 'permisos', ['id' => $rol['codrol']]) ?>"
-                      class="badge bg-primary bg-opacity-10 text-primary text-decoration-none px-3 py-2 fw-semibold" title="Gestionar permisos">
-                      <i class="bi bi-key-fill me-1"></i> Permisos
-                    </a>
-                  </td>
-                  
-                  <!-- Acciones de edición y estado -->
-                  <td class="text-end pe-4 py-3">
-                    <div class="btn-group shadow-sm" role="group">
-                      <!-- Botón Editar -->
-                      <button type="button" class="btn btn-sm btn-light border text-primary px-2" title="Editar"
-                        onclick="cargarFormularioModal('<?php echo getUrl('Roles', 'Roles', 'editRol', ['id' => $rol['codrol']]) ?>', 'Editar rol', 'rolFormEdicion', '<?php echo getUrl('Roles', 'Roles', 'listRol') ?>', 'tablaRoles')">
-                        <i class="bi bi-pencil"></i>
-                      </button>
-                      
-                      <!-- Botón Activar / Inhabilitar -->
-                      <?php if ($rol['estado'] === 'A'): ?>
-                        <a href="<?php echo getUrl('Roles', 'Roles', 'activacion', array('id' => $rol['codrol'], 'estado' => $rol['estado'])) ?>"
-                          class="btn btn-sm btn-light border text-danger px-2" title="Inhabilitar"
-                          onclick="return confirm('¿Seguro que deseas inhabilitar este rol?')">
-                          <i class="bi bi-slash-circle"></i>
-                        </a>
-                      <?php else: ?>
-                        <a href="<?php echo getUrl('Roles', 'Roles', 'activacion', array('id' => $rol['codrol'], 'estado' => $rol['estado'])) ?>"
-                          class="btn btn-sm btn-light border text-success px-2" title="Activar">
-                          <i class="bi bi-check-lg"></i>
-                        </a>
-                      <?php endif; ?>
-                    </div>
-                  </td>
-                </tr>
-              <?php
+                include __DIR__ . '/filaRol.php';
               endwhile;
             else:
               ?>

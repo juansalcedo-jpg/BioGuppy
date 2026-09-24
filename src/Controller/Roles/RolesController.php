@@ -77,13 +77,35 @@ class RolesController{
 
     }
 
+    // Consulta de roles con cuántos módulos tiene cada uno.
+    private function consultarRoles($obj, $buscar = null){
+
+        $sql = "SELECT r.codrol, r.nombrerol, r.estado,
+                       COUNT(m.codmodulo) AS totalmodulos
+                FROM tblrol r
+                LEFT JOIN tblrolmodulo rm ON rm.codrol = r.codrol
+                LEFT JOIN tblmodulo m     ON m.codmodulo = rm.codmodulo AND m.estado = 'A'";
+
+        $params = [];
+        if($buscar !== null && $buscar !== ''){
+            $sql .= " WHERE r.nombrerol ILIKE :buscar";
+            $params[':buscar'] = "%$buscar%";
+        }
+
+        $sql .= " GROUP BY r.codrol, r.nombrerol, r.estado
+                  ORDER BY r.codrol ASC";
+
+        return $obj->select($sql, $params);
+    }
+
     public function listRol(){
 
         $obj = new rolesModel();
 
-        $sql = "SELECT * FROM tblrol ORDER BY codrol ASC";
+        $resultrol = $this->consultarRoles($obj);
 
-        $resultrol = $obj->select($sql);
+        // Para mostrar "de N" en la columna de módulos.
+        $totalModulosSistema = (int) $obj->select("SELECT COUNT(*) FROM tblmodulo WHERE estado = 'A'")->fetchColumn();
 
         include_once __DIR__ . '/../../../view/Roles/listRol.php';
 
@@ -219,19 +241,18 @@ class RolesController{
     }
 
 
+    /*
+     * Pantalla de permisos: un interruptor por módulo.
+     * Si el rol tiene el módulo, ve todo lo de ese módulo; si no, no lo ve
+     * en la barra lateral ni puede entrar por URL.
+     */
     public function permisos(){
 
         $obj = new rolesModel();
 
-        $id = $_GET['id'] ?? null;
+        $id = (int) ($_GET['id'] ?? 0);
 
-        if(empty($id)){
-            $_SESSION['error'] = "Rol no válido.";
-            redirect(getUrl('Roles','Roles','listRol'));
-            exit();
-        }
-
-        $rol = $obj->select("SELECT codrol, nombrerol FROM tblrol WHERE codrol = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
+        $rol = $obj->select("SELECT codrol, nombrerol, estado FROM tblrol WHERE codrol = :id", [':id' => $id])->fetch(PDO::FETCH_ASSOC);
 
         if(!$rol){
             $_SESSION['error'] = "El rol no existe.";
@@ -239,24 +260,30 @@ class RolesController{
             exit();
         }
 
-        $sql = "SELECT m.nombremodulo, p.codpermiso, p.nombrepermiso, a.codaccion,
-                       (ra.codrol IS NOT NULL) AS seleccionado
+        $sql = "SELECT m.codmodulo, m.nombremodulo, m.carpeta, m.descripcion, m.icono, m.seccion,
+                       (rm.codrol IS NOT NULL) AS asignado
                 FROM tblmodulo m
-                CROSS JOIN tblpermiso p
-                INNER JOIN tblaccion a ON a.codmodulo = m.codmodulo AND a.codpermiso = p.codpermiso
-                LEFT JOIN tblrolaccion ra ON ra.codaccion = a.codaccion AND ra.codrol = :codrol
-                ORDER BY m.nombremodulo ASC, p.codpermiso ASC";
+                LEFT JOIN tblrolmodulo rm ON rm.codmodulo = m.codmodulo AND rm.codrol = :codrol
+                WHERE m.estado = 'A'
+                ORDER BY m.orden, m.nombremodulo";
 
         $filas = $obj->select($sql, [':codrol' => $id])->fetchAll(PDO::FETCH_ASSOC);
 
-        // Lista de permisos (columnas) en orden fijo
-        $permisosCols = $obj->select("SELECT codpermiso, nombrepermiso FROM tblpermiso ORDER BY codpermiso ASC")->fetchAll(PDO::FETCH_ASSOC);
-
-        // Agrupamos por módulo -> [codpermiso => fila] para pintar la matriz
-        $matriz = [];
+        // Agrupados por sección, igual que en la barra lateral.
+        $modulosPorSeccion = [];
+        $totalAsignados = 0;
         foreach($filas as $fila){
-            $matriz[$fila['nombremodulo']][$fila['codpermiso']] = $fila;
+            $fila['asignado'] = (bool) $fila['asignado'];
+            if($fila['asignado']){
+                $totalAsignados++;
+            }
+            $modulosPorSeccion[$fila['seccion']][] = $fila;
         }
+        $totalModulos = count($filas);
+
+        // Si estoy editando MI propio rol, no me dejo quitar "Roles"
+        // (me quedaría por fuera de esta misma pantalla).
+        $esMiRol = ((int) ($_SESSION['codrol'] ?? 0) === (int) $rol['codrol']);
 
         include_once __DIR__ . '/../../../view/Roles/permisos.php';
 
@@ -266,14 +293,51 @@ class RolesController{
 
         $obj = new rolesModel();
 
-        $codrol = $_POST['codrol'] ?? null;
-        $seleccionadas = $_POST['acciones'] ?? [];
+        $codrol = (int) ($_POST['codrol'] ?? 0);
 
-        if(empty($codrol)){
+        // Solo enteros, sin repetidos.
+        $seleccionados = array_values(array_unique(array_filter(
+            array_map('intval', (array) ($_POST['modulos'] ?? [])),
+            function($cod){ return $cod > 0; }
+        )));
+
+        $rol = $obj->select("SELECT codrol, nombrerol FROM tblrol WHERE codrol = :id", [':id' => $codrol])->fetch(PDO::FETCH_ASSOC);
+
+        if(!$rol){
             $_SESSION['error'] = "Rol no válido.";
             redirect(getUrl('Roles','Roles','listRol'));
             exit();
         }
+
+        // Módulos válidos (existentes y activos) con su nombre, para validar y para la bitácora.
+        $modulosValidos = $obj->select(
+            "SELECT codmodulo, nombremodulo, LOWER(carpeta) AS carpeta FROM tblmodulo WHERE estado = 'A'"
+        )->fetchAll(PDO::FETCH_ASSOC);
+
+        $nombrePorCod = [];
+        $codRoles = null;
+        foreach($modulosValidos as $m){
+            $nombrePorCod[(int) $m['codmodulo']] = $m['nombremodulo'];
+            if($m['carpeta'] === 'roles'){
+                $codRoles = (int) $m['codmodulo'];
+            }
+        }
+
+        // Se descarta cualquier código que no sea un módulo real.
+        $seleccionados = array_values(array_filter($seleccionados, function($cod) use ($nombrePorCod){
+            return isset($nombrePorCod[$cod]);
+        }));
+
+        // Protección: no te puedes quitar "Roles" a ti mismo.
+        $esMiRol = ((int) ($_SESSION['codrol'] ?? 0) === $codrol);
+        if($esMiRol && $codRoles !== null && !in_array($codRoles, $seleccionados, true)){
+            $seleccionados[] = $codRoles;
+        }
+
+        $anteriores = array_map('intval', $obj->select(
+            "SELECT codmodulo FROM tblrolmodulo WHERE codrol = :codrol",
+            [':codrol' => $codrol]
+        )->fetchAll(PDO::FETCH_COLUMN));
 
         $conexion = $obj->getConnection();
 
@@ -281,29 +345,50 @@ class RolesController{
 
             $conexion->beginTransaction();
 
-            $obj->delete("DELETE FROM tblrolaccion WHERE codrol = :codrol", [':codrol' => $codrol]);
+            $obj->delete("DELETE FROM tblrolmodulo WHERE codrol = :codrol", [':codrol' => $codrol]);
 
-            $sqlInsert = "INSERT INTO tblrolaccion (codrol, codaccion) VALUES (:codrol, :codaccion)";
-            foreach($seleccionadas as $codaccion){
+            $sqlInsert = "INSERT INTO tblrolmodulo (codrol, codmodulo) VALUES (:codrol, :codmodulo)";
+            foreach($seleccionados as $codmodulo){
                 $obj->insert($sqlInsert, [
                     ':codrol'    => $codrol,
-                    ':codaccion' => (int)$codaccion,
+                    ':codmodulo' => $codmodulo,
                 ]);
             }
 
             $conexion->commit();
 
         }catch(\Throwable $error){
-            $conexion->rollBack();
+            if($conexion->inTransaction()){
+                $conexion->rollBack();
+            }
             error_log("Error guardando permisos del rol: " . $error->getMessage());
             $_SESSION['error'] = "No se pudieron guardar los permisos. Intenta nuevamente.";
             redirect(getUrl('Roles','Roles','permisos', ['id' => $codrol]));
             exit();
         }
 
-        $this->registrarBitacora($obj, 'UPDATE', 'Roles', $codrol, null, "Permisos actualizados (" . count($seleccionadas) . " acciones)");
+        // Bitácora: nombres de los módulos antes y después.
+        $nombres = function($cods) use ($nombrePorCod){
+            $lista = [];
+            foreach($cods as $c){
+                if(isset($nombrePorCod[$c])){
+                    $lista[] = $nombrePorCod[$c];
+                }
+            }
+            sort($lista);
+            return empty($lista) ? 'Sin módulos' : implode(', ', $lista);
+        };
 
-        $_SESSION['exito'] = "Los permisos del rol se actualizaron correctamente.";
+        $this->registrarBitacora(
+            $obj,
+            'UPDATE',
+            'Roles',
+            $codrol,
+            "Módulos: " . $nombres($anteriores),
+            "Módulos: " . $nombres($seleccionados)
+        );
+
+        $_SESSION['exito'] = "Se guardaron los permisos del rol " . $rol['nombrerol'] . ". Los cambios aplican de inmediato.";
         redirect(getUrl('Roles','Roles','permisos', ['id' => $codrol]));
         exit();
 
@@ -314,15 +399,11 @@ class RolesController{
 
         $obj = new rolesModel();
 
-        $buscar = $_GET['buscar'];
+        $buscar = trim($_GET['buscar'] ?? '');
 
-        $sql = "SELECT nombrerol
-                FROM tblrol
-                WHERE nombreusuario ILIKE :buscar";
+        $Roles = $this->consultarRoles($obj, $buscar);
 
-        $Roles = $obj->select($sql, [
-            ':buscar' => "%$buscar%"
-        ]);
+        $totalModulosSistema = (int) $obj->select("SELECT COUNT(*) FROM tblmodulo WHERE estado = 'A'")->fetchColumn();
 
         include_once __DIR__ . '/../../../view/Roles/filtro.php';
     }

@@ -21,7 +21,7 @@ $esSiembra = $tipoActividad === 'Siembra';
 $esSeguimiento = $tipoActividad === 'Seguimiento';
 $esResiembra = $tipoActividad === 'Resiembra';
 $accion = $esEdicion
-    ? getUrl('ActividadesTer', 'ActividadesTer', 'postUpdate')
+    ? getUrl('ActividadesListTer', 'ActividadesListTer', 'postUpdate')
     : getUrl('ActividadesTer', 'ActividadesTer', 'postCreate');
 
 $valor = function ($campo, $defecto = '') use ($esEdicion, $actividad) {

@@ -1,7 +1,8 @@
 <?php
 
     if(!isset($_SESSION['auth']) || $_SESSION['auth'] != "ok"){
-        redirect("inicio/login.php");
+        irA("inicio/login.php");
+        exit();
     }
 
 ?>

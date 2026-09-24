@@ -50,12 +50,12 @@
                     <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 20px;">
                         <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
                             <span class="fw-bold text-dark"><i class="bi bi-sliders me-2 text-primary"></i>Filtros</span>
-                            <a href="index.php?modulo=ActividadesTer&controlador=ActividadesTer&funcion=listMisActividades" class="text-decoration-none small text-muted">Limpiar</a>
+                            <a href="index.php?modulo=ActividadesListTer&controlador=ActividadesListTer&funcion=listMisActividades" class="text-decoration-none small text-muted">Limpiar</a>
                         </div>
 
                         <form action="index.php" method="GET">
-                            <input type="hidden" name="modulo" value="ActividadesTer">
-                            <input type="hidden" name="controlador" value="ActividadesTer">
+                            <input type="hidden" name="modulo" value="ActividadesListTer">
+                            <input type="hidden" name="controlador" value="ActividadesListTer">
                             <input type="hidden" name="funcion" value="listMisActividades">
 
                             <div class="mb-3">
@@ -176,7 +176,7 @@
 
                                                     <!-- Botón Editar -->
                                                     <td class="text-center">
-                                                        <a href="<?php echo getUrl('ActividadesTer','ActividadesTer','update',array('id'=>$codActividad)); ?>"
+                                                        <a href="<?php echo getUrl('ActividadesListTer','ActividadesListTer','getUpdate',array('id'=>$codActividad)); ?>"
                                                             class="btn btn-outline-primary btn-sm rounded-circle p-2 d-inline-flex align-items-center justify-content-center"
                                                             style="width: 36px; height: 36px;"
                                                             title="Editar registro">
@@ -187,14 +187,14 @@
                                                     <!-- Botón Inhabilitar / Activar -->
                                                     <td class="text-center pe-4">
                                                         <?php if($estadoAct === 'A'): ?>
-                                                            <a href="<?php echo getUrl('ActividadesTer','ActividadesTer','delete',array('id'=>$codActividad)); ?>"
+                                                            <a href="<?php echo getUrl('ActividadesListTer','ActividadesListTer','delete',array('id'=>$codActividad)); ?>"
                                                                 class="btn btn-outline-danger btn-sm rounded-circle p-2 d-inline-flex align-items-center justify-content-center"
                                                                 style="width: 36px; height: 36px;"
                                                                 title="Inhabilitar registro">
                                                                 <i class="bi bi-slash-circle fs-6"></i>
                                                             </a>
                                                         <?php else: ?>
-                                                            <a href="<?php echo getUrl('ActividadesTer','ActividadesTer','delete',array('id'=>$codActividad)); ?>"
+                                                            <a href="<?php echo getUrl('ActividadesListTer','ActividadesListTer','delete',array('id'=>$codActividad)); ?>"
                                                                 class="btn btn-outline-success btn-sm rounded-circle p-2 d-inline-flex align-items-center justify-content-center"
                                                                 style="width: 36px; height: 36px;"
                                                                 title="Activar registro">

@@ -6,9 +6,9 @@ class InicioController{
 
     public function index(){
 
-        // Inicio quedo como modulo publico en permisos.php (para no tener que
-        // tocar la base de datos con tblrolaccion/tblaccion), asi que la sesion
-        // se valida aca a mano para que nadie sin login pueda verlo.
+        // Inicio es un modulo comun (MODULOS_COMUNES en lib/permisos.php):
+        // lo ve cualquier usuario con sesion, sin importar su rol.
+        // Se deja esta validacion como respaldo.
         if(!isset($_SESSION['auth']) || $_SESSION['auth'] !== 'ok'){
             redirect("inicio/login.php");
             exit();

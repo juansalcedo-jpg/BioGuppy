@@ -49,10 +49,10 @@ $filasActividades=(isset($actividades)&&$actividades)
                     class="btn btn-outline-primary btn-icon rounded-circle"
                     title="Editar"
                     onclick="cargarFormularioModal(
-                    '<?php echo getUrl('ActividadesTer','ActividadesTer','getUpdate',array('id'=>$act['id'])); ?>',
+                    '<?php echo getUrl('ActividadesListTer','ActividadesListTer','getUpdate',array('id'=>$act['id'])); ?>',
                     'Editar actividad',
                     'actividadTerFormEdicion',
-                    '<?php echo getUrl('ActividadesTer','ActividadesTer','listMisActividades'); ?>',
+                    '<?php echo getUrl('ActividadesListTer','ActividadesListTer','listMisActividades'); ?>',
                     'tablaMisActividadesTer'
                     )">
 
@@ -67,7 +67,7 @@ $filasActividades=(isset($actividades)&&$actividades)
                 <?php if($act['estado']==='A'): ?>
 
                     <a
-                        href="<?php echo getUrl('ActividadesTer','ActividadesTer','delete',array('id'=>$act['id'])); ?>"
+                        href="<?php echo getUrl('ActividadesListTer','ActividadesListTer','delete',array('id'=>$act['id'])); ?>"
                         class="btn btn-outline-danger btn-icon rounded-circle"
                         title="Inhabilitar">
 
@@ -78,7 +78,7 @@ $filasActividades=(isset($actividades)&&$actividades)
                 <?php else: ?>
 
                     <a
-                        href="<?php echo getUrl('ActividadesTer','ActividadesTer','delete',array('id'=>$act['id'])); ?>"
+                        href="<?php echo getUrl('ActividadesListTer','ActividadesListTer','delete',array('id'=>$act['id'])); ?>"
                         class="btn btn-outline-success btn-icon rounded-circle"
                         title="Activar">
 
