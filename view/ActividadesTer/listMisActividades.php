@@ -12,11 +12,6 @@
                         Consulta y filtra las actividades de terreno que has registrado.
                     </p>
                 </div>
-                <div>
-                    <span class="badge bg-white text-dark shadow-sm border px-3 py-2 rounded-pill fs-6">
-                        <i class="bi bi-calendar-event text-primary me-1"></i> <?php echo date('d M, Y'); ?>
-                    </span>
-                </div>
             </div>
 
             <!-- Alertas de Sesión o Errores -->

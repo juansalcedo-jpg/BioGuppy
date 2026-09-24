@@ -28,8 +28,6 @@ class ManualesController{
             $rutaFisica = __DIR__ . '/../../../img/' . $manual['archivo'];
 
             if(file_exists($rutaFisica)){
-                // Ruta relativa a web/index.php: sirve sin importar si la
-                // carpeta del proyecto se llama BioGuppy o Bioguppy.
                 $videoUrl = '../img/' . $manual['archivo'];
             }
         }
