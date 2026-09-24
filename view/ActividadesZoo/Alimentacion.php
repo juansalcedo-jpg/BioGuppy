@@ -74,7 +74,7 @@
                             </div>
 
                             <div class="col-md-4">
-                                <label for="horario" class="form-label fw-semibold">Horario *</label>
+                                <label for="horario" class="form-label fw-semibold">Jornada *</label>
                                 <select class="form-select form-select-lg fs-6" id="horario" name="horario">
                                     <option value="" selected disabled>Selecciona...</option>
                                     <option value="MAÑANA">Mañana</option>
