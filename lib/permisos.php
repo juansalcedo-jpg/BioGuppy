@@ -12,15 +12,11 @@
  * =====================================================================
  */
 
-<<<<<<< Updated upstream
 // Se pueden usar sin iniciar sesión (login y recuperar contraseña).
 const MODULOS_SIN_SESION = ['acceso', 'cambiocontra'];
 
 // Cualquier usuario con sesión iniciada los puede usar, sin importar su rol.
 const MODULOS_COMUNES = ['index', 'inicio', 'perfil', 'sobrenosotros'];
-=======
-$GLOBALS['MODULOS_PUBLICOS'] = ['Acceso', 'CambioContra', 'index', 'SobreNosotros', 'Inicio', 'Perfil', 'Manuales'];  
->>>>>>> Stashed changes
 
 
 function haySesionActiva()
